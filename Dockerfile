@@ -1,4 +1,6 @@
 FROM ubuntu:16.04
+
+########################### SSH ###########################
 RUN apt-get update && apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 
@@ -8,15 +10,14 @@ RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/s
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 EXPOSE 22
 
+########################### fdfs (libfastcommon) ###########################
 # install other packages
-RUN apt-get install -y vim gcc make
-
-# We use the last version in 14.10.2024
-# Install Fastdfs (libfastcommon-1.0.75)
+RUN apt-get install -y gcc make
 ENV FDFS_BASE_PATH=/root/FoxCloud/fdfs
 RUN mkdir -p $FDFS_BASE_PATH
 
-########################### fdfs (libfastcommon) ###########################
+# We use the last version in 14.10.2024
+# Install Fastdfs (libfastcommon-1.0.75)
 RUN wget -P $FDFS_BASE_PATH https://github.com/happyfish100/libfastcommon/archive/refs/tags/V1.0.75.tar.gz && \
     tar -xzvf $FDFS_BASE_PATH/V1.0.75.tar.gz -C $FDFS_BASE_PATH && \
     rm $FDFS_BASE_PATH/V1.0.75.tar.gz
@@ -58,5 +59,8 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     ./make.sh clean && \
     ./make.sh && \
     ./make.sh install
+
+########################### install other packages ###########################
+RUN apt-get install -y vim net-tools
 
 CMD ["/usr/sbin/sshd", "-D"]
