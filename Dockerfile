@@ -12,7 +12,7 @@ EXPOSE 22
 
 ########################### fdfs (libfastcommon) ###########################
 # install other packages
-RUN apt-get install -y gcc make
+RUN apt-get install -y gcc g++ make
 ENV FDFS_BASE_PATH=/root/FoxCloud/fdfs
 RUN mkdir -p $FDFS_BASE_PATH
 

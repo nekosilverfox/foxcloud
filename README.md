@@ -7,7 +7,7 @@
 
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen)](LICENSE)
-![FDFS](https://img.shields.io/badge/FDFS-v6.12.2-orange)
+![FastDFS](https://img.shields.io/badge/FDFS-v6.12.2-orange)
 ![libfastcommon](https://img.shields.io/badge/libfastcommon-v1.0.75-orange)
 ![libserverframe](https://img.shields.io/badge/libserverframe-v1.2.5-orange)
 
@@ -16,7 +16,6 @@
 
 ![nginx](https://img.shields.io/badge/nginx-vXX-blue)
 ![FastCGI](https://img.shields.io/badge/FastCGI-vXX-blue.svg)
-![FastDFS](https://img.shields.io/badge/FastDFS-vXX-yellow)
 
 
 <div align="left">
@@ -155,7 +154,7 @@
 | `fdfs_upload_file /etc/fdfs/client.conf FILE`        | 使用 client 直接上传文件，会生成这么一段：`group1/M00/00/00/rBEAAmcNnNWACcJSAACXlD6bcgU7205557` |
 | `fdfs_download_file /etc/fdfs/client.conf FILE_NAME` |                                                              |
 
-上传文件时候生成字符串的解释：
+使用 client 节点中直接上传文件时候生成字符串的解释：
 
 **group1/M00/00/00/rBEAAmcNnNWACcJSAACXlD6bcgU7205557**
 
@@ -166,7 +165,7 @@
     - 源 storage server IP 地址
     - 文件创建时间
     - 文件大小
-    - 文件 CRC32 校验码（循环冗余校验）
+    - 文件 CRC32 校验码（Cyclic redundancy check, 循环冗余校验）
     - 随机数
 
 ## 服务默认端口
