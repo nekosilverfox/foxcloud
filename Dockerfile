@@ -64,7 +64,7 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
 RUN apt-get install -y postgresql
 
 ########################### install other packages ###########################
-RUN apt-get install -y vim net-tools
+RUN apt-get install -y vim net-tools git
 
 CMD ["/usr/sbin/sshd", "-D"]
 
