@@ -60,7 +60,11 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     ./make.sh && \
     ./make.sh install
 
+########################### PosrgreSQL ###########################
+RUN apt-get install -y postgresql
+
 ########################### install other packages ###########################
 RUN apt-get install -y vim net-tools
 
 CMD ["/usr/sbin/sshd", "-D"]
+
