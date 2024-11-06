@@ -6,7 +6,7 @@
 #include <time.h>
 #include <sys/stat.h>
  
-#include "make_log.h"
+#include "log.h"
 #include <pthread.h>
 
 pthread_mutex_t ca_log_lock=PTHREAD_MUTEX_INITIALIZER;

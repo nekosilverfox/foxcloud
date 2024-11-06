@@ -3,11 +3,13 @@
 CC=gcc
 
 # 预处理参数（注释去掉，宏替换）
-CPPLFAGS=-I
+CPPLFAGS=-I /usr/include/fastdfs \
+         -I /usr/include/fastcommon \
+         -I /usr/include
 CFLAGS=-Wall
 
 # 需要链接的动态库 .so
-LIBS=
+LIBS=-lfdfsclient
 
 # 子目标, 因为是测试,所有需要单独生成很多子目标(生成可执行程序的名字)
 # 前面是变量名，后面是子目标的名字
