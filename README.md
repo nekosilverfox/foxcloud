@@ -42,10 +42,10 @@
 
 3. 修改 `Dockerfile` 里面的 `YOUR_PASSWORD` 为 SSH 登录配置密码
 
-4. 构建 FoxCloudServer 的 Docker 镜像
+4. 构建 foxclouldserver 的 Docker 镜像
 
     ```bash
-    docker build -t FoxCloudServer .
+    docker build -t foxclouldserver .
     ```
 
 5. 启动容器（节点），其中需要配置的：
@@ -60,7 +60,7 @@
     - 启动单独的 `Tracker` 节点
 
         ```
-        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 --name TRACKER_CONTAINER_NAME FoxCloudServer
+        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 --name TRACKER_CONTAINER_NAME foxclouldserver
         ```
 
         
@@ -68,7 +68,7 @@
     - 启动单独的 `Storge` 节点
 
         ```
-        docker run -id -p SSH_PORT:22 -p STORGE_PORT:23000 --name STORGE_CONTAINER_NAME FoxCloudServer
+        docker run -id -p SSH_PORT:22 -p STORGE_PORT:23000 --name STORGE_CONTAINER_NAME foxclouldserver
         ```
 
         
@@ -76,7 +76,7 @@
     - 如果 `Tracker` 节点和 `Storge` 节点在一台主机上，可使用
 
         ```
-        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 --name CONTAINER_NAME FoxCloudServer
+        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 --name CONTAINER_NAME foxclouldserver
         ```
 
         
@@ -128,18 +128,18 @@
 
 > `fdfs_trackerd` 好 `fdfs_storaged` 后面的 `d` 代表启动后是守护进程
 
-1. 启动/停止 `tracker`，**tracker 必须第一个启动，因为客户端和存储节点都要去被动的连接他**:
+1. 启动/重启/停止 `tracker`，**tracker 必须第一个启动，因为客户端和存储节点都要去被动的连接他**:
 
     ```
-    fdfs_trackerd /etc/fdfs/tracker.conf start/stop
+    fdfs_trackerd /etc/fdfs/tracker.conf [start | restart | stop]
     ```
 
     
 
-2. 启动/停止 `storage`:
+2. 启动/重启/停止 `storage`:
 
     ```
-    fdfs_storaged /etc/fdfs/storage.conf start/stop
+    fdfs_storaged /etc/fdfs/storage.conf [start | restart | stop]
     ```
 
 

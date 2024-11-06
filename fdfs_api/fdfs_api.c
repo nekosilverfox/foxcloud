@@ -8,8 +8,6 @@
 
 int fdfs_upload_file(const char* conf_file, const char* upload_file_path, char* file_id)
 {
-	LogInit();
-
 	char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
 	ConnectionInfo *pTrackerServer;
 	int result;
@@ -21,7 +19,7 @@ int fdfs_upload_file(const char* conf_file, const char* upload_file_path, char* 
 	{
 		return result;
 	}
-	LogInfo("FDFS-Client init successful");
+	LOG("FDFS", "Upload", "FDFS-Client init successful");
 
 	/*
 	 * 通过从配置文件中读出的数据，连接追踪器 Tracker
@@ -44,7 +42,7 @@ int fdfs_upload_file(const char* conf_file, const char* upload_file_path, char* 
 		fprintf(stderr, "tracker_query_storage fail, " \
 			"error no: %d, error info: %s\n", \
 			result, STRERROR(result));
-		LogError("Failed to get Storage info, error code: %d", result);
+		LOG("FDFS", "Upload", "Failed to get Storage info, error code: %d", result);
 		return result;
 	}
 
@@ -56,14 +54,14 @@ int fdfs_upload_file(const char* conf_file, const char* upload_file_path, char* 
 	if (result == 0)
 	{
 		printf("%s\n", file_id);
-		LogInfo("FDFS-Client upload successful, file ID: %s", file_id);
+		LOG("FDFS", "Upload", "FDFS-Client upload successful, file ID: %s", file_id);
 	}
 	else
 	{
 		fprintf(stderr, "upload file fail, " \
 			"error no: %d, error info: %s\n", \
 			result, STRERROR(result));
-		LogError("Failed to upload file, error code: %d", result);
+		LOG("FDFS", "Upload", "Failed to upload file, error code: %d", result);
 	}
 
 	tracker_close_connection_ex(pTrackerServer, true);
