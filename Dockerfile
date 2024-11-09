@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-########################### SSH ###########################
+########################### Install SSH ###########################
 RUN apt-get update && apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 
@@ -10,7 +10,7 @@ RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/s
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 EXPOSE 22
 
-########################### fdfs (libfastcommon) ###########################
+########################### Install fdfs (libfastcommon) ###########################
 # install other packages
 RUN apt-get install -y gcc g++ make
 ENV FDFS_BASE_PATH=/root/FoxCloud/fdfs
@@ -31,7 +31,7 @@ RUN cd $FDFS_BASE_PATH/libfastcommon-1.0.75 && \
     ./make.sh && \
     ./make.sh install
 
-########################### fdfs (libfastcommon) ###########################
+########################### Install fdfs (libserverframe) ###########################
 RUN wget -P $FDFS_BASE_PATH https://github.com/happyfish100/libserverframe/archive/refs/tags/V1.2.5.tar.gz && \
     tar -xzvf $FDFS_BASE_PATH/V1.2.5.tar.gz -C $FDFS_BASE_PATH && \
     rm $FDFS_BASE_PATH/V1.2.5.tar.gz
@@ -45,7 +45,7 @@ RUN cd $FDFS_BASE_PATH/libserverframe-1.2.5 && \
     ./make.sh && \
     ./make.sh install
 
-########################### fdfs ###########################
+########################### Install fdfs ###########################
 # Download, extract, and clean up Fastdfs
 RUN wget -P $FDFS_BASE_PATH https://github.com/happyfish100/fastdfs/archive/refs/tags/V6.12.2.tar.gz && \
     tar -xzvf $FDFS_BASE_PATH/V6.12.2.tar.gz -C $FDFS_BASE_PATH && \
@@ -60,10 +60,23 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     ./make.sh && \
     ./make.sh install
 
-########################### PosrgreSQL ###########################
+########################### Install PosrgreSQL ###########################
 RUN apt-get install -y postgresql
 
-########################### install other packages ###########################
+
+########################### Install Redis ###########################
+ENV REDIS_BASE_PATH=/root/FoxCloud/redis
+RUN mkdir $REDIS_BASE_PATH && \
+    cd $REDIS_BASE_PATH && \
+    wget https://download.redis.io/redis-stable.tar.gz && \
+    tar -xzvf redis-stable.tar.gz && \
+    cd redis-stable && \
+    make && \
+    make install
+
+
+########################### Install other packages ###########################
+
 RUN apt-get install -y vim net-tools git
 
 CMD ["/usr/sbin/sshd", "-D"]
