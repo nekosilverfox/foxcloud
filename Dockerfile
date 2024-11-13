@@ -72,9 +72,17 @@ RUN mkdir $REDIS_BASE_PATH && \
     tar -xzvf redis-stable.tar.gz && \
     cd redis-stable && \
     make && \
-    make install
+    make install && \
+    cd ..  && \
+    rm -rf redis-stable.tar.gz
 
-
+########################### Install HiRedis ###########################
+RUN cd $REDIS_BASE_PATH && \
+    git clone https://github.com/redis/hiredis.git && \
+    cd hiredis && \
+    make  && \
+    make install && \
+    
 ########################### Install other packages ###########################
 
 RUN apt-get install -y vim net-tools git
