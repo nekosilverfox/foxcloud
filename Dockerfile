@@ -108,7 +108,7 @@ EXPOSE 5432
 ########################### Docker 容器每次启动时候需要运行的命令 ###########################
 ENV PROJECT_BASE_PATH=/root/FoxCloud/
 RUN cd $PROJECT_BASE_PATH && \
-    git clone git@github.com:NekoSilverFox/FoxCloud.git && \
+    git clone https://github.com/NekoSilverFox/FoxCloud.git && \
     cd FoxCloud && \
     chmod 755 entrypoint.sh
 
