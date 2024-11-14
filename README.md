@@ -12,7 +12,7 @@
 ![libserverframe](https://img.shields.io/badge/libserverframe-v1.2.5-orange)
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v16-red)
-![redis](https://img.shields.io/badge/redis-vXX-red)
+![redis](https://img.shields.io/badge/redis-Lastest-red)
 
 ![nginx](https://img.shields.io/badge/nginx-vXX-blue)
 ![FastCGI](https://img.shields.io/badge/FastCGI-vXX-blue.svg)
@@ -40,7 +40,7 @@
     cd ./FoxClould
     ```
 
-3. 修改 `Dockerfile` 里面的 `YOUR_PASSWORD` 为 SSH 登录配置密码
+3. 修改 `Dockerfile` 里面的 `SSH_ROOT_PASSWORD` 为 SSH 登录配置密码
 
 4. 构建 foxclouldserver 的 Docker 镜像
 
@@ -76,7 +76,7 @@
     - 如果 `Tracker` 节点和 `Storge` 节点在一台主机上，可使用
 
         ```
-        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 --name CONTAINER_NAME foxclouldserver
+        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 -p POSTGRESQL_PORT:5432 --name CONTAINER_NAME foxclouldserver
         ```
 
         
@@ -144,6 +144,17 @@
 
 
 
+3. `redis`:
+
+    ```
+    启动 Redis：redis-server
+    连接本地服务器：redis-cli
+    连接远程 Redis：redis-cli -h HOSTNAME -p PORT
+    
+    ```
+
+    
+
 ## 验证
 
 | 命令                                                 | 说明                                                         |
@@ -170,11 +181,14 @@
 
 ## 服务默认端口
 
-| 说明    | 端口  |
-| ------- | ----- |
-| tracker | 22122 |
-| storage | 23000 |
-|         |       |
+| 说明         | 端口  |
+| ------------ | ----- |
+| FDFS tracker | 22122 |
+| FDFS storage | 23000 |
+| Redis        | 6379  |
 
 
 
+>  TODO
+>
+> 增加 开机自动运行 PostgreSQL

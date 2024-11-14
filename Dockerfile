@@ -15,7 +15,7 @@ RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 
 # Set root password for SSH access
-RUN echo 'root:$SSH_ROOT_PASSWORD' | chpasswd
+RUN echo "root:${SSH_ROOT_PASSWORD}" | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 EXPOSE 22
@@ -105,4 +105,11 @@ RUN service postgresql start && \
 EXPOSE 5432
 
 
-CMD ["/usr/sbin/sshd", "-D"]
+########################### Docker 容器每次启动时候需要运行的命令 ###########################
+ENV PROJECT_BASE_PATH=/root/FoxCloud/
+RUN cd $PROJECT_BASE_PATH && \
+    git clone git@github.com:NekoSilverFox/FoxCloud.git && \
+    cd FoxCloud && \
+    chmod 755 entrypoint.sh
+
+ENTRYPOINT ["${PROJECT_BASE_PATH}/FoxCloud/entrypoint.sh"]
