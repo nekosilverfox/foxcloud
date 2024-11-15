@@ -1,16 +1,19 @@
 FROM ubuntu:16.04
 
-# 配置为自己的
-ENV POSTGRE_USER=your_pg_user_name \
-    POSTGRE_PASSWORD=your_pg_password \
-    POSTGRE_DB=your_pg_database \
-    SSH_ROOT_PASSWORD=your_ssh_password
+LABEL description="FoxCloud Server docker image"
+LABEL maintainer="nekosilverfox"
 
-########################### Install other packages ###########################
+# 配置为自己的
+ENV POSTGRE_USER=your_pg_user_name
+ENV POSTGRE_PASSWORD=your_pg_password
+ENV POSTGRE_DB=your_pg_database
+ENV SSH_ROOT_PASSWORD=your_ssh_password
+
+##################### Install other packages #####################
 RUN apt-get update
 RUN apt-get install -y vim net-tools git
 
-########################### Install SSH ###########################
+########################## Install SSH ##########################
 RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 
@@ -20,7 +23,7 @@ RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/s
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 EXPOSE 22
 
-########################### Install fdfs (libfastcommon) ###########################
+################# Install fdfs (libfastcommon) #################
 # install other packages
 RUN apt-get install -y gcc g++ make
 ENV FDFS_BASE_PATH=/root/foxcloudservers/fdfs
@@ -41,7 +44,7 @@ RUN cd $FDFS_BASE_PATH/libfastcommon-1.0.75 && \
     ./make.sh && \
     ./make.sh install
 
-########################### Install fdfs (libserverframe) ###########################
+################# Install fdfs (libserverframe) #################
 RUN wget -P $FDFS_BASE_PATH https://github.com/happyfish100/libserverframe/archive/refs/tags/V1.2.5.tar.gz && \
     tar -xzvf $FDFS_BASE_PATH/V1.2.5.tar.gz -C $FDFS_BASE_PATH && \
     rm $FDFS_BASE_PATH/V1.2.5.tar.gz
@@ -55,7 +58,7 @@ RUN cd $FDFS_BASE_PATH/libserverframe-1.2.5 && \
     ./make.sh && \
     ./make.sh install
 
-########################### Install fdfs ###########################
+##################### Install fdfs #####################
 # Download, extract, and clean up Fastdfs
 RUN wget -P $FDFS_BASE_PATH https://github.com/happyfish100/fastdfs/archive/refs/tags/V6.12.2.tar.gz && \
     tar -xzvf $FDFS_BASE_PATH/V6.12.2.tar.gz -C $FDFS_BASE_PATH && \
@@ -109,7 +112,7 @@ RUN service postgresql start && \
 EXPOSE 5432
 
 
-########################### Docker 容器每次启动时候需要运行的命令 ###########################
+################# Docker 容器每次启动时候需要运行的命令 #################
 ENV PROJECT_BASE_PATH=/root/foxcloudservers/
 RUN cd $PROJECT_BASE_PATH && \
     git clone https://github.com/NekoSilverFox/foxcloud.git && \
