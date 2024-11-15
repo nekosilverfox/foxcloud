@@ -116,4 +116,4 @@ RUN cd $PROJECT_BASE_PATH && \
     cd ./foxcloud/server && \
     chmod 755 entrypoint.sh
 
-ENTRYPOINT ["/root/foxcloudservers/foxcloud/entrypoint.sh"]
+ENTRYPOINT ["/root/foxcloudservers/foxcloud/server/entrypoint.sh"]
