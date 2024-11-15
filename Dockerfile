@@ -79,6 +79,9 @@ RUN mkdir $REDIS_BASE_PATH && \
     make && \
     make install
 
+RUN cd $REDIS_BASE_PATH && \
+    touch redis.log
+
 ########################### Install HiRedis ###########################
 RUN cd $REDIS_BASE_PATH && \
     git clone https://github.com/redis/hiredis.git && \
@@ -112,4 +115,4 @@ RUN cd $PROJECT_BASE_PATH && \
     cd FoxCloud && \
     chmod 755 entrypoint.sh
 
-ENTRYPOINT ["${PROJECT_BASE_PATH}/FoxCloud/entrypoint.sh"]
+ENTRYPOINT ["/root/FoxCloud/FoxCloud/entrypoint.sh"]

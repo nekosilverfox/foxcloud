@@ -164,6 +164,7 @@
 | `fdfs_monitor /etc/fdfs/client.conf`                 | 执行查看状态，如果状态为 `ACTIVE` 则说明正常                 |
 | `fdfs_upload_file /etc/fdfs/client.conf FILE`        | 使用 client 直接上传文件，会生成这么一段：`group1/M00/00/00/rBEAAmcNnNWACcJSAACXlD6bcgU7205557` |
 | `fdfs_download_file /etc/fdfs/client.conf FILE_NAME` |                                                              |
+| `pg_isready`                                         | 如果 PostgreSQL 正在运行并且可以接受连接，将输出：accepting connections |
 
 使用 client 节点中直接上传文件时候生成字符串的解释：
 
