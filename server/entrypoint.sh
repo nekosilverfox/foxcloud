@@ -9,7 +9,7 @@ fdfs_storaged /etc/fdfs/storage.conf start
 service postgresql start
 
 # 启动 Redis
-# redis-server /root/foxcloudservers/foxcloud/server/config/redis.conf
+redis-server /root/foxcloudservers/foxcloud/server/config/redis.conf
 
 # 启动 SSH 服务
 /usr/sbin/sshd -D
