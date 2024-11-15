@@ -23,7 +23,7 @@ EXPOSE 22
 ########################### Install fdfs (libfastcommon) ###########################
 # install other packages
 RUN apt-get install -y gcc g++ make
-ENV FDFS_BASE_PATH=/root/FoxCloud/fdfs
+ENV FDFS_BASE_PATH=/root/foxcloudservers/fdfs
 RUN mkdir -p $FDFS_BASE_PATH
 
 # We use the last version in 14.10.2024
@@ -71,7 +71,7 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     ./make.sh install
 
 ########################### Install Redis ###########################
-ENV REDIS_BASE_PATH=/root/FoxCloud/redis
+ENV REDIS_BASE_PATH=/root/foxcloudservers/redis
 RUN mkdir $REDIS_BASE_PATH && \
     cd $REDIS_BASE_PATH && \
     git clone https://github.com/redis/redis.git && \
@@ -79,6 +79,7 @@ RUN mkdir $REDIS_BASE_PATH && \
     make && \
     make install
 
+# 用于记录 redis 日志
 RUN cd $REDIS_BASE_PATH && \
     touch redis.log
 
@@ -109,10 +110,10 @@ EXPOSE 5432
 
 
 ########################### Docker 容器每次启动时候需要运行的命令 ###########################
-ENV PROJECT_BASE_PATH=/root/FoxCloud/
+ENV PROJECT_BASE_PATH=/root/foxcloudservers/
 RUN cd $PROJECT_BASE_PATH && \
-    git clone https://github.com/NekoSilverFox/FoxCloud.git && \
-    cd FoxCloud && \
+    git clone https://github.com/NekoSilverFox/foxcloud.git && \
+    cd ./foxcloud/server && \
     chmod 755 entrypoint.sh
 
-ENTRYPOINT ["/root/FoxCloud/FoxCloud/entrypoint.sh"]
+ENTRYPOINT ["/root/foxcloudservers/foxcloud/entrypoint.sh"]
