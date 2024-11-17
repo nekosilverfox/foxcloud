@@ -173,6 +173,7 @@ RUN cd $NGINX_BASE_PATH && \
 
 ########################### Nginx ###########################
 # 由于 FDFS 兼容性问题，所以使用 1.16.1 版本
+# Nginx 的配置位于 /usr/local/nginx/
 RUN cd $NGINX_BASE_PATH && \
     wget https://nginx.org/download/nginx-1.16.1.tar.gz && \
     tar -xzvf nginx-1.16.1.tar.gz && \
@@ -182,6 +183,9 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install && \
     ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
+
+# 开机启动
+RUN echo "nginx" >> $ENTRYPOINT_SH
 
 ########################### 自动启动服务 ###########################
 ENTRYPOINT ["sh", "-c", "$ENTRYPOINT_SH"]
