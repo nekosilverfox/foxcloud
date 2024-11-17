@@ -13,6 +13,20 @@ ENV SSH_ROOT_PASSWORD=your_ssh_password
 RUN apt-get update
 RUN apt-get install -y vim net-tools git
 
+
+##################### 克隆仓库到容器（需要利用仓库中的配置文件） #####################
+ENV PROJECT_BASE_PATH=/root/foxcloudservers/
+RUN cd $PROJECT_BASE_PATH && \
+    git clone https://github.com/NekoSilverFox/foxcloud.git
+
+
+##################### 开机自动启动的服务 #####################
+ENV ENTRYPOINT_SH=${PROJECT_BASE_PATH}entrypoint.sh
+RUN touch $ENTRYPOINT_SH && \
+    chmod 755 $ENTRYPOINT_SH
+RUN echo "#!/bin/bash" >> $ENTRYPOINT_SH && \
+    echo "set -e" >> $ENTRYPOINT_SH
+
 ########################## Install SSH ##########################
 RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
@@ -23,10 +37,13 @@ RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/s
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 EXPOSE 22
 
+# 开机启动
+RUN echo "/usr/sbin/sshd -D" >> $ENTRYPOINT_SH
+
 ################# Install fdfs (libfastcommon) #################
 # install other packages
 RUN apt-get install -y gcc g++ make
-ENV FDFS_BASE_PATH=/root/foxcloudservers/fdfs
+ENV FDFS_BASE_PATH=${PROJECT_BASE_PATH}fdfs
 RUN mkdir -p $FDFS_BASE_PATH
 
 # We use the last version in 14.10.2024
@@ -73,8 +90,13 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     ./make.sh && \
     ./make.sh install
 
+# 开机启动
+RUN echo "fdfs_trackerd /etc/fdfs/tracker.conf start" >> $ENTRYPOINT_SH
+RUN echo "fdfs_storaged /etc/fdfs/storage.conf start" >> $ENTRYPOINT_SH
+
+
 ########################### Install Redis ###########################
-ENV REDIS_BASE_PATH=/root/foxcloudservers/redis
+ENV REDIS_BASE_PATH=${PROJECT_BASE_PATH}redis
 RUN mkdir $REDIS_BASE_PATH && \
     cd $REDIS_BASE_PATH && \
     git clone https://github.com/redis/redis.git && \
@@ -85,6 +107,9 @@ RUN mkdir $REDIS_BASE_PATH && \
 # 用于记录 redis 日志
 RUN cd $REDIS_BASE_PATH && \
     touch redis.log
+
+# 开机启动
+RUN echo "redis-server /root/foxcloudservers/foxcloud/server/config/redis.conf" >> $ENTRYPOINT_SH
 
 ########################### Install HiRedis ###########################
 RUN cd $REDIS_BASE_PATH && \
@@ -111,12 +136,52 @@ RUN service postgresql start && \
 # 暴露 PostgreSQL 默认端口
 EXPOSE 5432
 
+# 开机启动
+RUN echo "service postgresql start" >> $ENTRYPOINT_SH
 
-################# Docker 容器每次启动时候需要运行的命令 #################
-ENV PROJECT_BASE_PATH=/root/foxcloudservers/
-RUN cd $PROJECT_BASE_PATH && \
-    git clone https://github.com/NekoSilverFox/foxcloud.git && \
-    cd ./foxcloud/server && \
-    chmod 755 entrypoint.sh
+########################### Nginx 依赖包 openssl ###########################
+ENV NGINX_BASE_PATH=${PROJECT_BASE_PATH}nginx
+RUN mkdir $NGINX_BASE_PATH && \
+    cd $NGINX_BASE_PATH && \
+    wget https://github.com/openssl/openssl/releases/download/openssl-3.4.0/openssl-3.4.0.tar.gz && \
+    tar -xzvf openssl-3.4.0.tar.gz && \
+    rm openssl-3.4.0.tar.gz && \
+    cd ./openssl-3.4.0 && \
+    ./config && \
+    make && \
+    make install
 
-ENTRYPOINT ["/root/foxcloudservers/foxcloud/server/entrypoint.sh"]
+########################### Nginx 依赖包 pcre ###########################
+RUN cd $NGINX_BASE_PATH && \
+    wget https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.gz  && \
+    tar -xzvf pcre-8.45.tar.gz && \
+    rm pcre-8.45.tar.gz && \
+    cd pcre-8.45 && \
+    ./configure && \
+    make && \
+    make install
+
+########################### Nginx 依赖包 zlib ###########################
+RUN cd $NGINX_BASE_PATH && \
+    wget https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz && \
+    tar -xzvf zlib-1.3.1.tar.gz && \
+    rm zlib-1.3.1.tar.gz && \
+    cd ./zlib-1.3.1 && \
+    ./configure && \
+    make && \
+    make install
+
+########################### Nginx ###########################
+# 由于 FDFS 兼容性问题，所以使用 1.16.1 版本
+RUN cd $NGINX_BASE_PATH && \
+    wget https://nginx.org/download/nginx-1.16.1.tar.gz && \
+    tar -xzvf nginx-1.16.1.tar.gz && \
+    rm nginx-1.16.1.tar.gz && \
+    cd ./nginx-1.16.1 && \
+    ./configure && \
+    make && \
+    make install && \
+    ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
+
+########################### 自动启动服务 ###########################
+ENTRYPOINT ["sh", "-c", "$ENTRYPOINT_SH"]
