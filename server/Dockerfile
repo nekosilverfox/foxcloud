@@ -16,7 +16,8 @@ RUN apt-get install -y vim net-tools git
 
 ##################### 克隆仓库到容器（需要利用仓库中的配置文件） #####################
 ENV PROJECT_BASE_PATH=/root/foxcloudservers/
-RUN cd $PROJECT_BASE_PATH && \
+RUN mkdir $PROJECT_BASE_PATH && \
+    cd $PROJECT_BASE_PATH && \
     git clone https://github.com/NekoSilverFox/foxcloud.git
 
 
