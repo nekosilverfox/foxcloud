@@ -11,10 +11,10 @@
 ![libfastcommon](https://img.shields.io/badge/libfastcommon-v1.0.75-orange)
 ![libserverframe](https://img.shields.io/badge/libserverframe-v1.2.5-orange)
 
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v16-red)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v9-red)
 ![redis](https://img.shields.io/badge/redis-Lastest-red)
 
-![nginx](https://img.shields.io/badge/nginx-vXX-blue)
+![nginx](https://img.shields.io/badge/nginx-v1.16.1-blue)
 ![FastCGI](https://img.shields.io/badge/FastCGI-vXX-blue.svg)
 
 
@@ -82,7 +82,7 @@
     - 如果 `Tracker` 节点和 `Storge` 节点和数据库都在一台主机上，可使用
 
         ```
-        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 -p POSTGRESQL_PORT:5432 --name CONTAINER_NAME foxclouldserver
+        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 -p POSTGRESQL_PORT:5432 -p NGINX_PORT:80 --name CONTAINER_NAME foxclouldserver
         ```
 
         
@@ -193,6 +193,15 @@
 
     ```bash
     service postgresql [start | restart | stop]
+    ```
+
+- nginx
+
+    ```
+    启动：nginx
+    暴力终止：nginx -s stop
+    等待任务停止后退出：nginx -s quit
+    重新加载：nginx -s reload
     ```
 
     
