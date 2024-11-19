@@ -216,6 +216,33 @@ RUN echo "echo \"Starting server [nginx]\"" >> $ENTRYPOINT_SH && \
     echo "/usr/local/nginx/sbin/nginx" >> $ENTRYPOINT_SH
 
 ###############################################################
+# Install FastCGI 2.4.1
+# 如果是 arm 处理器使用以下 configure 指令参数
+# ./configure --host=arm-linux  --prefix=/usr  --build=arm-linux
+###############################################################
+RUN cd $NGINX_BASE_PATH && \
+    git clone https://github.com/Kuzmenko-Pavel/FastCGI.git && \
+    cd FastCGI && \
+    ./configure && \
+    make && \
+    make install
+
+###############################################################
+# Install spawn-fcgi v1.6.3
+# https://github.com/lighttpd/spawn-fcgi
+###############################################################
+RUN cd $NGINX_BASE_PATH && \
+    wget https://github.com/lighttpd/spawn-fcgi/archive/refs/tags/v1.6.3.tar.gz && \
+    tar -xzvf v1.6.3.tar.gz && \
+    rm v1.6.3.tar.gz && \
+    cd ./spawn-fcgi-1.6.3 && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install
+
+
+###############################################################
 # 自动启动服务
 ###############################################################
 RUN echo "echo \"Running servers on current moment:\"" >> $ENTRYPOINT_SH && \
