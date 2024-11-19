@@ -231,6 +231,7 @@ RUN cd $NGINX_BASE_PATH && \
 # Install spawn-fcgi v1.6.3
 # https://github.com/lighttpd/spawn-fcgi
 ###############################################################
+RUN apt-get install -y automake
 RUN cd $NGINX_BASE_PATH && \
     wget https://github.com/lighttpd/spawn-fcgi/archive/refs/tags/v1.6.3.tar.gz && \
     tar -xzvf v1.6.3.tar.gz && \
