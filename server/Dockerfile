@@ -108,10 +108,10 @@ RUN mkdir -p ${FDFS_BASE_PATH}/tracker && \
     mkdir -p ${FDFS_BASE_PATH}/storage/store && \
     mkdir -p ${FDFS_BASE_PATH}/client
 
-# TODO Copy config file to FastDFS
-RUN cp ${PROJECT_BASE_PATH}server/config/tracker.conf /etc/fdfs/tracker.conf && \
-    cp ${PROJECT_BASE_PATH}server/config/storage.conf /etc/fdfs/storage.conf && \
-    cp ${PROJECT_BASE_PATH}server/config/client.conf /etc/fdfs/client.conf
+# Copy config file to FastDFS
+RUN cp ${PROJECT_SOURCE_CODE_PATH}server/config/tracker.conf /etc/fdfs/tracker.conf && \
+    cp ${PROJECT_SOURCE_CODE_PATH}server/config/storage.conf /etc/fdfs/storage.conf && \
+    cp ${PROJECT_SOURCE_CODE_PATH}server/config/client.conf /etc/fdfs/client.conf
 
 # Autostart service when booting
 RUN echo "echo \"Starting server [fdfs_trackerd]\"" >> $ENTRYPOINT_SH && \
