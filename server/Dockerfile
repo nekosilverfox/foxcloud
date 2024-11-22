@@ -109,9 +109,9 @@ RUN mkdir -p ${FDFS_BASE_PATH}/tracker && \
     mkdir -p ${FDFS_BASE_PATH}/client
 
 # Copy config file to FastDFS
-RUN cp ${PROJECT_SOURCE_CODE_PATH}server/config/tracker.conf /etc/fdfs/tracker.conf && \
-    cp ${PROJECT_SOURCE_CODE_PATH}server/config/storage.conf /etc/fdfs/storage.conf && \
-    cp ${PROJECT_SOURCE_CODE_PATH}server/config/client.conf /etc/fdfs/client.conf
+RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/tracker.conf /etc/fdfs/tracker.conf && \
+    cp ${PROJECT_SOURCE_CODE_PATH}/server/config/storage.conf /etc/fdfs/storage.conf && \
+    cp ${PROJECT_SOURCE_CODE_PATH}/server/config/client.conf /etc/fdfs/client.conf
 
 # Autostart service when booting
 RUN echo "echo \"Starting server [fdfs_trackerd]\"" >> $ENTRYPOINT_SH && \
@@ -226,6 +226,8 @@ RUN cd $NGINX_BASE_PATH && \
     make install && \
     ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
 
+RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/nginx.conf /usr/local/nginx/conf/nginx.conf
+
 # Autostart service when booting
 RUN echo "echo \"Starting server [nginx]\"" >> $ENTRYPOINT_SH && \
     echo "/usr/local/nginx/sbin/nginx" >> $ENTRYPOINT_SH
@@ -277,9 +279,9 @@ RUN cd $NGINX_BASE_PATH && \
     make install
     
 # Config fastdfs-nginx-module
-RUN cp ${PROJECT_BASE_PATH}/server/config/mod_fastdfs.conf /etc/fdfs  && \
-    cp ${FDFS_BASE_PATH}/fastdfs-6.12.2/conf/http.conf /etc/fdfs && \
-    cp ${NGINX_BASE_PATH}/nginx-1.16.1/conf/mime.types /etc/fdfs
+RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/mod_fastdfs.conf /etc/fdfs/  && \
+    cp ${FDFS_BASE_PATH}/fastdfs-6.12.2/conf/http.conf /etc/fdfs/ && \
+    cp ${NGINX_BASE_PATH}/nginx-1.16.1/conf/mime.types /etc/fdfs/
 
 ###############################################################
 # 自动启动服务
