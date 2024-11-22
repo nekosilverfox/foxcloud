@@ -20,9 +20,11 @@ RUN apt-get install -y vim net-tools git
 # 克隆仓库到容器（需要利用仓库中的配置文件）
 ###############################################################
 ENV PROJECT_BASE_PATH=/root/foxcloudservers/
-RUN mkdir $PROJECT_BASE_PATH && \
-    cd $PROJECT_BASE_PATH && \
-    git clone https://github.com/NekoSilverFox/foxcloud.git
+RUN mkdir $PROJECT_BASE_PATH
+
+ENV PROJECT_SOURCE_CODE_PATH=${PROJECT_BASE_PATH}foxcloud
+RUN cd $PROJECT_BASE_PATH && \
+    git clone https://github.com/nekosilverfox/foxcloud.git
 
 
 ###############################################################
@@ -53,6 +55,8 @@ RUN echo "echo \"Starting server [SSH]\"" >> $ENTRYPOINT_SH && \
 # Install FDFS dependencies libfastcommon v1.0.75
 ###############################################################
 RUN apt-get install -y gcc g++ make
+
+# FastDFS package install path and also data and log save path
 ENV FDFS_BASE_PATH=${PROJECT_BASE_PATH}fdfs
 RUN mkdir -p $FDFS_BASE_PATH
 
@@ -97,6 +101,17 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     ./make.sh clean && \
     ./make.sh && \
     ./make.sh install
+
+# Create base path to save data and log for FastDFS
+RUN mkdir ${FDFS_BASE_PATH}/tracker && \
+    mkdir ${FDFS_BASE_PATH}/storage/base && \
+    mkdir ${FDFS_BASE_PATH}/storage/store && \
+    mkdir ${FDFS_BASE_PATH}/client
+
+# TODO Copy config file to FastDFS
+RUN cp ${PROJECT_BASE_PATH}/server/config/tracker.conf /etc/fdfs/tracker.conf && \
+    cp ${PROJECT_BASE_PATH}/server/config/storage.conf /etc/fdfs/storage.conf && \
+    cp ${PROJECT_BASE_PATH}/server/config/client.conf /etc/fdfs/client.conf
 
 # Autostart service when booting
 RUN echo "echo \"Starting server [fdfs_trackerd]\"" >> $ENTRYPOINT_SH && \
@@ -248,7 +263,7 @@ RUN cd $NGINX_BASE_PATH && \
     make install
 
 ###############################################################
-# Install fastdfs-nginx-module v1.24
+# Install and config fastdfs-nginx-module v1.24
 ###############################################################
 RUN cd $FDFS_BASE_PATH && \
     git clone https://github.com/happyfish100/fastdfs-nginx-module.git && \
@@ -260,6 +275,11 @@ RUN cd $NGINX_BASE_PATH && \
     ./configure --add-module=${FDFS_BASE_PATH}/fastdfs-nginx-module/src && \
     make && \
     make install
+    
+# Config fastdfs-nginx-module
+RUN cp ${PROJECT_BASE_PATH}/server/config/mod_fastdfs.conf /etc/fdfs  && \
+    cp ${FDFS_BASE_PATH}/fastdfs-6.12.2/conf/http.conf /etc/fdfs && \
+    cp ${NGINX_BASE_PATH}/nginx-1.16.1/conf/mime.types /etc/fdfs
 
 ###############################################################
 # 自动启动服务

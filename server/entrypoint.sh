@@ -12,6 +12,7 @@ service postgresql start
 redis-server /root/foxcloudservers/foxcloud/server/config/redis.conf
 
 # 启动 SSH 服务
-/usr/sbin/sshd -D
+/usr/sbin/sshd
 
-
+# 启动 nginx 服务
+nginx
