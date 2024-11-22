@@ -103,15 +103,15 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     ./make.sh install
 
 # Create base path to save data and log for FastDFS
-RUN mkdir ${FDFS_BASE_PATH}/tracker && \
-    mkdir ${FDFS_BASE_PATH}/storage/base && \
-    mkdir ${FDFS_BASE_PATH}/storage/store && \
-    mkdir ${FDFS_BASE_PATH}/client
+RUN mkdir -p ${FDFS_BASE_PATH}/tracker && \
+    mkdir -p ${FDFS_BASE_PATH}/storage/base && \
+    mkdir -p ${FDFS_BASE_PATH}/storage/store && \
+    mkdir -p ${FDFS_BASE_PATH}/client
 
 # TODO Copy config file to FastDFS
-RUN cp ${PROJECT_BASE_PATH}/server/config/tracker.conf /etc/fdfs/tracker.conf && \
-    cp ${PROJECT_BASE_PATH}/server/config/storage.conf /etc/fdfs/storage.conf && \
-    cp ${PROJECT_BASE_PATH}/server/config/client.conf /etc/fdfs/client.conf
+RUN cp ${PROJECT_BASE_PATH}server/config/tracker.conf /etc/fdfs/tracker.conf && \
+    cp ${PROJECT_BASE_PATH}server/config/storage.conf /etc/fdfs/storage.conf && \
+    cp ${PROJECT_BASE_PATH}server/config/client.conf /etc/fdfs/client.conf
 
 # Autostart service when booting
 RUN echo "echo \"Starting server [fdfs_trackerd]\"" >> $ENTRYPOINT_SH && \
