@@ -216,19 +216,24 @@ RUN echo "echo \"Starting server [nginx]\"" >> $ENTRYPOINT_SH && \
     echo "/usr/local/nginx/sbin/nginx" >> $ENTRYPOINT_SH
 
 ###############################################################
-# Install FastCGI 2.4.1
+# Install FastCGI v2.4.1
 # 如果是 arm 处理器使用以下 configure 指令参数
 # ./configure --host=arm-linux  --prefix=/usr  --build=arm-linux
+
+# 使用 C++ 编译 FastCGI 程序：
+# g++ echo-cpp.cpp -o test -lfcgi++ -lfcgi -std=c++11
 ###############################################################
 RUN cd $NGINX_BASE_PATH && \
     git clone https://github.com/Kuzmenko-Pavel/FastCGI.git && \
     cd FastCGI && \
-    ./configure && \
+    ./configure --host=arm-linux  --prefix=/usr  --build=arm-linux && \
     make && \
     make install
 
 ###############################################################
 # Install spawn-fcgi v1.6.3
+# 其用于作为 Nginx 与 FastCGI 的连接桥梁
+# 使用 spawn-fcgi -a HOST -p PORT ./EXE 启动
 # https://github.com/lighttpd/spawn-fcgi
 ###############################################################
 RUN apt-get install -y automake
@@ -242,6 +247,19 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install
 
+###############################################################
+# Install fastdfs-nginx-module v1.24
+###############################################################
+RUN cd $FDFS_BASE_PATH && \
+    git clone https://github.com/happyfish100/fastdfs-nginx-module.git && \
+    cd fastdfs-nginx-module && \
+    git checkout V1.24
+
+RUN cd $NGINX_BASE_PATH && \
+    cd nginx-1.16.1 && \
+    ./configure --add-module=${FDFS_BASE_PATH}/fastdfs-nginx-module/src && \
+    make && \
+    make install
 
 ###############################################################
 # 自动启动服务
