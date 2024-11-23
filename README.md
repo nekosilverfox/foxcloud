@@ -12,10 +12,10 @@
 ![libserverframe](https://img.shields.io/badge/libserverframe-v1.2.5-orange)
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v9-red)
-![redis](https://img.shields.io/badge/redis-Lastest-red)
+![redis](https://img.shields.io/badge/redis-v7.4.1-red)
 
 ![nginx](https://img.shields.io/badge/nginx-v1.16.1-blue)
-![FastCGI](https://img.shields.io/badge/FastCGI-vXX-blue.svg)
+![FastCGI](https://img.shields.io/badge/FastCGI-v2.4.1-blue.svg)
 
 
 <div align="left">
@@ -50,7 +50,7 @@
 4. 构建 foxclouldserver 的 Docker 镜像
 
     ```bash
-    docker build -t foxclouldserver .
+    docker buildx build -t foxclouldserver .
     ```
 
 5. 启动容器（节点），其中可选配置：
@@ -97,40 +97,61 @@
 
 ### tracker
 
-建议配置以下行
+此配置文件位于 `/etc/fdfs/tracker.conf`，确保以下行被正确配置
 
-| 配置           | 说明                                                         |
-| -------------- | ------------------------------------------------------------ |
-| `bind_addr = ` | tracker 所在的**服务器IP地址**（不能是 127.0.0.1 和 localhost） |
-| `port = `      | tracker 所运行的端口（默认 22122）                           |
-| `base_path = ` | 存储 tracker 数据和日志的路径(要保证该目录已经实际存在)      |
+| 行号   | 配置               | 说明                                                         |
+| ------ | ------------------ | ------------------------------------------------------------ |
+| **17** | **`bind_addr = `** | **tracker 所在的服务器IP地址（不能是 127.0.0.1 和 localhost）** |
+| 20     | `port = `          | tracker 所运行的端口（默认 22122）                           |
+| 45     | `base_path = `     | 存储 tracker 数据和日志的路径(要保证该目录已经实际存在)      |
 
 ### storage
 
-建议配置以下行
+此配置文件位于 `/etc/fdfs/storage.conf`，确保以下行被正确配置
 
-| 配置                 | 说明                                                         |
-| -------------------- | ------------------------------------------------------------ |
-| `group_name = `      | 当前 storage 存储节点属于哪一个组                            |
-| `bind_addr = `       | storage 所在的主机的 IP（不能是 127.0.0.1 和 localhost）     |
-| `port = `            | storage 所运行的端口（默认 23000）                           |
-| `base_path = `       | 存储 storage 数据和日志的路径(要保证该目录已经实际存在)      |
-| `store_path_count =` | 存储目录的数量                                               |
-| `store_path0 =`      | 实际存储数据路径，如果 `store_path_count` 指定了几个路径，就要有对应的几个 |
-| `tracker_server = `  | tracker 的 IP 及端口                                         |
-
-### client
-
-建议配置以下行
-
-| 配置                | 说明                                                  |
-| ------------------- | ----------------------------------------------------- |
-| `base_path = `      | client 数据和日志的路径(要保证该目录已经实际存在)     |
-| `tracker_server = ` | tracker 的 IP 及端口（不能是 127.0.0.1 和 localhost） |
+| 行号    | 配置                    | 说明                                                         |
+| ------- | ----------------------- | ------------------------------------------------------------ |
+| 11      | `group_name = `         | 当前 storage 存储节点属于哪一个组                            |
+| **24**  | **`bind_addr = `**      | **storage 所在的主机的 IP（不能是 127.0.0.1 和 localhost）** |
+| 32      | `port = `               | storage 所运行的端口（默认 23000）                           |
+| 79      | `base_path = `          | 存储 storage 数据和日志的路径(要保证该目录已经实际存在)      |
+| 149     | `store_path_count =`    | 存储目录的数量                                               |
+| 159     | `store_path* =`         | 实际存储数据路径，如果 `store_path_count` 指定了几个路径，就要有对应的几个 |
+| **179** | **`tracker_server = `** | **tracker 的 IP 及端口**                                     |
 
 
 
 配置完成后重启容器或者使用 `fdfs_trackerd /etc/fdfs/tracker.conf restart` 和 `fdfs_storaged /etc/fdfs/storage.conf restart` 重启 tracker 和 storge
+
+
+
+### client
+
+此配置文件位于 `/etc/fdfs/client.conf`，确保以下行被正确配置
+
+| 行号   | 配置                    | 说明                                                      |
+| ------ | ----------------------- | --------------------------------------------------------- |
+| 11     | `base_path = `          | client 数据和日志的路径(要保证该目录已经实际存在)         |
+| **26** | **`tracker_server = `** | **tracker 的 IP 及端口（不能是 127.0.0.1 和 localhost）** |
+
+
+
+### mod_fastdfs
+
+此是 FastDFS 对于 Nginx 的插件，配置文件位于 `/etc/fdfs/mod_fastdfs.conf`，确保以下行被正确配置：
+
+| 配置                     | 说明                                                         |
+| ------------------------ | ------------------------------------------------------------ |
+| `base_path = `           | 需要与存储节点中`storage.conf`的`base_path`保持一致(要保证该目录已经实际存在) |
+| **`tracker_server = `**  | **tracker 的 IP 及端口（不能是 127.0.0.1 和 localhost）**    |
+| `storage_server_port = ` | 存储节点 storage 的端口                                      |
+| `group_name = `          | 当前 storage 存储节点属于哪一个组                            |
+| `url_have_group_name = ` | 通过 URL 访问的时候是否显示属于位于哪一个组（`group_name`）  |
+| `store_path_count =`     | 对应存储节点 storage 的存储目录数量                          |
+| `store_path* =`          | 对应存储节点的实际存储数据路径，如果 `store_path_count` 指定了几个路径，就要有对应的几个 |
+| `group_count = `         | **整个** FDFS 系统中有几个组。有几个组就需要把底下几个组（`[group*]`）的信息的注释去掉并正确配置:<br />118 [group1]<br/>119 group_name=group1<br/>120 storage_server_port=23000<br/>121 store_path_count=2<br/>122 store_path0=/home/yuqing/fastdfs<br/>123 store_path1=/home/yuqing/fastdfs1 |
+
+
 
 ---
 
