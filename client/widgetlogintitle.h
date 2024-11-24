@@ -2,6 +2,8 @@
 #define WIDGETLOGINTITLE_H
 
 #include <QWidget>
+#include <QMouseEvent>
+#include <QPoint>
 
 namespace Ui {
 class WidgetLoginTitle;
@@ -15,8 +17,15 @@ public:
     explicit WidgetLoginTitle(QWidget *parent = nullptr);
     ~WidgetLoginTitle();
 
+protected:
+    /* 重写鼠标事件 */
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+
 private:
     Ui::WidgetLoginTitle *ui;
+    QWidget* _parent;  // 当前插件所属的父窗口
+    QPoint _pt;  // 差值：鼠标位置 - 窗口左上角
 };
 
 #endif // WIDGETLOGINTITLE_H

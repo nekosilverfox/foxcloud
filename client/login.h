@@ -15,6 +15,10 @@ public:
     explicit Login(QWidget *parent = nullptr);
     ~Login();
 
+protected:
+    /* 绘图事件函数 */
+    void paintEvent(QPaintEvent* event) override;
+
 private:
     Ui::Login *ui;
 };
