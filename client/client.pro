@@ -15,6 +15,7 @@ SOURCES += \
     widgetlogintitle.cpp
 
 HEADERS += \
+    config.h \
     login.h \
     mainwindow.h \
     widgetlogintitle.h

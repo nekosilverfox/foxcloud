@@ -1,11 +1,15 @@
 #include "widgetlogintitle.h"
 #include "ui_widgetlogintitle.h"
 
+#include <QPushButton>
+
 WidgetLoginTitle::WidgetLoginTitle(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::WidgetLoginTitle)
 {
     ui->setupUi(this);
+
+    _parent = parent;
 
     /* Init imgs */
     ui->lbLogo->setPixmap(QPixmap(":/img/foxcloud-logo.svg").scaled(QSize(80, 40), Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -19,7 +23,9 @@ WidgetLoginTitle::WidgetLoginTitle(QWidget *parent)
     this->setWindowFlags(Qt::FramelessWindowHint | windowFlags());
     // this->setFont(QFont("BM Jua", 16, QFont::Bold, false));
 
-    _parent = parent;
+    connect(ui->btnSetServer, &QPushButton::clicked, this, [=](){ emit WidgetLoginTitle::showSetServerPage(); });
+    connect(ui->btnHide, &QPushButton::clicked, this, [=](){ _parent->showMinimized(); });
+    connect(ui->btnClose, &QPushButton::clicked, this, [=](){ emit WidgetLoginTitle::closeCurPage(); });
 }
 
 WidgetLoginTitle::~WidgetLoginTitle()

@@ -9,6 +9,9 @@ namespace Ui {
 class WidgetLoginTitle;
 }
 
+/**
+ * @brief 作为登录窗口上面的小横条
+ */
 class WidgetLoginTitle : public QWidget
 {
     Q_OBJECT
@@ -21,6 +24,10 @@ protected:
     /* 重写鼠标事件 */
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+
+signals:
+    void showSetServerPage();
+    void closeCurPage();
 
 private:
     Ui::WidgetLoginTitle *ui;

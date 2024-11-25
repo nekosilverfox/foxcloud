@@ -19,6 +19,9 @@ protected:
     /* 绘图事件函数 */
     void paintEvent(QPaintEvent* event) override;
 
+private slots:
+    bool registerUser();
+
 private:
     Ui::Login *ui;
 };
