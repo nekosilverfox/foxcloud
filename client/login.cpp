@@ -2,7 +2,7 @@
 #include "ui_login.h"
 
 #include "widgetlogintitle.h"
-#include "config.h"
+#include "common/config.h"
 
 #include <QPainter>
 #include <QRegularExpression>
@@ -127,6 +127,34 @@ bool Login::registerUser()
         return false;
     }
 
+
+
+}
+
+bool Login::connectServer()
+{
+    QString ip = ui->lePageServerIp->text();
+    QString port = ui->lePageServerPort->text();
+
+    /* 利用正则表达式校验数据 */
+    QRegularExpression reg;
+    reg.setPattern(REG_IP);
+    if (!reg.match(ip).hasMatch())
+    {
+        QMessageBox::warning(this ,"Warning","Incorrect IP format");
+        ui->lePageServerIp->clear();
+        ui->lePageServerIp->setFocus();
+        return false;
+    }
+
+    reg.setPattern(REG_PORT);
+    if (!reg.match(port).hasMatch())
+    {
+        QMessageBox::warning(this ,"Warning","Incorrect port format");
+        ui->lePageServerPort->clear();
+        ui->lePageServerPort->setFocus();
+        return false;
+    }
 
 
 }

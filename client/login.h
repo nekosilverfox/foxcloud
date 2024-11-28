@@ -21,6 +21,7 @@ protected:
 
 private slots:
     bool registerUser();
+    bool connectServer();
 
 private:
     Ui::Login *ui;

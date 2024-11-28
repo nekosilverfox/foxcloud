@@ -26,6 +26,7 @@ WidgetLoginTitle::WidgetLoginTitle(QWidget *parent)
     connect(ui->btnSetServer, &QPushButton::clicked, this, [=](){ emit WidgetLoginTitle::showSetServerPage(); });
     connect(ui->btnHide, &QPushButton::clicked, this, [=](){ _parent->showMinimized(); });
     connect(ui->btnClose, &QPushButton::clicked, this, [=](){ emit WidgetLoginTitle::closeCurPage(); });
+
 }
 
 WidgetLoginTitle::~WidgetLoginTitle()

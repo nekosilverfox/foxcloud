@@ -20,7 +20,7 @@
    <item>
     <widget class="QStackedWidget" name="swLoginPages">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pageLogin">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -205,6 +205,14 @@
                 </property>
                 <item>
                  <widget class="QPushButton" name="btnTurnToRegPage">
+                  <property name="font">
+                   <font>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color: rgb(11, 54, 79);</string>
+                  </property>
                   <property name="text">
                    <string>Registration</string>
                   </property>
@@ -212,7 +220,10 @@
                    <bool>false</bool>
                   </property>
                   <property name="default">
-                   <bool>true</bool>
+                   <bool>false</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
