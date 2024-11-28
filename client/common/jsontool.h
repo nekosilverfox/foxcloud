@@ -16,7 +16,7 @@ public:
                                                     const QString& jsonPath);
 
     static WebServerInfo getWebServerInfoFromJsonFile(const QString& jsonPath);
-    static bool writeWebServerInfoToJsonFile(const WebServerInfo& webServerInfo, const QString& jsonPath);
+    static bool overwriteWebServerInfoToFile(const WebServerInfo& webServerInfo, const QString& jsonPath);
 };
 
 #endif // JSONTOOL_H

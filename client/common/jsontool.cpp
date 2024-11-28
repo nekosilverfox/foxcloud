@@ -41,6 +41,7 @@ bool JsonTool::overwriteFoxcloudClientInfoJsonFile(const FoxcloudClientInfo& cli
     file.write(QJsonDocument(objRoot).toJson());
     file.close();
 
+    qDebug() << "Overwrite FoxcloudClientInfo object to " << jsonPath;
     return true;
 }
 
@@ -68,6 +69,7 @@ bool JsonTool::overwriteFoxcloudClientInfoJsonFile(const QJsonObject jsonObjClie
     file.write(doc.toJson(QJsonDocument::Indented));
     file.close();
 
+    qDebug() << "Overwrite QJsonObject of client info to " << jsonPath;
     return true;
 }
 
@@ -81,7 +83,7 @@ WebServerInfo JsonTool::getWebServerInfoFromJsonFile(const QString& jsonPath)
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qWarning() << "Can not open file";
+        qWarning() << "Can not open file" << jsonPath;
         return WebServerInfo();
     }
 
@@ -93,7 +95,7 @@ WebServerInfo JsonTool::getWebServerInfoFromJsonFile(const QString& jsonPath)
     QJsonDocument doc = QJsonDocument::fromJson(fileData);
     if (doc.isNull() || !doc.isObject())
     {
-        qWarning() << "Invalid JSON file";
+        qWarning() << "Invalid JSON file" << jsonPath;
         return WebServerInfo();
     }
 
@@ -103,7 +105,7 @@ WebServerInfo JsonTool::getWebServerInfoFromJsonFile(const QString& jsonPath)
     // 这里我们获取 web_server
     if (!objRoot.contains(STR_OBJ_WEBSERVERINFO) || !objRoot[STR_OBJ_WEBSERVERINFO].isObject())
     {
-        qWarning() << "JSON does not contain 'web_server' object";
+        qWarning() << "JSON does not contain 'web_server' object" << jsonPath;
         return WebServerInfo();
     }
     QJsonObject objWebServer = objRoot[STR_OBJ_WEBSERVERINFO].toObject();
@@ -111,16 +113,18 @@ WebServerInfo JsonTool::getWebServerInfoFromJsonFile(const QString& jsonPath)
     webServerInfo.address = objWebServer[STR_VAL_ADDRESS].toString();
     webServerInfo.port = (qint16)objWebServer[STR_VAL_PORT].toInt();
 
+    qDebug() << "Get " << STR_OBJ_WEBSERVERINFO << ": [" << STR_VAL_ADDRESS << ": " << webServerInfo.address
+             << "], [" << STR_VAL_PORT << ": " << webServerInfo.port << "] from JSON file " << jsonPath;
     return webServerInfo;
 }
 
 /**
- * @brief JsonTool::writeWebServerInfoToFile 将 WebServerInfo 复写到指定JSON文件 中，如果文件没有则会新建并写入
+ * @brief JsonTool::overwriteWebServerInfoToFile 将 WebServerInfo 复写到指定JSON文件 中，如果文件没有则会新建并写入
  * @param webServerInfo WebServerInfo 对象
  * @param jsonPath JSON 路径
  * @return 是否成功
  */
-bool JsonTool::writeWebServerInfoToJsonFile(const WebServerInfo& webServerInfo, const QString& jsonPath)
+bool JsonTool::overwriteWebServerInfoToFile(const WebServerInfo& webServerInfo, const QString& jsonPath)
 {
     // 如果文件不存在，直接创建一个带有WebServerInfo默认值的 JSON 新文件
     if (!QFile::exists(jsonPath))
@@ -134,7 +138,7 @@ bool JsonTool::writeWebServerInfoToJsonFile(const WebServerInfo& webServerInfo, 
     QFile file(jsonPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        qWarning() << "Can not open file";
+        qWarning() << "Can not open file " << jsonPath;
         return false;
     }
 
@@ -160,7 +164,6 @@ bool JsonTool::writeWebServerInfoToJsonFile(const WebServerInfo& webServerInfo, 
         return false;
     }
 
-
     // 更新 web_server 的值
     QJsonObject objWebServer = objRoot[STR_OBJ_WEBSERVERINFO].toObject();
     objWebServer[STR_VAL_ADDRESS] = webServerInfo.address;
@@ -170,6 +173,9 @@ bool JsonTool::writeWebServerInfoToJsonFile(const WebServerInfo& webServerInfo, 
     objRoot[STR_OBJ_WEBSERVERINFO] = objWebServer;
 
     // 写回 JSON 文件
+    qDebug() << "Overwrite " << STR_OBJ_WEBSERVERINFO << " to [" << STR_VAL_ADDRESS << ": " << webServerInfo.address
+             << "], [" << STR_VAL_PORT << ": " << webServerInfo.port << "] to JSON file " << jsonPath;
+
     return overwriteFoxcloudClientInfoJsonFile(objRoot, jsonPath);
 }
 
