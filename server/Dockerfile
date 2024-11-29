@@ -139,9 +139,16 @@ RUN mkdir $REDIS_BASE_PATH && \
     make && \
     make install
 
+# 用于记录 redis pid
+RUN cd $REDIS_BASE_PATH && \
+    touch redis.pid
+
 # 用于记录 redis 日志的文件
 RUN cd $REDIS_BASE_PATH && \
     touch redis.log
+
+# Copy config file to FastDFS
+RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/redis.conf ${REDIS_BASE_PATH}/redis/redis.conf
 
 # Autostart service when booting
 RUN echo "echo \"Starting server [Redis]\"" >> $ENTRYPOINT_SH && \
@@ -203,12 +210,13 @@ RUN echo "[mysqld]" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
 RUN apt-get install -y gettext-base
 
 # 复制 init.sql.template 并替换环境变量生成 init.sql
-COPY init.sql.template /docker-entrypoint-initdb.d/init.sql.template
-RUN envsubst < /docker-entrypoint-initdb.d/init.sql.template > /docker-entrypoint-initdb.d/init.sql
+COPY init.sql /docker-entrypoint-initdb.d/init.sql
+RUN envsubst < /docker-entrypoint-initdb.d/init.sql > /docker-entrypoint-initdb.d/init_processed.sql
+
 
 # 初始化数据库
 RUN service mysql start && \
-    mysql -u root < /docker-entrypoint-initdb.d/init.sql
+    mysql -u root < /docker-entrypoint-initdb.d/init_processed.sql
 
 # 暴露 MySQL 默认端口
 EXPOSE 3306
