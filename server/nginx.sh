@@ -10,7 +10,7 @@ fi
 
 case $1 in
     start)
-        sudo /usr/local/nginx/sbin/nginx 
+        /usr/local/nginx/sbin/nginx 
         if [ $? -eq 0 ];then
             echo "nginx start success ..."
         else
@@ -18,7 +18,7 @@ case $1 in
         fi
         ;;
     stop)
-        sudo /usr/local/nginx/sbin/nginx -s quit
+        /usr/local/nginx/sbin/nginx -s quit
         if [ $? -eq 0 ];then
             echo "nginx stop success ..."
         else
@@ -26,7 +26,7 @@ case $1 in
         fi
         ;;
     reload)
-        sudo /usr/local/nginx/sbin/nginx -s reload
+        /usr/local/nginx/sbin/nginx -s reload
         if [ $? -eq 0 ];then
             echo "nginx reload success ..."
         else

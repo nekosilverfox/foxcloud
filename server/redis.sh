@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME=redis
+NAME=/root/foxcloudservers/redis
 FILE=redis.pid
 # 判断redis目录是否存在, 如果不存在则创建
 is_directory()

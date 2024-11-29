@@ -7,7 +7,7 @@ tracker_start()
     if [ $? -eq 0 ];then
         echo "fdfs_trackerd 已经在运行中, 无需启动..."
     else
-        sudo fdfs_trackerd  /etc/fdfs/tracker.conf
+        fdfs_trackerd  /etc/fdfs/tracker.conf
         if [ $? -ne 0 ];then
             echo "tracker start failed ..."
         else
@@ -22,7 +22,7 @@ storage_start()
     if [ $? -eq 0 ];then
         echo "fdfs_storaged 已经在运行中, 无需启动..."
     else
-        sudo fdfs_storaged  /etc/fdfs/storage.conf
+        fdfs_storaged  /etc/fdfs/storage.conf
         if [ $? -ne 0 ];then
             echo "storage start failed ..."
         else
@@ -53,8 +53,8 @@ case $1 in
         tracker_start
         ;;
     stop)
-        sudo fdfs_trackerd /etc/fdfs/tracker.conf stop
-        sudo fdfs_storaged /etc/fdfs/storage.conf stop
+        fdfs_trackerd /etc/fdfs/tracker.conf stop
+        fdfs_storaged /etc/fdfs/storage.conf stop
         ;;
     *)
         echo "nothing ......"
