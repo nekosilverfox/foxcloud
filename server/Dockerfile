@@ -5,8 +5,8 @@ LABEL maintainer="nekosilverfox"
 
 # 配置为自己的
 ENV SSH_ROOT_PASSWORD=your_ssh_password
-ENV DB_USERNAME=your_DB_USERNAME_name
-ENV DB_PASSWORD=your_DB_PASSWORD
+ENV DB_USERNAME=your_db_username_name
+ENV DB_PASSWORD=your_db_password
 
 
 ENV DB_NAME=db_foxcloud
