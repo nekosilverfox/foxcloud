@@ -4,10 +4,14 @@ LABEL description="FoxCloud Server docker image"
 LABEL maintainer="nekosilverfox"
 
 # 配置为自己的
+ENV SSH_ROOT_PASSWORD=your_ssh_password
 ENV POSTGRE_USER=your_pg_user_name
 ENV POSTGRE_PASSWORD=your_pg_password
-ENV POSTGRE_DB=your_pg_database
-ENV SSH_ROOT_PASSWORD=your_ssh_password
+
+ENV POSTGRE_DB=db_foxcloud
+
+# 定义构建参数 TARGETARCH
+ARG TARGETARCH
 
 ###############################################################
 # Install other packages
@@ -113,13 +117,14 @@ RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/tracker.conf /etc/fdfs/tracker.
     cp ${PROJECT_SOURCE_CODE_PATH}/server/config/storage.conf /etc/fdfs/storage.conf && \
     cp ${PROJECT_SOURCE_CODE_PATH}/server/config/client.conf /etc/fdfs/client.conf
 
+EXPOSE 22122 23000
+
 # Autostart service when booting
 RUN echo "echo \"Starting server [fdfs_trackerd]\"" >> $ENTRYPOINT_SH && \
     echo "fdfs_trackerd /etc/fdfs/tracker.conf start" >> $ENTRYPOINT_SH
 
 RUN echo "echo \"Starting server [fdfs_storaged]\"" >> $ENTRYPOINT_SH && \
     echo "fdfs_storaged /etc/fdfs/storage.conf start" >> $ENTRYPOINT_SH
-
 
 ###############################################################
 # Install Redis 
@@ -129,6 +134,7 @@ RUN mkdir $REDIS_BASE_PATH && \
     cd $REDIS_BASE_PATH && \
     git clone https://github.com/redis/redis.git && \
     cd redis && \
+    git checkout 7.4.1 && \
     make && \
     make install
 
@@ -228,6 +234,8 @@ RUN cd $NGINX_BASE_PATH && \
 
 RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/nginx.conf /usr/local/nginx/conf/nginx.conf
 
+EXPOSE 80
+
 # Autostart service when booting
 RUN echo "echo \"Starting server [nginx]\"" >> $ENTRYPOINT_SH && \
     echo "/usr/local/nginx/sbin/nginx" >> $ENTRYPOINT_SH
@@ -243,7 +251,11 @@ RUN echo "echo \"Starting server [nginx]\"" >> $ENTRYPOINT_SH && \
 RUN cd $NGINX_BASE_PATH && \
     git clone https://github.com/Kuzmenko-Pavel/FastCGI.git && \
     cd FastCGI && \
-    ./configure --host=arm-linux  --prefix=/usr  --build=arm-linux && \
+    if [ "$TARGETARCH" = "arm64" ]; then \
+        ./configure --host=arm-linux --prefix=/usr --build=arm-linux; \
+    else \
+        ./configure; \
+    fi && \
     make && \
     make install
 
@@ -291,5 +303,11 @@ RUN echo "echo \"Running servers on current moment:\"" >> $ENTRYPOINT_SH && \
 
 # 保持容器运行
 RUN echo "tail -f /dev/null" >> $ENTRYPOINT_SH
+
+
+###############################################################
+# 清除不必要文件来减小镜像大小
+###############################################################
+RUN rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["sh", "-c", "$ENTRYPOINT_SH"]
