@@ -5,10 +5,11 @@ LABEL maintainer="nekosilverfox"
 
 # 配置为自己的
 ENV SSH_ROOT_PASSWORD=your_ssh_password
-ENV POSTGRE_USER=your_pg_user_name
-ENV POSTGRE_PASSWORD=your_pg_password
+ENV DB_USERNAME=your_DB_USERNAME_name
+ENV DB_PASSWORD=your_DB_PASSWORD
 
-ENV POSTGRE_DB=db_foxcloud
+
+ENV DB_NAME=db_foxcloud
 
 # 定义构建参数 TARGETARCH
 ARG TARGETARCH
@@ -21,7 +22,7 @@ RUN apt-get install -y vim net-tools git
 
 
 ###############################################################
-# 克隆仓库到容器（需要利用仓库中的配置文件）
+# 克隆 Github 仓库到容器（需要利用仓库中的配置文件）
 ###############################################################
 ENV PROJECT_BASE_PATH=/root/foxcloudservers/
 RUN mkdir $PROJECT_BASE_PATH
@@ -158,26 +159,65 @@ RUN cd $REDIS_BASE_PATH && \
 ###############################################################
 # Install PosrgreSQL v9.5
 ###############################################################
-RUN apt-get install -y postgresql postgresql-contrib
+# RUN apt-get install -y postgresql postgresql-contrib
 
-# 配置 PostgreSQL 监听所有 IP 地址
-RUN echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
+# # 配置 PostgreSQL 监听所有 IP 地址
+# RUN echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
 
-# 配置 pg_hba.conf 以允许所有远程连接
-RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/9.5/main/pg_hba.conf
+# # 配置 pg_hba.conf 以允许所有远程连接
+# RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/9.5/main/pg_hba.conf
 
-# 启动 PostgreSQL 服务并设置默认用户、数据库
-RUN service postgresql start && \
-    su - postgres -c "psql -c \"CREATE USER $POSTGRE_USER WITH PASSWORD '$POSTGRE_PASSWORD';\"" && \
-    su - postgres -c "psql -c \"CREATE DATABASE $POSTGRE_DB OWNER $POSTGRE_USER;\"" && \
-    su - postgres -c "psql -c \"ALTER USER $POSTGRE_USER WITH SUPERUSER;\""
+# # 启动 PostgreSQL 服务并设置默认用户、数据库
+# RUN service postgresql start && \
+#     su - postgres -c "psql -c \"CREATE USER $DB_USERNAME WITH PASSWORD '$DB_PASSWORD';\"" && \
+#     su - postgres -c "psql -c \"CREATE DATABASE $DB_NAME OWNER $DB_USERNAME;\"" && \
+#     su - postgres -c "psql -c \"ALTER USER $DB_USERNAME WITH SUPERUSER;\""
 
-# 暴露 PostgreSQL 默认端口
-EXPOSE 5432
+# # 暴露 PostgreSQL 默认端口
+# EXPOSE 5432
+
+# # Autostart service when booting
+# RUN echo "echo \"Starting server [PosrgreSQL]\"" >> $ENTRYPOINT_SH && \
+#     echo "service postgresql start" >> $ENTRYPOINT_SH
+
+
+###############################################################
+# 安装 MySQL Server
+###############################################################
+# 环境变量
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+
+# 配置 MySQL
+# 修改配置文件，允许远程连接
+RUN sed -i "s/^bind-address\s*=.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# 添加 UTF-8 编码和表名不区分大小写的配置
+RUN echo "[mysqld]" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
+    echo "character-set-server=utf8mb4" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
+    echo "collation-server=utf8mb4_general_ci" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
+    echo "lower_case_table_names=1" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
+    echo "[client]" >> /etc/mysql/mysql.conf.d/mysqld.cnf && \
+    echo "default-character-set=utf8mb4" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# 安装 envsubst
+RUN apt-get install -y gettext-base
+
+# 复制 init.sql.template 并替换环境变量生成 init.sql
+COPY init.sql.template /docker-entrypoint-initdb.d/init.sql.template
+RUN envsubst < /docker-entrypoint-initdb.d/init.sql.template > /docker-entrypoint-initdb.d/init.sql
+
+# 初始化数据库
+RUN service mysql start && \
+    mysql -u root < /docker-entrypoint-initdb.d/init.sql
+
+# 暴露 MySQL 默认端口
+EXPOSE 3306
 
 # Autostart service when booting
-RUN echo "echo \"Starting server [PosrgreSQL]\"" >> $ENTRYPOINT_SH && \
-    echo "service postgresql start" >> $ENTRYPOINT_SH
+RUN echo "echo \"Starting server [MySQL]\"" >> $ENTRYPOINT_SH && \
+    echo "service mysql start" >> $ENTRYPOINT_SH
+
+
 
 ###############################################################
 # Install Nginx dependencies openssl v3.4.0
@@ -233,6 +273,7 @@ RUN cd $NGINX_BASE_PATH && \
     ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
 
 RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/nginx.conf /usr/local/nginx/conf/nginx.conf
+RUN cp -r ${PROJECT_SOURCE_CODE_PATH}/server/zyfile2  /usr/local/nginx/
 
 EXPOSE 80
 
