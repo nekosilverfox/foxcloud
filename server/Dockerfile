@@ -192,7 +192,7 @@ RUN cd $REDIS_BASE_PATH && \
 # 安装 MySQL Server
 ###############################################################
 # 环境变量
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server libmysqlclient-dev
 
 # 配置 MySQL
 # 修改配置文件，允许远程连接
