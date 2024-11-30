@@ -220,3 +220,21 @@ bool JsonTool::overwriteWebServerInfo(const WebServerInfo& webServerInfo, const 
     return overwriteFoxcloudClientInfo(clientInfo, jsonPath);
 }
 
+/**
+ * @brief JsonTool::getRegistrationJsonForServer 获取用于向Foxcloud服务器注册用户 POST 请求中所需的 JSON 数据
+ * @param userInfo
+ * @return 转换为 ByteArray 的二进制的 JSON 对象
+ */
+QByteArray JsonTool::getRegistrationJsonForServer(const UserInfo &userInfo)
+{
+    QJsonObject obj;
+    obj.insert(Server::STR_LOGIN,   userInfo.login);
+    obj.insert(Server::STR_NICKNAME, userInfo.nickname);
+    obj.insert(Server::STR_PASSWORD, userInfo.password);
+    obj.insert(Server::STR_PHONE,   userInfo.phone);
+    obj.insert(Server::STR_EMAIL,   userInfo.email);
+
+    QJsonDocument doc = QJsonDocument(obj);
+    return doc.toJson();
+}
+

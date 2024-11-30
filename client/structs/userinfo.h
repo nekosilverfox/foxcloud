@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+/* 用于在本地记录 JSON 配置文件的 key */
 #define STR_VAL_LOGIN       "login"
 #define STR_VAL_NICKNAME    "nickname"
 #define STR_VAL_PASSWORD    "password"

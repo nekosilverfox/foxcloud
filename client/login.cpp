@@ -5,6 +5,8 @@
 #include "common/config.h"
 #include "structs/userinfo.h"
 #include "common/jsontool.h"
+#include "common/networktool.h"
+#include "structs/httpreplaycode.h"
 
 
 #include <QPainter>
@@ -32,7 +34,7 @@ Login::Login(QWidget *parent)
     /* 点击服务器设置页面 */
     connect(ui->wgTitle, &WidgetLoginTitle::showSetServerPage, this, [=](){
         ui->swLoginPages->setCurrentWidget(ui->pageSetServer);
-        ui->lePageServerIp->setFocus();  // 设置焦点
+        ui->lePageServerAddress->setFocus();  // 设置焦点
     });
 
     /* 点击前往注册 */
@@ -83,6 +85,11 @@ bool Login::registerUser()
     user.password    = ui->lePageRegPwd->text();
     user.phone       = ui->lePageRegPhone->text();
     user.email       = ui->lePageRegEmail->text();
+
+    WebServerInfo serverInfo;
+    serverInfo.address  = ui->lePageServerAddress->text();
+    serverInfo.port     = (qint16)ui->lePageServerPort->text().toInt();
+
 
     /* 利用正则表达式校验数据 */
     QRegularExpression reg;
@@ -138,20 +145,19 @@ bool Login::registerUser()
     }
 
     /* 注册信息转为 JSON */
-    QByteArray jsonPostData = QJsonDocument(JsonTool::userInfoToJsonObj(user)).toJson();
+    QByteArray jsonPostData = JsonTool::getRegistrationJsonForServer(user);
 
     /* 发送 Http 请求协议 */
     QNetworkRequest request;
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::ContentLengthHeader, jsonPostData.size());
 
-    WebServerInfo serverInfo = JsonTool::getWebServerInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
     QString url = QString("http://%1:%2/reg").arg(serverInfo.address, QString::number(serverInfo.port));
     request.setUrl(url);
     qDebug() << "Registration info will send to URL:" << url << "with data: " << jsonPostData;
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
-    QNetworkReply* replay = manager->post(request, jsonPostData);
+    QNetworkAccessManager* manager = NetworkTool::getNetworkManager();
+    QNetworkReply* replay = manager->post(request, jsonPostData);  // 发送请求
     connect(replay, &QNetworkReply::readyRead, this, [=](){
         /*
          * 读取返回的数据
@@ -159,6 +165,38 @@ bool Login::registerUser()
          * 用户已存在 {"code":"003"}
          * 失败 {"code":"004"}
         */
+        QByteArray replayData = replay->readAll();
+        const QString code = NetworkTool::getReplayCode(replayData);
+
+        if (code == HttpReplayCode::SUCCESS)
+        {
+            /* 帮用户把成功的信息填到输入框，然后跳转 */
+            ui->lePageLoginLogin->setText(user.login);
+            ui->lePageLoginPwd->setText(user.password);
+            ui->swLoginPages->setCurrentWidget(ui->pageLogin);
+
+            /* 保存信息 */
+            JsonTool::overwriteUserInfo(user, PATH_FOXCLOUD_CLIENT_CONFIG);
+
+            QMessageBox::information(this, "Registration", "Successful registration!");
+            return;
+        }
+        else if (code == HttpReplayCode::USER_EXISIT)
+        {
+            QMessageBox::warning(this, "Warning", QString("User with login %1 already exists").arg(user.login));
+            return;
+        }
+        else if (code == HttpReplayCode::FAIL)
+        {
+            QMessageBox::critical(this, "Error", "Can not  registration!");
+            return;
+
+        }
+        else
+        {
+            QMessageBox::critical(this, "Error", QString("Can not registration, server replay code: %1").arg(code));
+            return;
+        }
     });
 
 
@@ -167,7 +205,7 @@ bool Login::registerUser()
 
 bool Login::connectServer()
 {
-    QString ip = ui->lePageServerIp->text();
+    QString ip = ui->lePageServerAddress->text();
     QString port = ui->lePageServerPort->text();
 
     /* 利用正则表达式校验数据 */
@@ -176,8 +214,8 @@ bool Login::connectServer()
     if (!reg.match(ip).hasMatch())
     {
         QMessageBox::warning(this ,"Warning","Incorrect IP format");
-        ui->lePageServerIp->clear();
-        ui->lePageServerIp->setFocus();
+        ui->lePageServerAddress->clear();
+        ui->lePageServerAddress->setFocus();
         return false;
     }
 

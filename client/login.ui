@@ -20,7 +20,7 @@
    <item>
     <widget class="QStackedWidget" name="swLoginPages">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="pageLogin">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -615,12 +615,12 @@
                    <string notr="true">color: rgb(11, 54, 79);</string>
                   </property>
                   <property name="text">
-                   <string>IP</string>
+                   <string>Address</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="lePageServerIp">
+                 <widget class="QLineEdit" name="lePageServerAddress">
                   <property name="minimumSize">
                    <size>
                     <width>200</width>
@@ -742,7 +742,7 @@
   <tabstop>lePageRegPhone</tabstop>
   <tabstop>lePageRegEmail</tabstop>
   <tabstop>btnReg</tabstop>
-  <tabstop>lePageServerIp</tabstop>
+  <tabstop>lePageServerAddress</tabstop>
   <tabstop>lePageServerPort</tabstop>
   <tabstop>btnConnect</tabstop>
  </tabstops>

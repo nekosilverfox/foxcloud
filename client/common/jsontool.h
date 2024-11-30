@@ -28,6 +28,8 @@ public:
     static WebServerInfo getWebServerInfo(const QString& jsonPath = PATH_FOXCLOUD_CLIENT_CONFIG);
     static bool overwriteWebServerInfo(const WebServerInfo& webServerInfo,
                                        const QString& jsonPath = PATH_FOXCLOUD_CLIENT_CONFIG);
+
+    static QByteArray getRegistrationJsonForServer(const UserInfo& userInfo);
 };
 
 #endif // JSONTOOL_H
