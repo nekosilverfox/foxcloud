@@ -145,7 +145,7 @@ bool Login::registerUser()
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::ContentLengthHeader, jsonPostData.size());
 
-    WebServerInfo serverInfo = JsonTool::getWebServerInfoFromJsonFile(PATH_FOXCLOUD_CLIENT_CONFIG);
+    WebServerInfo serverInfo = JsonTool::getWebServerInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
     QString url = QString("http://%1:%2/reg").arg(serverInfo.address, QString::number(serverInfo.port));
     request.setUrl(url);
     qDebug() << "Registration info will send to URL:" << url << "with data: " << jsonPostData;

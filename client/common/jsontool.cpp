@@ -87,12 +87,12 @@ FoxcloudClientInfo JsonTool::getFoxcloudClientInfo(const QString &jsonPath)
 }
 
 /**
- * @brief JsonTool::overwriteFoxcloudClientInfoJsonFile 复写存储 FoxcloudClientInfo 的文件，如果不存在则会新建、如果存在则复写
+ * @brief JsonTool::overwriteFoxcloudClientInfo 复写存储 FoxcloudClientInfo 的文件，如果不存在则会新建、如果存在则复写
  * @param clientInfo
  * @param jsonPath
  * @return
  */
-bool JsonTool::overwriteFoxcloudClientInfoJsonFile(const FoxcloudClientInfo& clientInfo, const QString& jsonPath)
+bool JsonTool::overwriteFoxcloudClientInfo(const FoxcloudClientInfo& clientInfo, const QString& jsonPath)
 {
     QFile file(jsonPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -119,12 +119,12 @@ bool JsonTool::overwriteFoxcloudClientInfoJsonFile(const FoxcloudClientInfo& cli
 }
 
 /**
- * @brief JsonTool::overwriteFoxcloudClientInfoJsonFile 复写存储 FoxcloudClientInfo 的文件，如果不存在则会新建、如果存在则复写
+ * @brief JsonTool::overwriteFoxcloudClientInfo 复写存储 FoxcloudClientInfo 的文件，如果不存在则会新建、如果存在则复写
  * @param jsonObjClientInfo
  * @param jsonPath
  * @return
  */
-bool JsonTool::overwriteFoxcloudClientInfoJsonFile(const QJsonObject jsonObjClientInfo, const QString &jsonPath)
+bool JsonTool::overwriteFoxcloudClientInfo(const QJsonObject jsonObjClientInfo, const QString &jsonPath)
 {
     QFile file(jsonPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -158,12 +158,12 @@ UserInfo JsonTool::getUserInfo(const QString &jsonPath)
 }
 
 /**
- * @brief JsonTool::overwriteUserInfoToFile 将 UserInfo 复写到指定JSON文件 中，如果文件没有则会新建并写入
+ * @brief JsonTool::overwriteUserInfo 将 UserInfo 复写到指定JSON文件 中，如果文件没有则会新建并写入
  * @param userInfo
  * @param jsonPath
  * @return
  */
-bool JsonTool::overwriteUserInfoToFile(const UserInfo &userInfo, const QString &jsonPath)
+bool JsonTool::overwriteUserInfo(const UserInfo &userInfo, const QString &jsonPath)
 {
     qDebug() << "Start overwrite UserInfo to file";
 
@@ -182,15 +182,15 @@ bool JsonTool::overwriteUserInfoToFile(const UserInfo &userInfo, const QString &
              << "[" << STR_VAL_PHONE    << ": " << userInfo.phone       << "]"
              << "to JSON file " << jsonPath;
 
-    return overwriteFoxcloudClientInfoJsonFile(clientInfo, jsonPath);
+    return overwriteFoxcloudClientInfo(clientInfo, jsonPath);
 }
 
 /**
- * @brief JsonTool::getWebServerInfoFromJsonFile 从 JSON 文件中获取 WebServerInfo
+ * @brief JsonTool::getWebServerInfo 从 JSON 文件中获取 WebServerInfo
  * @param jsonPath JSON 文件的路径
  * @return WebServerInfo
  */
-WebServerInfo JsonTool::getWebServerInfoFromJsonFile(const QString& jsonPath)
+WebServerInfo JsonTool::getWebServerInfo(const QString& jsonPath)
 {
     FoxcloudClientInfo clientInfo = getFoxcloudClientInfo(jsonPath);
 
@@ -200,12 +200,12 @@ WebServerInfo JsonTool::getWebServerInfoFromJsonFile(const QString& jsonPath)
 }
 
 /**
- * @brief JsonTool::overwriteWebServerInfoToFile 将 WebServerInfo 复写到指定JSON文件 中，如果文件没有则会新建并写入
+ * @brief JsonTool::overwriteWebServerInfo 将 WebServerInfo 复写到指定JSON文件 中，如果文件没有则会新建并写入
  * @param webServerInfo WebServerInfo 对象
  * @param jsonPath JSON 路径
  * @return 是否成功
  */
-bool JsonTool::overwriteWebServerInfoToFile(const WebServerInfo& webServerInfo, const QString& jsonPath)
+bool JsonTool::overwriteWebServerInfo(const WebServerInfo& webServerInfo, const QString& jsonPath)
 {
     qDebug() << "Start overwrite WebServerInfo to file";
     FoxcloudClientInfo clientInfo = getFoxcloudClientInfo(jsonPath);
@@ -217,6 +217,6 @@ bool JsonTool::overwriteWebServerInfoToFile(const WebServerInfo& webServerInfo, 
     qDebug() << "Overwrite " << STR_OBJ_WEBSERVERINFO << " to [" << STR_VAL_ADDRESS << ": " << webServerInfo.address
              << "], [" << STR_VAL_PORT << ": " << webServerInfo.port << "] to JSON file " << jsonPath;
 
-    return overwriteFoxcloudClientInfoJsonFile(clientInfo, jsonPath);
+    return overwriteFoxcloudClientInfo(clientInfo, jsonPath);
 }
 
