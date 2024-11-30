@@ -12,7 +12,9 @@
 #define REG_IP          (R"(^((25[0-5]|2[0-4]\d|1\d{2}|\d{1,2})\.){3}(25[0-5]|2[0-4]\d|1\d{2}|\d{1,2})$)")
 #define REG_PORT        (R"(^([1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$)")
 
-#define PATH_CONFIG_FILE    ("config/foxcloud-client.json") // 客户端配置文件
 
+// TODO 修改路径
+#define PATH_FOXCLOUD_CLIENT_CONFIG    ("/Users/fox/雪狸的文件/Programma/foxcloud/client/configs/foxcloud-server.json") // 客户端配置文件
+#define PATH_LOG                       ("/Users/fox/雪狸的文件/Programma/foxcloud/client/build/log") // 客户端配置文件
 
 #endif // CONFIG_H

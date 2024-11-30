@@ -3,10 +3,18 @@
 
 #include "widgetlogintitle.h"
 #include "common/config.h"
+#include "structs/userinfo.h"
+#include "common/jsontool.h"
+
 
 #include <QPainter>
 #include <QRegularExpression>
 #include <QMessageBox>
+#include <QJsonDocument>
+
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 
 Login::Login(QWidget *parent)
     : QDialog(parent)
@@ -14,6 +22,8 @@ Login::Login(QWidget *parent)
 {
     ui->setupUi(this);
     ui->swLoginPages->setCurrentWidget(ui->pageLogin);
+
+    this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
 
     ui->lePageLoginPwd->setEchoMode(QLineEdit::Password);
     ui->lePageRegPwd->setEchoMode(QLineEdit::Password);
@@ -67,17 +77,17 @@ void Login::paintEvent(QPaintEvent *event)
 
 bool Login::registerUser()
 {
-    QString login       = ui->lePageRegLogin->text();
-    QString nickname    = ui->lePageRegNickname->text();
-    QString pwd         = ui->lePageRegPwd->text();
-    QString configPwd   = ui->lePageRegConfirmPwd->text();
-    QString phone       = ui->lePageRegPhone->text();
-    QString email       = ui->lePageRegEmail->text();
+    UserInfo user;
+    user.login       = ui->lePageRegLogin->text();
+    user.nickname    = ui->lePageRegNickname->text();
+    user.password    = ui->lePageRegPwd->text();
+    user.phone       = ui->lePageRegPhone->text();
+    user.email       = ui->lePageRegEmail->text();
 
     /* 利用正则表达式校验数据 */
     QRegularExpression reg;
     reg.setPattern(REG_LOGIN);
-    if (!reg.match(login).hasMatch())
+    if (!reg.match(user.login).hasMatch())
     {
         QMessageBox::warning(this ,"Warning","Incorrect login format, only upper and lower case letters and underscores are allowed");
         ui->lePageRegLogin->clear();
@@ -85,14 +95,14 @@ bool Login::registerUser()
         return false;
     }
 
-    if (nickname.length() < 1)
+    if (user.nickname.length() < 1)
     {
         QMessageBox::warning(this, "Warning", "Nickname length needs to be greater than 1");
         return false;
     }
 
     reg.setPattern(REG_PASSWD);
-    if (!reg.match(pwd).hasMatch())
+    if (!reg.match(user.password).hasMatch())
     {
         QMessageBox::warning(this ,"Warning","Incorrect password format, only upper and lower case letters and underscores are allowed");
         ui->lePageRegPwd->clear();
@@ -100,7 +110,7 @@ bool Login::registerUser()
         return false;
     }
 
-    if (pwd != configPwd)
+    if (user.password != ui->lePageRegConfirmPwd->text())
     {
         QMessageBox::warning(this, "Warning", "Inconsistent passwords entered twice");
         ui->lePageRegPwd->clear();
@@ -110,7 +120,7 @@ bool Login::registerUser()
     }
 
     reg.setPattern(REG_PHONE);
-    if (!reg.match(phone).hasMatch())
+    if (!reg.match(user.phone).hasMatch())
     {
         QMessageBox::warning(this ,"Warning","Incorrect phone number format, it should be 6 to 10 digits");
         ui->lePageRegPhone->clear();
@@ -119,7 +129,7 @@ bool Login::registerUser()
     }
 
     reg.setPattern(REG_EMAIL);
-    if (!reg.match(email).hasMatch())
+    if (!reg.match(user.email).hasMatch())
     {
         QMessageBox::warning(this ,"Warning","Incorrect email format");
         ui->lePageRegEmail->clear();
@@ -127,8 +137,32 @@ bool Login::registerUser()
         return false;
     }
 
+    /* 注册信息转为 JSON */
+    QByteArray jsonPostData = QJsonDocument(JsonTool::userInfoToJsonObj(user)).toJson();
+
+    /* 发送 Http 请求协议 */
+    QNetworkRequest request;
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setHeader(QNetworkRequest::ContentLengthHeader, jsonPostData.size());
+
+    WebServerInfo serverInfo = JsonTool::getWebServerInfoFromJsonFile(PATH_FOXCLOUD_CLIENT_CONFIG);
+    QString url = QString("http://%1:%2/reg").arg(serverInfo.address, QString::number(serverInfo.port));
+    request.setUrl(url);
+    qDebug() << "Registration info will send to URL:" << url << "with data: " << jsonPostData;
+
+    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
+    QNetworkReply* replay = manager->post(request, jsonPostData);
+    connect(replay, &QNetworkReply::readyRead, this, [=](){
+        /*
+         * 读取返回的数据
+         * 成功 {"code":"002"}
+         * 用户已存在 {"code":"003"}
+         * 失败 {"code":"004"}
+        */
+    });
 
 
+    return true;
 }
 
 bool Login::connectServer()
@@ -157,6 +191,8 @@ bool Login::connectServer()
     }
 
 
+// TODO
+    return true;
 }
 
 

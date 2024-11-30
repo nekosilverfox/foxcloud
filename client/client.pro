@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     common/jsontool.cpp \
+    common/logger.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 HEADERS += \
     common/config.h \
     common/jsontool.h \
+    common/logger.h \
     login.h \
     mainwindow.h \
     structs/foxcloudclientinfo.h \

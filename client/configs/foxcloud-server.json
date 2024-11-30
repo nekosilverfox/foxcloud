@@ -1,0 +1,14 @@
+{
+    "user": {
+        "email": "1",
+        "login": "2",
+        "nickname": "3",
+        "password": "4",
+        "phone": "5",
+        "remember_password": "false"
+    },
+    "web_server": {
+        "address": "127.0.0.1",
+        "port": 80
+    }
+}
