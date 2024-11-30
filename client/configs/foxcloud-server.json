@@ -8,7 +8,7 @@
         "remember_password": "false"
     },
     "web_server": {
-        "address": "127.0.0.1",
+        "address": "192.168.31.8",
         "port": 80
     }
 }

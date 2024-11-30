@@ -18,13 +18,13 @@
 #define PATH_LOG                       ("/Users/fox/雪狸的文件/Programma/foxcloud/client/build/log") // 客户端配置文件
 
 /* Server 端解析时候需要匹配的数据，如果更改的话 Server 端 CGI 程序需要同步更改！！ */
-namespace Server
+namespace JsonKeyForServer
 {
-const char* STR_LOGIN    = "userName";
-const char* STR_NICKNAME = "nickName";
-const char* STR_PASSWORD = "firstPwd";
-const char* STR_PHONE    = "phone";
-const char* STR_EMAIL    = "email";
+inline const char* STR_LOGIN    = "userName";
+inline const char* STR_NICKNAME = "nickName";
+inline const char* STR_PASSWORD = "firstPwd";
+inline const char* STR_PHONE    = "phone";
+inline const char* STR_EMAIL    = "email";
 }
 
 #endif // CONFIG_H

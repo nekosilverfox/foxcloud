@@ -1,15 +1,11 @@
 #ifndef NETWORKTOOL_H
 #define NETWORKTOOL_H
 
-#include <QObject>
-
 #include <QNetworkAccessManager>
 
 
 class NetworkTool
 {
-    Q_OBJECT
-
 public:
     NetworkTool();
 

@@ -228,11 +228,11 @@ bool JsonTool::overwriteWebServerInfo(const WebServerInfo& webServerInfo, const 
 QByteArray JsonTool::getRegistrationJsonForServer(const UserInfo &userInfo)
 {
     QJsonObject obj;
-    obj.insert(Server::STR_LOGIN,   userInfo.login);
-    obj.insert(Server::STR_NICKNAME, userInfo.nickname);
-    obj.insert(Server::STR_PASSWORD, userInfo.password);
-    obj.insert(Server::STR_PHONE,   userInfo.phone);
-    obj.insert(Server::STR_EMAIL,   userInfo.email);
+    obj.insert(JsonKeyForServer::STR_LOGIN,   userInfo.login);
+    obj.insert(JsonKeyForServer::STR_NICKNAME, userInfo.nickname);
+    obj.insert(JsonKeyForServer::STR_PASSWORD, userInfo.password);
+    obj.insert(JsonKeyForServer::STR_PHONE,   userInfo.phone);
+    obj.insert(JsonKeyForServer::STR_EMAIL,   userInfo.email);
 
     QJsonDocument doc = QJsonDocument(obj);
     return doc.toJson();

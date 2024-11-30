@@ -27,6 +27,11 @@ Login::Login(QWidget *parent)
 
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
 
+    /* 从配置问价加载 webserver 信息 */
+    WebServerInfo serverInfo = JsonTool::getWebServerInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
+    ui->lePageServerAddress->setText(serverInfo.address);
+    ui->lePageServerPort->setText(QString::number(serverInfo.port));
+
     ui->lePageLoginPwd->setEchoMode(QLineEdit::Password);
     ui->lePageRegPwd->setEchoMode(QLineEdit::Password);
     ui->lePageRegConfirmPwd->setEchoMode(QLineEdit::Password);
@@ -70,7 +75,7 @@ Login::~Login()
  * @brief Login::paintEvent
  * @param event
  */
-void Login::paintEvent(QPaintEvent *event)
+void Login::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
     QPixmap pixmap(":/img/background-blud-prink.jpg");
@@ -190,7 +195,6 @@ bool Login::registerUser()
         {
             QMessageBox::critical(this, "Error", "Can not  registration!");
             return;
-
         }
         else
         {

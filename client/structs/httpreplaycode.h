@@ -1,12 +1,18 @@
 #ifndef HTTPREPLAYCODE_H
 #define HTTPREPLAYCODE_H
 
+/*
+ * 读取返回的数据
+ * 成功 {"code":"002"}
+ * 用户已存在 {"code":"003"}
+ * 失败 {"code":"004"}
+*/
 namespace HttpReplayCode
 {
-const char* EMPTY       =   "";
-const char* SUCCESS     = "002";
-const char* USER_EXISIT = "003";
-const char* FAIL        = "004";
+inline const char* EMPTY       =   "";
+inline const char* SUCCESS     = "002";
+inline const char* USER_EXISIT = "003";
+inline const char* FAIL        = "004";
 }
 
 

@@ -17,7 +17,7 @@ public:
 
 protected:
     /* 绘图事件函数 */
-    void paintEvent(QPaintEvent* event) override;
+    void paintEvent(QPaintEvent*) override;
 
 private slots:
     bool registerUser();
