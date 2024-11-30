@@ -23,13 +23,16 @@ RUN apt-get install -y vim net-tools git
 
 ###############################################################
 # 克隆 Github 仓库到容器（需要利用仓库中的配置文件）
+# 由于 Docker 缓存机制如果不再次 pull 会造成 仓库代码不是最新版
 ###############################################################
 ENV PROJECT_BASE_PATH=/root/foxcloudservers/
 RUN mkdir $PROJECT_BASE_PATH
 
 ENV PROJECT_SOURCE_CODE_PATH=${PROJECT_BASE_PATH}foxcloud
 RUN cd $PROJECT_BASE_PATH && \
-    git clone https://github.com/nekosilverfox/foxcloud.git
+    git clone https://github.com/nekosilverfox/foxcloud.git && \
+    cd ${PROJECT_SOURCE_CODE_PATH} && \
+    git pull
 
 
 ###############################################################
@@ -343,6 +346,16 @@ RUN cd $NGINX_BASE_PATH && \
 RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/mod_fastdfs.conf /etc/fdfs/  && \
     cp ${FDFS_BASE_PATH}/fastdfs-6.12.2/conf/http.conf /etc/fdfs/ && \
     cp ${NGINX_BASE_PATH}/nginx-1.16.1/conf/mime.types /etc/fdfs/
+
+###############################################################
+# 编译 自己编写的 CGI 脚本
+###############################################################
+RUN cd ${PROJECT_SOURCE_CODE_PATH}/server && \
+    make clean  && \
+    make
+
+# 使用脚本进行启动
+RUN echo "${PROJECT_SOURCE_CODE_PATH}/server/start.sh" >> $ENTRYPOINT_SH
 
 ###############################################################
 # 自动启动服务
