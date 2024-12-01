@@ -154,7 +154,7 @@ bool Login::registerUser()
     }
 
     /* 加密密码 */
-    user.password = EncryptTool::getStrMD5(user.password);
+    user.password = EncryptTool::getStrMD5(user.password).toBase64();
 
     /* 注册信息转为 JSON */
     QByteArray jsonPostData = JsonTool::getRegistrationJsonForServer(user);
@@ -185,6 +185,7 @@ bool Login::registerUser()
          * 失败 {"code":"004"}
         */
         QByteArray replayData = reply->readAll();
+        reply->deleteLater();  // 释放资源
         const QString code = NetworkTool::getReplayCode(replayData);
 
         if (code == HttpReplayCode::Reg::SUCCESS)
@@ -196,7 +197,6 @@ bool Login::registerUser()
 
             /* 保存信息 */
             JsonTool::overwriteUserInfo(user, PATH_FOXCLOUD_CLIENT_CONFIG);
-
             QMessageBox::information(this, "Registration", "Successful registration!");
             return;
         }
@@ -232,12 +232,37 @@ bool Login::loginUser()
     clientInfo.webServerInfo.address = ui->lePageServerAddress->text();
     clientInfo.webServerInfo.port = (qint16)ui->lePageServerPort->text().toInt();
 
-    //TODO做输入检测
-    qDebug() << clientInfo.userInfo.login << clientInfo.userInfo.password;
+    /* 校验数据 */
+    //TODO 校验服务器
+    if (clientInfo.userInfo.login.length() == 0 || clientInfo.userInfo.password.length() == 0)
+    {
+        QMessageBox::warning(this, "Warning", "Login or password is empty");
+        return false;
+    }
+
+    QRegularExpression reg;
+    reg.setPattern(REG_LOGIN);
+    if (!reg.match(clientInfo.userInfo.login).hasMatch())
+    {
+        QMessageBox::warning(this ,"Warning","Incorrect login format, only upper and lower case letters and underscores are allowed");
+        ui->lePageRegLogin->clear();
+        ui->lePageRegLogin->setFocus();
+        return false;
+    }
+
+    reg.setPattern(REG_PASSWD);
+    if (!reg.match(clientInfo.userInfo.password).hasMatch())
+    {
+        QMessageBox::warning(this ,"Warning","Incorrect password format, only upper and lower case letters and underscores are allowed");
+        ui->lePageRegPwd->clear();
+        ui->lePageRegPwd->setFocus();
+        return false;
+    }
+
 
     // TODO 加密用户名称
     /* 加密用户名和密码 */
-    clientInfo.userInfo.password = EncryptTool::getStrMD5(clientInfo.userInfo.password).toHex();
+    clientInfo.userInfo.password = EncryptTool::getStrMD5(clientInfo.userInfo.password).toBase64();
     // clientInfo.userInfo.login    = EncryptTool::encryptString(clientInfo.userInfo.login).toHex();
     // clientInfo.userInfo.password = EncryptTool::encryptString(clientInfo.userInfo.password).toHex();
 
@@ -257,22 +282,30 @@ bool Login::loginUser()
 
     QNetworkAccessManager* manager = NetworkTool::getNetworkManager();
     QNetworkReply* reply = manager->post(request, jsonPostData);  // 发送请求
+    qInfo() << "Login Json data POST to server finish";
 
     /* 接收并处理服务器发回的http响应消息 */
-    connect(reply, &QNetworkReply::finished, this, [&](){
-        if (reply->error() != QNetworkReply::NoError)
+    connect(reply, &QNetworkReply::finished, this, [=](){
+        qInfo() << "Get LOGIN replay from server";
+
+#if 1
+        if (reply->error() != QNetworkReply::NoError || !reply->isOpen())
         {
-            qCritical() << reply->errorString();
-            reply->deleteLater();  // 释放资源
+            qCritical() << "Network reply error:" << reply->errorString();
+            reply->deleteLater();
             return;
         }
-
+#endif
+#if 1
         /*  将server回写的数据读出
             登陆 - 服务器回写的json数据包格式：
             成功：{"code":"000"}
             失败：{"code":"001"}
         */
         QByteArray replayData = reply->readAll();
+        reply->deleteLater();  // 释放资源
+        qInfo() << "Replay LOGIN data from server:" << replayData;
+
         if (HttpReplayCode::Login::SUCCESS != NetworkTool::getReplayCode(replayData))
         {
             qWarning() << "Can not login";
@@ -283,7 +316,7 @@ bool Login::loginUser()
         /* 用户没有选中保存密码 */
         if (!ui->cbSavePwd->isChecked())
         {
-            clientInfo.userInfo.password = "";
+            // clientInfo.userInfo.password = "";
         }
 
         //TODO 登陆成功后调用的东西，还需要保存下 token
@@ -292,6 +325,9 @@ bool Login::loginUser()
 
 
         QString token = NetworkTool::getReplayToken(replayData);
+
+
+#endif
     });
 
     return true;
