@@ -7,6 +7,7 @@
 #include "common/jsontool.h"
 #include "common/networktool.h"
 #include "structs/httpreplaycode.h"
+#include "common/encrypttool.h"
 
 
 #include <QPainter>
@@ -27,7 +28,7 @@ Login::Login(QWidget *parent)
 
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
 
-    /* 从配置问价加载 webserver 信息 */
+    /* 从配置文件加载 webserver 信息 */
     WebServerInfo serverInfo = JsonTool::getWebServerInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
     ui->lePageServerAddress->setText(serverInfo.address);
     ui->lePageServerPort->setText(QString::number(serverInfo.port));
@@ -50,6 +51,9 @@ Login::Login(QWidget *parent)
 
     /* 点击注册按钮 */
     connect(ui->btnReg, &QPushButton::clicked, this, &Login::registerUser);
+
+    /* 点击注册 */
+    connect(ui->btnLogin, &QPushButton::clicked, this, &Login::loginUser);
 
     /* 点击关闭按钮时候窗口相互的切换 */
     connect(ui->wgTitle, &WidgetLoginTitle::closeCurPage, this, [=](){
@@ -162,18 +166,25 @@ bool Login::registerUser()
     qDebug() << "Registration info will send to URL:" << url << "with data: " << jsonPostData;
 
     QNetworkAccessManager* manager = NetworkTool::getNetworkManager();
-    QNetworkReply* replay = manager->post(request, jsonPostData);  // 发送请求
-    connect(replay, &QNetworkReply::readyRead, this, [=](){
+    QNetworkReply* reply = manager->post(request, jsonPostData);  // 发送请求
+    connect(reply, &QNetworkReply::readyRead, this, [=](){
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qCritical() << reply->errorString();
+            reply->deleteLater();  // 释放资源
+            return;
+        }
+
         /*
          * 读取返回的数据
          * 成功 {"code":"002"}
          * 用户已存在 {"code":"003"}
          * 失败 {"code":"004"}
         */
-        QByteArray replayData = replay->readAll();
+        QByteArray replayData = reply->readAll();
         const QString code = NetworkTool::getReplayCode(replayData);
 
-        if (code == HttpReplayCode::SUCCESS)
+        if (code == HttpReplayCode::Reg::SUCCESS)
         {
             /* 帮用户把成功的信息填到输入框，然后跳转 */
             ui->lePageLoginLogin->setText(user.login);
@@ -186,23 +197,95 @@ bool Login::registerUser()
             QMessageBox::information(this, "Registration", "Successful registration!");
             return;
         }
-        else if (code == HttpReplayCode::USER_EXISIT)
+        else if (code == HttpReplayCode::Reg::USER_EXISIT)
         {
             QMessageBox::warning(this, "Warning", QString("User with login %1 already exists").arg(user.login));
             return;
         }
-        else if (code == HttpReplayCode::FAIL)
+        else if (code == HttpReplayCode::Reg::FAIL)
         {
             QMessageBox::critical(this, "Error", "Can not  registration!");
             return;
         }
         else
         {
-            QMessageBox::critical(this, "Error", QString("Can not registration, server replay code: %1").arg(code));
+            QMessageBox::critical(this, "Error", QString("Can not registration, server reply code: %1").arg(code));
             return;
         }
     });
 
+    return true;
+}
+
+/**
+ * @brief Login::loginUser 用户登录
+ * @return
+ */
+bool Login::loginUser()
+{
+    FoxcloudClientInfo clientInfo = JsonTool::getFoxcloudClientInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
+    clientInfo.userInfo.login = ui->lePageLoginLogin->text();
+    clientInfo.userInfo.password = ui->lePageLoginPwd->text();
+    clientInfo.webServerInfo.address = ui->lePageServerAddress->text();
+    clientInfo.webServerInfo.port = (qint16)ui->lePageServerPort->text().toInt();
+
+    //TODO做输入检测
+
+    /* 加密用户名和密码 */
+    clientInfo.userInfo.login    = EncryptTool::encryptString(clientInfo.userInfo.login).toHex();
+    clientInfo.userInfo.password = EncryptTool::encryptString(clientInfo.userInfo.password).toHex();
+
+    /* 注册信息转为 JSON */
+    QByteArray jsonPostData = JsonTool::getLoginJsonForServer(clientInfo.userInfo);
+
+    /* 发送 Http 请求协议 */
+    QNetworkRequest request;
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setHeader(QNetworkRequest::ContentLengthHeader, jsonPostData.size());
+
+    QString url = QString("http://%1:%2/login").arg(clientInfo.webServerInfo.address,
+                                                    QString::number(clientInfo.webServerInfo.port));
+    request.setUrl(url);
+    qDebug() << "Login info will send to URL:" << url << "with data: " << jsonPostData;
+
+    QNetworkAccessManager* manager = NetworkTool::getNetworkManager();
+    QNetworkReply* reply = manager->post(request, jsonPostData);  // 发送请求
+
+    /* 接收并处理服务器发回的http响应消息 */
+    connect(reply, &QNetworkReply::finished, this, [&](){
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qCritical() << reply->errorString();
+            reply->deleteLater();  // 释放资源
+            return;
+        }
+
+        /*  将server回写的数据读出
+            登陆 - 服务器回写的json数据包格式：
+            成功：{"code":"000"}
+            失败：{"code":"001"}
+        */
+        QByteArray replayData = reply->readAll();
+        if (HttpReplayCode::Login::SUCCESS != NetworkTool::getReplayCode(replayData))
+        {
+            qWarning() << "Can not login";
+            QMessageBox::warning(this, "Warning", "Can not login, Incorrect username or password");
+            return;
+        }
+
+        /* 用户没有选中保存密码 */
+        if (!ui->cbSavePwd->isChecked())
+        {
+            clientInfo.userInfo.password = "";
+        }
+
+        //TODO 登陆成功后调用的东西，还需要保存下 token
+        QMessageBox::information(this, "Login", "Successed login!");
+        JsonTool::overwriteFoxcloudClientInfo(clientInfo);
+
+
+        QString token = NetworkTool::getReplayToken(replayData);
+    });
 
     return true;
 }

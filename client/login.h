@@ -21,6 +21,7 @@ protected:
 
 private slots:
     bool registerUser();
+    bool loginUser();
     bool connectServer();
 
 private:
