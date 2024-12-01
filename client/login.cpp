@@ -153,6 +153,9 @@ bool Login::registerUser()
         return false;
     }
 
+    /* 加密密码 */
+    user.password = EncryptTool::getStrMD5(user.password);
+
     /* 注册信息转为 JSON */
     QByteArray jsonPostData = JsonTool::getRegistrationJsonForServer(user);
 
@@ -230,10 +233,14 @@ bool Login::loginUser()
     clientInfo.webServerInfo.port = (qint16)ui->lePageServerPort->text().toInt();
 
     //TODO做输入检测
+    qDebug() << clientInfo.userInfo.login << clientInfo.userInfo.password;
 
+    // TODO 加密用户名称
     /* 加密用户名和密码 */
-    clientInfo.userInfo.login    = EncryptTool::encryptString(clientInfo.userInfo.login).toHex();
-    clientInfo.userInfo.password = EncryptTool::encryptString(clientInfo.userInfo.password).toHex();
+    clientInfo.userInfo.password = EncryptTool::getStrMD5(clientInfo.userInfo.password).toHex();
+    // clientInfo.userInfo.login    = EncryptTool::encryptString(clientInfo.userInfo.login).toHex();
+    // clientInfo.userInfo.password = EncryptTool::encryptString(clientInfo.userInfo.password).toHex();
+
 
     /* 注册信息转为 JSON */
     QByteArray jsonPostData = JsonTool::getLoginJsonForServer(clientInfo.userInfo);
