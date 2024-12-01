@@ -228,13 +228,27 @@ bool JsonTool::overwriteWebServerInfo(const WebServerInfo& webServerInfo, const 
 QByteArray JsonTool::getRegistrationJsonForServer(const UserInfo &userInfo)
 {
     QJsonObject obj;
-    obj.insert(JsonKeyForServer::STR_LOGIN,   userInfo.login);
-    obj.insert(JsonKeyForServer::STR_NICKNAME, userInfo.nickname);
-    obj.insert(JsonKeyForServer::STR_PASSWORD, userInfo.password);
-    obj.insert(JsonKeyForServer::STR_PHONE,   userInfo.phone);
-    obj.insert(JsonKeyForServer::STR_EMAIL,   userInfo.email);
+    obj.insert(JsonKeyForServer::Reg::STR_LOGIN,   userInfo.login);
+    obj.insert(JsonKeyForServer::Reg::STR_NICKNAME, userInfo.nickname);
+    obj.insert(JsonKeyForServer::Reg::STR_PASSWORD, userInfo.password);
+    obj.insert(JsonKeyForServer::Reg::STR_PHONE,   userInfo.phone);
+    obj.insert(JsonKeyForServer::Reg::STR_EMAIL,   userInfo.email);
 
     QJsonDocument doc = QJsonDocument(obj);
     return doc.toJson();
+}
+
+/**
+ * @brief JsonTool::getLoginJsonForServer 获取用于向Foxcloud服务器登录用户 POST 请求中所需的 JSON 数据
+ * @param userInfo
+ * @return
+ */
+QByteArray JsonTool::getLoginJsonForServer(const UserInfo &userInfo)
+{
+    QJsonObject obj;
+    obj.insert(JsonKeyForServer::Login::STR_LOGIN,      userInfo.login);
+    obj.insert(JsonKeyForServer::Login::STR_PASSWORD,   userInfo.password);
+
+    return QJsonDocument(obj).toJson();
 }
 
