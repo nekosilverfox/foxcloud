@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     /* 为当前应用统一设置字体 */
+    a.setStyleSheet("QWidget { color: rgb(11, 54, 79); }");
     a.setFont(QFont("BM Jua", 14, QFont::Normal, false));
     a.setWindowIcon(QIcon(":/img/foxcloud-logo-name.svg"));
 
@@ -26,11 +27,11 @@ int main(int argc, char *argv[])
     Logger::init(PATH_LOG, "hh:mm:ss", " | ");  // 初始化 Logger
 
 
-    Login login;
-    login.show();
+    // Login login;
+    // login.show();
 
-    // MainWindow w;
-    // w.show();
+    MainWindow w;
+    w.show();
 
     // Logger::close();
     return a.exec();

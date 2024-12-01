@@ -17,6 +17,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    /* 绘图事件函数 */
+    void paintEvent(QPaintEvent*) override;
+
 private:
     Ui::MainWindow *ui;
 };
