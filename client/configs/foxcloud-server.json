@@ -1,11 +1,11 @@
 {
     "user": {
-        "email": "1",
-        "login": "2",
-        "nickname": "3",
-        "password": "4",
-        "phone": "5",
-        "remember_password": "false"
+        "email": "789789@sdf.sdf",
+        "login": "789789",
+        "nickname": "789789",
+        "password": "Nzg5Nzg5",
+        "phone": "789789",
+        "remember_password": "true"
     },
     "web_server": {
         "address": "192.168.31.8",

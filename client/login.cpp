@@ -284,19 +284,29 @@ bool Login::loginUser()
     QNetworkReply* reply = manager->post(request, jsonPostData);  // 发送请求
     qInfo() << "Login Json data POST to server finish";
 
-    /* 接收并处理服务器发回的http响应消息 */
+    /* 用户没有选中保存密码 */
+    if (ui->cbSavePwd->isChecked())
+    {
+        clientInfo.userInfo.password = ui->lePageLoginPwd->text().toUtf8().toBase64();
+        clientInfo.userInfo.remember_password = "true";
+    }
+    else
+    {
+        clientInfo.userInfo.password = "";
+        clientInfo.userInfo.remember_password = "false";
+    }
+
+    /* 接收并处理服务器发回的http响应消息，注意 lambda 表达式中如果使用 [&] 将会使reply释放而造成程序崩溃 */
     connect(reply, &QNetworkReply::finished, this, [=](){
         qInfo() << "Get LOGIN replay from server";
 
-#if 1
         if (reply->error() != QNetworkReply::NoError || !reply->isOpen())
         {
             qCritical() << "Network reply error:" << reply->errorString();
             reply->deleteLater();
             return;
         }
-#endif
-#if 1
+
         /*  将server回写的数据读出
             登陆 - 服务器回写的json数据包格式：
             成功：{"code":"000"}
@@ -313,21 +323,13 @@ bool Login::loginUser()
             return;
         }
 
-        /* 用户没有选中保存密码 */
-        if (!ui->cbSavePwd->isChecked())
-        {
-            // clientInfo.userInfo.password = "";
-        }
-
         //TODO 登陆成功后调用的东西，还需要保存下 token
         QMessageBox::information(this, "Login", "Successed login!");
         JsonTool::overwriteFoxcloudClientInfo(clientInfo);
 
-
+        //Token 很重要，之后所有的传输都需要他，用于确认身份
         QString token = NetworkTool::getReplayToken(replayData);
 
-
-#endif
     });
 
     return true;

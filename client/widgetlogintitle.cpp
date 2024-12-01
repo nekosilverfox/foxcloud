@@ -40,6 +40,7 @@ WidgetLoginTitle::~WidgetLoginTitle()
  */
 void WidgetLoginTitle::mouseMoveEvent(QMouseEvent *event)
 {
+#if 0
     /* 只允许左键按住拖动，持续的状态应该用 buttonS，并且用 `&` */
     if (event->buttons() & Qt::LeftButton)
     {
@@ -56,6 +57,7 @@ void WidgetLoginTitle::mouseMoveEvent(QMouseEvent *event)
          */
         _parent->move(event->globalPos() - _pt);
     }
+#endif
 }
 
 void WidgetLoginTitle::mousePressEvent(QMouseEvent *event)

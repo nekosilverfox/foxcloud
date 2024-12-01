@@ -8,11 +8,11 @@ QString Logger::_sep = " | ";                   // 默认分隔符
 QFile* Logger::_logFile = nullptr;
 bool   Logger::_isInit  = false;
 QHash<QtMsgType, QString> Logger::_contextName = {
-    {QtMsgType::QtDebugMsg,     " Debug  "},
-    {QtMsgType::QtInfoMsg,      "  Info  "},
-    {QtMsgType::QtWarningMsg,   "Warning "},
-    {QtMsgType::QtCriticalMsg,  "Critical"},
-    {QtMsgType::QtFatalMsg,     " Fatal  "}
+    {QtMsgType::QtDebugMsg,     "DEBUG"},
+    {QtMsgType::QtInfoMsg,      "INFO "},
+    {QtMsgType::QtWarningMsg,   "WARN "},
+    {QtMsgType::QtCriticalMsg,  "ERROR"},
+    {QtMsgType::QtFatalMsg,     "FATAL"}
 };
 
 /**
@@ -50,11 +50,10 @@ void Logger::init(const QString &path, const QString &date, const QString &sep)
 void Logger::msgOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QTextStream stream(_logFile);
-    stream <<         QDateTime::currentDateTime().toString(_date)
-           << _sep << _contextName.value(type)
-           << _sep << QString(context.file)  // 文件名
+    stream << QDateTime::currentDateTime().toString(_date) << ' '
+           << '['  << _contextName.value(type) << ']' << ' '
+           << QString(context.file) << ":" << QString::number(context.line)  // 文件名+行号
            << _sep << QString(context.function).section('(', -2, -2).section(' ', -1).section(':', -1)  // 函数名
-           << _sep << QString::number(context.line)  // 行号
            << _sep << msg
            << "\n";
 

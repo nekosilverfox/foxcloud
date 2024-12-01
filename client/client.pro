@@ -9,6 +9,9 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    buttongroup.cpp \
+    common/des.c \
+    common/encrypttool.cpp \
     common/jsontool.cpp \
     common/logger.cpp \
     common/networktool.cpp \
@@ -18,7 +21,10 @@ SOURCES += \
     widgetlogintitle.cpp
 
 HEADERS += \
+    buttongroup.h \
     common/config.h \
+    common/des.h \
+    common/encrypttool.h \
     common/jsontool.h \
     common/logger.h \
     common/networktool.h \
@@ -31,6 +37,7 @@ HEADERS += \
     widgetlogintitle.h
 
 FORMS += \
+    buttongroup.ui \
     login.ui \
     mainwindow.ui \
     widgetlogintitle.ui

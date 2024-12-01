@@ -5,5 +5,6 @@
         <file>img/window-minimize.svg</file>
         <file>img/foxcloud-logo.svg</file>
         <file>img/background-blud-prink.jpg</file>
+        <file>img/foxcloud-logo-name.svg</file>
     </qresource>
 </RCC>

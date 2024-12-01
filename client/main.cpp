@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 
     /* 为当前应用统一设置字体 */
     a.setFont(QFont("BM Jua", 14, QFont::Normal, false));
+    a.setWindowIcon(QIcon(":/img/foxcloud-logo-name.svg"));
 
     /* 初始化 Logger */
     // QLoggingCategory::setFilterRules("*.debug=false;");  // 设置日志级别

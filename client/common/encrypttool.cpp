@@ -15,6 +15,8 @@ EncryptTool::EncryptTool() {}
  */
 QByteArray EncryptTool::encryptString(const QString& str)
 {
+    qDebug() << "Start encrypt string" << str;
+
     unsigned char encData[1024] = {0};
     int encDataLen;
 

@@ -18,7 +18,7 @@ public:
 private:
     static QFile* _logFile; // 日志文件指针
     static bool _isInit;    // 是否初始化
-    static QHash<QtMsgType, QString> _contextName;  // 日志级别和对应字符串
+    static QHash<QtMsgType, QString> _contextName;  // 上下文信息（Context Information）日志级别和对应字符串
     static QString _date;   // 日志中日期格式
     static QString _sep;    // 日志中分隔符
 };
