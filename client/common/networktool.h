@@ -13,7 +13,7 @@ public:
     static QString getReplayCode(const QByteArray& replayJsonData);
 
 private:
-    static QNetworkAccessManager* _manager;  // 整个项目维护一个就足够了
+    static QNetworkAccessManager* _manager;  // 整个项目维护一个 QNetworkAccessManager 就足够了
 };
 
 #endif // NETWORKTOOL_H
