@@ -352,7 +352,7 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="QToolButton" name="btnChangeUser">
+       <widget class="QToolButton" name="btnLogout">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>

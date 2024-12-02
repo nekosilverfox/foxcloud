@@ -18,6 +18,8 @@ SOURCES += \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
+    myfilewidget.cpp \
+    transportwidget.cpp \
     widgetlogintitle.cpp \
     windowmanager.cpp
 
@@ -31,10 +33,12 @@ HEADERS += \
     common/networktool.h \
     login.h \
     mainwindow.h \
+    myfilewidget.h \
     structs/foxcloudclientinfo.h \
     structs/httpreplaycode.h \
     structs/userinfo.h \
     structs/webserverinfo.h \
+    transportwidget.h \
     widgetlogintitle.h \
     windowmanager.h
 
@@ -42,6 +46,8 @@ FORMS += \
     buttongroup.ui \
     login.ui \
     mainwindow.ui \
+    myfilewidget.ui \
+    transportwidget.ui \
     widgetlogintitle.ui
 
 # Default rules for deployment.

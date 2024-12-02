@@ -15,6 +15,16 @@ public:
     explicit ButtonGroup(QWidget *parent = nullptr);
     ~ButtonGroup();
 
+    void setCurrentUserLogin(const QString& login);
+
+signals:
+    void onBtnCurrentUserClicked();
+    void onBtnMyFilesClicked();
+    void onBtnShareListClicked();
+    void onBtnTopDownloadClicked();
+    void onBtnTransportListClicked();
+    void onBtnLogoutClicked();
+
 private:
     Ui::ButtonGroup *ui;
 };
