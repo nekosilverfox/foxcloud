@@ -5,14 +5,17 @@
 
 #include "common/logger.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent, const FoxcloudClientInfo& clientInfo, const QString& token) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    _clientInfo(clientInfo),
+    _token(token)
 {
     ui->setupUi(this);
 
-    this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
+    qInfo() << "Init MainWindow";
 
+    this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
 }
 
 MainWindow::~MainWindow()

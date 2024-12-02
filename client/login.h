@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "structs/foxcloudclientinfo.h"
+
 namespace Ui {
 class Login;
 }
@@ -23,6 +25,9 @@ private slots:
     bool registerUser();
     bool loginUser();
     bool connectServer();
+
+signals:
+    void logined(FoxcloudClientInfo clientInfo, QString token);
 
 private:
     Ui::Login *ui;

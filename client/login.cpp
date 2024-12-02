@@ -3,7 +3,6 @@
 
 #include "widgetlogintitle.h"
 #include "common/config.h"
-#include "structs/userinfo.h"
 #include "common/jsontool.h"
 #include "common/networktool.h"
 #include "structs/httpreplaycode.h"
@@ -24,6 +23,9 @@ Login::Login(QWidget *parent)
     , ui(new Ui::Login)
 {
     ui->setupUi(this);
+
+    qInfo() << "Init Login window";
+
     ui->swLoginPages->setCurrentWidget(ui->pageLogin);
 
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
@@ -329,7 +331,9 @@ bool Login::loginUser()
 
         //Token 很重要，之后所有的传输都需要他，用于确认身份
         QString token = NetworkTool::getReplayToken(replayData);
+        emit logined(clientInfo, token);
 
+        this->close();
     });
 
     return true;

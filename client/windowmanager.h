@@ -16,13 +16,22 @@ public:
     static WindowManager& getManger();
 
     void showLogin();
-    void showMainwindow();
+    void showMainWindow();
 
 private:
     explicit WindowManager(QObject *parent = nullptr);
     ~WindowManager();
 
+    void initLogin();
+    void destroyLogin();
+
+    void initMainWindow(const FoxcloudClientInfo& clientInfo,const QString& token);
+    void destroyMainWindow();
+
     void connectSingalSlot();
+
+private slots:
+    void onLogined(const FoxcloudClientInfo& clientInfo,const QString& token);
 
 private:
     Login*      _login;

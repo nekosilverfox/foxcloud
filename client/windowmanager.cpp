@@ -6,9 +6,13 @@
 
 
 WindowManager::WindowManager(QObject* parent) :
-    QObject{parent}, _login(nullptr), _mainwindow(nullptr)
+    QObject{parent},
+    _login(nullptr),
+    _mainwindow(nullptr)
 {
     qInfo() << "Start init Window manager";
+
+    initLogin();
 
     connectSingalSlot();
 }
@@ -45,29 +49,75 @@ WindowManager& WindowManager::getManger()
     return manger;
 }
 
+
+/**
+ * @brief WindowManager::initLogin 初始化 Login 窗口
+ */
+void WindowManager::initLogin()
+{
+    destroyLogin();
+    _login = new Login(nullptr);
+}
+
+void WindowManager::destroyLogin()
+{
+    if (nullptr == _login) return;
+
+    qWarning() << "Destory Login window";
+    _login->close();
+    _login->deleteLater();
+    delete _login;
+    _login = nullptr;
+}
+
+
+/**
+ * @brief WindowManager::initMainWindow 初始化主窗口
+ * @param clientInfo
+ * @param token
+ */
+void WindowManager::initMainWindow(const FoxcloudClientInfo& clientInfo, const QString& token)
+{
+    destroyMainWindow();
+    _mainwindow = new MainWindow(nullptr, clientInfo, token);
+}
+
+void WindowManager::destroyMainWindow()
+{
+    if (nullptr == _mainwindow) return;
+
+    qWarning() << "Destory MainWindow";
+    _mainwindow->close();
+    _mainwindow->deleteLater();
+    delete _mainwindow;
+    _mainwindow = nullptr;
+}
+
+
 /**
  * @brief WindowManager::showLogin 初始化并显示 Login 窗口
  */
 void WindowManager::showLogin()
 {
-    if (!_login)
+    if (_login == nullptr)
     {
-        _login = new Login();
-        qInfo() << "Init Login window";
+        qWarning() << "Login do not init, can not show";
+        return;
     }
 
     _login->show();
 }
 
+
 /**
- * @brief WindowManager::showMainwindow 初始化并显示主窗口
+ * @brief WindowManager::showMainWindow 初始化并显示主窗口
  */
-void WindowManager::showMainwindow()
+void WindowManager::showMainWindow()
 {
-    if (_mainwindow)
+    if (_mainwindow == nullptr)
     {
-        _mainwindow = new MainWindow();
-        qInfo() << "Init Main window";
+        qWarning() << "MainWindow do not init, can not show";
+        return;
     }
 
     _mainwindow->show();
@@ -80,6 +130,17 @@ void WindowManager::showMainwindow()
 void WindowManager::connectSingalSlot()
 {
     qInfo() << "Start connect singals and slots between windows";
+
+    /* 初始化主窗口并显示 */
+    connect(_login, &Login::logined, this, &WindowManager::onLogined);
+
+    qInfo() << "Connected singals and slots between windows";
+}
+
+void WindowManager::onLogined(const FoxcloudClientInfo &clientInfo, const QString &token)
+{
+    initMainWindow(clientInfo, token);
+    showMainWindow();
 }
 
 
