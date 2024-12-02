@@ -60,7 +60,9 @@ void Logger::msgOutput(QtMsgType type, const QMessageLogContext &context, const 
     _logFile->flush();  // 待写数据从缓冲区写入文件
 }
 
-
+/**
+ * @brief Logger::clean 停用自定义日志记录并关闭文件
+ */
 void Logger::clean()
 {
     if (_logFile != nullptr)

@@ -18,7 +18,8 @@ SOURCES += \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
-    widgetlogintitle.cpp
+    widgetlogintitle.cpp \
+    windowmanager.cpp
 
 HEADERS += \
     buttongroup.h \
@@ -34,7 +35,8 @@ HEADERS += \
     structs/httpreplaycode.h \
     structs/userinfo.h \
     structs/webserverinfo.h \
-    widgetlogintitle.h
+    widgetlogintitle.h \
+    windowmanager.h
 
 FORMS += \
     buttongroup.ui \

@@ -3,14 +3,8 @@
 #include <QApplication>
 #include <QLoggingCategory>
 
-#include "widgetlogintitle.h"
-
-#include "structs/foxcloudclientinfo.h"
-#include "structs/webserverinfo.h"
-#include "common/jsontool.h"
+#include "windowmanager.h"
 #include "common/config.h"
-
-#include "login.h"
 #include "common/logger.h"
 
 int main(int argc, char *argv[])
@@ -26,13 +20,7 @@ int main(int argc, char *argv[])
     // QLoggingCategory::setFilterRules("*.debug=false;");  // 设置日志级别
     Logger::init(PATH_LOG, "hh:mm:ss", " | ");  // 初始化 Logger
 
+    WindowManager::getManger().showLogin();
 
-    // Login login;
-    // login.show();
-
-    MainWindow w;
-    w.show();
-
-    // Logger::close();
     return a.exec();
 }
