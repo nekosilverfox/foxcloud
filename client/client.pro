@@ -25,6 +25,7 @@ SOURCES += \
     windowmanager.cpp
 
 HEADERS += \
+    FileInfo.h \
     buttongroup.h \
     common/config.h \
     common/des.h \
