@@ -16,13 +16,13 @@ SOURCES += \
     common/logger.cpp \
     common/networktool.cpp \
     common/uploadlayout.cpp \
+    common/uploadqueue.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
     myfilewidget.cpp \
     transportbar.cpp \
     transportwidget.cpp \
-    uploadqueue.cpp \
     widgetlogintitle.cpp \
     windowmanager.cpp
 
@@ -35,6 +35,7 @@ HEADERS += \
     common/logger.h \
     common/networktool.h \
     common/uploadlayout.h \
+    common/uploadqueue.h \
     login.h \
     mainwindow.h \
     myfilewidget.h \
@@ -45,7 +46,6 @@ HEADERS += \
     structs/webserverinfo.h \
     transportbar.h \
     transportwidget.h \
-    uploadqueue.h \
     widgetlogintitle.h \
     windowmanager.h
 
