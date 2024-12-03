@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "common/logger.h"
+#include "common/clientinfoinstance.h"
 
 
 WindowManager::WindowManager(QObject* parent) :
@@ -76,10 +77,10 @@ void WindowManager::destroyLogin()
  * @param clientInfo
  * @param token
  */
-void WindowManager::initMainWindow(const FoxcloudClientInfo& clientInfo, const QString& token)
+void WindowManager::initMainWindow()
 {
     destroyMainWindow();
-    _mainwindow = new MainWindow(nullptr, clientInfo, token);
+    _mainwindow = new MainWindow(nullptr);
 }
 
 void WindowManager::destroyMainWindow()
@@ -137,9 +138,10 @@ void WindowManager::connectSingalSlot()
     qInfo() << "Connected singals and slots between windows";
 }
 
-void WindowManager::onLogined(const FoxcloudClientInfo &clientInfo, const QString &token)
+void WindowManager::onLogined(const FoxcloudClientInfo& clientInfo, const QString& token)
 {
-    initMainWindow(clientInfo, token);
+    ClientInfoInstance::getInstance()->setClientInfo(clientInfo, token);
+    initMainWindow();
     showMainWindow();
 }
 

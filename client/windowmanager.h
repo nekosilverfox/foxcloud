@@ -19,13 +19,13 @@ public:
     void showMainWindow();
 
 private:
-    explicit WindowManager(QObject *parent = nullptr);
+    explicit WindowManager(QObject* parent = nullptr);
     ~WindowManager();
 
     void initLogin();
     void destroyLogin();
 
-    void initMainWindow(const FoxcloudClientInfo& clientInfo,const QString& token);
+    void initMainWindow();
     void destroyMainWindow();
 
     void connectSingalSlot();

@@ -16,23 +16,6 @@ ClientInfoInstance *ClientInfoInstance::getInstance()
     return _instance;
 }
 
-/**
- * @brief ClientInfoInstance::destory 销毁当前实例
- *
- * 单例对象的销毁操作应该通过静态成员变量管理，而不应该 delete this->_instance 销毁，因为 _instance 是静态成员，与具体的 this 实例无关
- */
-void ClientInfoInstance::destory()
-{
-    if (nullptr == ClientInfoInstance::_instance)
-    {
-        return;
-    }
-
-    delete ClientInfoInstance::_instance;
-    ClientInfoInstance::_instance = nullptr;
-
-    qInfo() << "ClientInfoInstance instance was destoryed";
-}
 
 void ClientInfoInstance::setClientInfo(const FoxcloudClientInfo &clientInfo, const QString &token)
 {
@@ -59,6 +42,11 @@ void ClientInfoInstance::setToken(QString token)
     }
 
     _token = token;
+}
+
+FoxcloudClientInfo ClientInfoInstance::getClientInfo()
+{
+    return _clientInfo;
 }
 
 QString ClientInfoInstance::getLogin()

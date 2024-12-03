@@ -3,22 +3,23 @@
 
 #include <QPainter>
 
-#include "structs/foxcloudclientinfo.h"
 #include "buttongroup.h"
+#include "common/clientinfoinstance.h"
 #include "common/config.h"
 #include "common/logger.h"
 
-MainWindow::MainWindow(QWidget *parent, const FoxcloudClientInfo& clientInfo, const QString& token) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    _clientInfo(clientInfo),
-    _token(token)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     qInfo() << "Init MainWindow";
 
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
+
+    /* 通过单例模式获取唯一的用户信息 */
+    FoxcloudClientInfo clientInfo = ClientInfoInstance::getInstance()->getClientInfo();
 
     /* 修改控件信息 */
     ui->btnGroup->setCurrentUserLogin(clientInfo.userInfo.login);

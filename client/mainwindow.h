@@ -3,8 +3,6 @@
 
 #include <QMainWindow>
 
-#include "structs/foxcloudclientinfo.h"
-
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -16,7 +14,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget* parent = nullptr, const FoxcloudClientInfo& clientInfo = FoxcloudClientInfo(), const QString& token = "");
+    MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
 protected:
@@ -25,8 +23,5 @@ protected:
 
 private:
     Ui::MainWindow* ui;
-
-    FoxcloudClientInfo _clientInfo;  //当前用户配置信息
-    QString            _token;       //
 };
 #endif // MAINWINDOW_H

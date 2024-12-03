@@ -12,12 +12,12 @@ class ClientInfoInstance
 {
 public:
     static ClientInfoInstance* getInstance();
-    static void destory();
 
     void setClientInfo(const FoxcloudClientInfo& clientInfo, const QString& token);
     void setClientInfo(const FoxcloudClientInfo& clientInfo);
     void setToken(QString token);
 
+    FoxcloudClientInfo getClientInfo();
     QString getLogin();
     QString getServerAddress();
     qint16  getServerIp();
