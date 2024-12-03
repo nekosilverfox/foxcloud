@@ -19,6 +19,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     myfilewidget.cpp \
+    transportbar.cpp \
     transportwidget.cpp \
     widgetlogintitle.cpp \
     windowmanager.cpp
@@ -38,6 +39,7 @@ HEADERS += \
     structs/httpreplaycode.h \
     structs/userinfo.h \
     structs/webserverinfo.h \
+    transportbar.h \
     transportwidget.h \
     widgetlogintitle.h \
     windowmanager.h
@@ -47,6 +49,7 @@ FORMS += \
     login.ui \
     mainwindow.ui \
     myfilewidget.ui \
+    transportbar.ui \
     transportwidget.ui \
     widgetlogintitle.ui
 
