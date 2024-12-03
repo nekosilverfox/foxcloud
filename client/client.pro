@@ -20,11 +20,11 @@ SOURCES += \
     myfilewidget.cpp \
     transportbar.cpp \
     transportwidget.cpp \
+    uploadqueue.cpp \
     widgetlogintitle.cpp \
     windowmanager.cpp
 
 HEADERS += \
-    FileInfo.h \
     buttongroup.h \
     common/config.h \
     common/encrypttool.h \
@@ -34,12 +34,14 @@ HEADERS += \
     login.h \
     mainwindow.h \
     myfilewidget.h \
+    structs/fileinfo.h \
     structs/foxcloudclientinfo.h \
     structs/httpreplaycode.h \
     structs/userinfo.h \
     structs/webserverinfo.h \
     transportbar.h \
     transportwidget.h \
+    uploadqueue.h \
     widgetlogintitle.h \
     windowmanager.h
 

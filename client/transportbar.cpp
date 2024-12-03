@@ -1,14 +1,17 @@
 #include "transportbar.h"
 #include "ui_transportbar.h"
 
-TransportBar::TransportBar(QWidget *parent, unsigned int maxValue)
+TransportBar::TransportBar(QWidget *parent, const QString &fileName, const unsigned int maxValue)
     : QWidget(parent)
     , ui(new Ui::TransportBar)
 {
     ui->setupUi(this);
 
-    _max_value = maxValue;
+    ui->lbFileName->setText(fileName);
+    setMaxValue(maxValue);
+    setValue(0);
 }
+
 
 TransportBar::~TransportBar()
 {
@@ -33,7 +36,7 @@ void TransportBar::setFileName(QString name)
  * @brief TransportBar::setValue 设置当前值
  * @param value
  */
-void TransportBar::setValue(unsigned int value)
+void TransportBar::setValue(const unsigned int value)
 {
     ui->progressBar->setValue(value);
     ui->lbPercent->setText(QString::number(value / _max_value, 'f', 2));
@@ -43,7 +46,7 @@ void TransportBar::setValue(unsigned int value)
  * @brief TransportBar::setMaxValue 设置最大值
  * @param value
  */
-void TransportBar::setMaxValue(unsigned int value)
+void TransportBar::setMaxValue(const unsigned int value)
 {
     if (0 == value)
     {
