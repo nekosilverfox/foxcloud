@@ -16,7 +16,7 @@ public:
 
     TransportStatus appendUploadFile(const QString& filePath);
 
-    UploadFileInfo* getFileInfoToUpload();
+    UploadFileInfo* getFileToUpload();
 
     bool isQueueEmpty();
     bool isUploading();
