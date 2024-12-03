@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     buttongroup.cpp \
-    common/des.c \
     common/encrypttool.cpp \
     common/jsontool.cpp \
     common/logger.cpp \
@@ -28,7 +27,6 @@ HEADERS += \
     FileInfo.h \
     buttongroup.h \
     common/config.h \
-    common/des.h \
     common/encrypttool.h \
     common/jsontool.h \
     common/logger.h \

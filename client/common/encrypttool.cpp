@@ -4,7 +4,6 @@
 #include <QCryptographicHash>
 #include <QFile>
 
-#include "des.h"
 
 EncryptTool::EncryptTool() {}
 
@@ -15,24 +14,21 @@ EncryptTool::EncryptTool() {}
  */
 QByteArray EncryptTool::encryptString(const QString& str)
 {
+#if 0
     qDebug() << "Start encrypt string" << str;
 
     unsigned char encData[1024] = {0};
     int encDataLen;
 
-    // 加密
-    int ret = DesDec((unsigned char*)str.toUtf8().data(), str.toUtf8().size(), encData, &encDataLen);
-    if (0 != ret)
-    {
-        qWarning() << "Encrypt fail";
-        return "";
-    }
+    // 加密 TODO
 
     // 再次通过 Base64 加密
     QByteArray result = QByteArray((char*)encData, encDataLen).toBase64();
 
     qDebug() << "Encrypt" << str << "to" << result;
     return result;
+#endif
+    return QByteArray();
 }
 
 /**
