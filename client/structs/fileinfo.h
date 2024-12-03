@@ -10,6 +10,7 @@
  */
 enum TransportStatus
 {
+    SUCCESS,
     FILE_TOO_BIG,       // 文件过大
     ALREADY_IN_QUEUE,   // 文件已经在传输队列
     OPEN_FAILED,        // 打开文件失败

@@ -4,6 +4,7 @@
 #include <QFileInfo>
 
 #include "common/encrypttool.h"
+#include "common/uploadlayout.h"
 #include "transportbar.h"
 
 /* 初始化变量 */
@@ -59,8 +60,13 @@ TransportStatus UploadQueue::appendUploadFile(const QString& filePath)
     uploadFile->isUploaded = false;
     uploadFile->isUploading = false;
 
-    // TODO 添加 layout
+    _queue.append(uploadFile);
 
+    /* 添加到 Upload Layout */
+    UploadLayout::getInstance()->appendTransportBar(uploadFile->bar);
+
+    qInfo() << "Successful append upload task, File:" << uploadFile->path;
+    return TransportStatus::SUCCESS;
 }
 
 /**
@@ -117,12 +123,13 @@ void UploadQueue::removeFinsishedTask()
         if (_queue.at(i)->isUploaded)
         {
             UploadFileInfo* curTask = _queue.takeAt(i);
+
+            UploadLayout::getInstance()->removeTransportBar(curTask->bar);  // 移除布局
+            delete curTask->bar;
+
             curTask->pfile->close();
             delete curTask->pfile;
 
-            /* TODO 移除布局 */
-
-            delete curTask->bar;
             delete curTask;
         }
     }

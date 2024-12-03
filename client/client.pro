@@ -14,6 +14,7 @@ SOURCES += \
     common/jsontool.cpp \
     common/logger.cpp \
     common/networktool.cpp \
+    common/uploadlayout.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     common/jsontool.h \
     common/logger.h \
     common/networktool.h \
+    common/uploadlayout.h \
     login.h \
     mainwindow.h \
     myfilewidget.h \
