@@ -25,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
     /* 修改控件信息 */
     ui->btnGroup->setCurrentUserLogin(clientInfo.userInfo.login);
 
+    /* 登录后显示的主页 */
+    ui->swPages->setCurrentWidget(ui->pUserInfo);
+
     /* 用户信息添加到表格中 */
     QStringList clientInfoKeyList;
     clientInfoKeyList << STR_VAL_LOGIN << STR_VAL_ADDRESS << STR_VAL_PORT;
@@ -46,7 +49,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btnGroup, &ButtonGroup::onBtnCurrentUserClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pUserInfo); });
     connect(ui->btnGroup, &ButtonGroup::onBtnMyFilesClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pMyFile); });
     connect(ui->btnGroup, &ButtonGroup::onBtnTransportListClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pTransport); });
-
+    connect(ui->btnGroup, &ButtonGroup::onBtnTopDownloadClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pTopDownload); });
+    connect(ui->btnGroup, &ButtonGroup::onBtnShareListClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pShare); });
 
     /* 一路跳转到上传显示区域 */
     connect(ui->myFileWidget, &MyFileWidget::jumpToTabUpload, this, [=](){

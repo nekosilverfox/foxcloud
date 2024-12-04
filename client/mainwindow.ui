@@ -115,12 +115,15 @@ QTableWidget::item:selected {
        <item>
         <widget class="QStackedWidget" name="swPages">
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="pUserInfo">
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QTableWidget" name="twClientInfo">
+             <property name="editTriggers">
+              <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+             </property>
              <property name="showGrid">
               <bool>true</bool>
              </property>
@@ -159,6 +162,23 @@ DO</string>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <widget class="TransportWidget" name="transportWidget" native="true"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="pShare">
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>256</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>TO
+DO</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
