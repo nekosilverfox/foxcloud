@@ -35,6 +35,13 @@ namespace JsonKeyForServer
         inline const char* STR_PASSWORD = "pwd";
     }
 
+    namespace CheckMD5
+    {
+        inline const char* STR_LOGIN    = "user";
+        inline const char* STR_TOKEN    = "token";
+        inline const char* STR_MD5      = "md5";
+        inline const char* STR_FILENAME = "fileName";
+    }
 }
 
 #endif // CONFIG_H

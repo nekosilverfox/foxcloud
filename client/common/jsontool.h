@@ -31,6 +31,8 @@ public:
 
     static QByteArray getRegistrationJsonForServer(const UserInfo& userInfo);
     static QByteArray getLoginJsonForServer(const UserInfo& userInfo);
+    static QByteArray getCheckMD5JsonFromServer(const QString& login, const QString& token,
+                                                const QString& fileName, const QString& md5)
 };
 
 #endif // JSONTOOL_H
