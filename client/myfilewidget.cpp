@@ -45,7 +45,7 @@ void MyFileWidget::initListWidgetFiles()
 {
     ui->lwFiles->setViewMode(QListView::IconMode);   //设置显示图标模式
     ui->lwFiles->setIconSize(QSize(50, 50));         //设置图标大小
-    ui->lwFiles->setGridSize(QSize(80, 80));       //设置item大小
+    ui->lwFiles->setGridSize(QSize(80, 80));        //设置item大小
 
     // 设置QLisView大小改变时，图标的调整模式，默认是固定的，可以改成自动调整
     ui->lwFiles->setResizeMode(QListView::Adjust);   //自动适应布局
@@ -281,6 +281,61 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
         }
     });
 
+}
+
+/**
+ * @brief MyFileWidget::clearListWidgetFiles 清空 lwFiles 中所有的 Item
+ */
+void MyFileWidget::clearListWidgetFiles()
+{
+    ui->lwFiles->clear();
+    qInfo() << "Clear all items in lwFiles";
+}
+
+/**
+ * @brief MyFileWidget::refreshListWidgetFiles 刷新lwFile中的内容
+ */
+void MyFileWidget::refreshListWidgetFiles()
+{
+    qInfo() << "Refrsh lwFiles";
+    clearListWidgetFiles();
+
+    if (_cloudFileList.isEmpty())
+    {
+        return;
+    }
+
+    for (CloudFileInfo* i : _cloudFileList)
+    {
+        ui->lwFiles->addItem(i->item);
+    }
+    qInfo() << "Finished add all item in cloud file list";
+}
+
+/**
+ * @brief MyFileWidget::getUserFilesListFromServer 从服务器获取用户文件列表
+ * @param softType 排序方式
+ */
+void MyFileWidget::getUserFilesListFromServer(const SortType softType)
+{
+
+}
+
+/**
+ * @brief MyFileWidget::clearCloudFileList 清空存储云端文件信息的列表
+ */
+void MyFileWidget::clearCloudFileList()
+{
+    while (_cloudFileList.size() != 0)
+    {
+        CloudFileInfo* cur = _cloudFileList.takeFirst();
+
+        delete cur->item;
+        cur->item = nullptr;
+
+        delete cur;
+        cur = nullptr;
+    }
 }
 
 
