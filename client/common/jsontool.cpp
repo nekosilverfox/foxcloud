@@ -277,6 +277,8 @@ QByteArray JsonTool::getCheckMD5JsonForServer(const QString& login,    const QSt
     map.insert(JsonKeyForServer::CheckMD5::STR_MD5,   md5);
     map.insert(JsonKeyForServer::CheckMD5::STR_FILENAME, fileName);
 
+    qDebug() << "Get MD5 Json" << QJsonDocument::fromVariant(map).toJson();
+
     return QJsonDocument::fromVariant(map).toJson();
 }
 

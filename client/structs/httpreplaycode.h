@@ -47,11 +47,11 @@ namespace HttpReplayCode
      * 成功 {"code":"008"}
      * 失败 {"code":"009"}
      */
-        namespace Upload
-        {
+    namespace Upload
+    {
         inline const char* SUCCESS     = "008";
         inline const char* FAIL        = "009";
-        }
+    }
 }
 
 

@@ -21,6 +21,7 @@ public:
 
     void selectUploadFilesAndAppendToQueue();
     void uploadFilesAction();
+    void uploadFile();
 
 
 private:

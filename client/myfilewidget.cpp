@@ -125,7 +125,10 @@ void MyFileWidget::uploadFilesAction()
 
     /* 准备 Request 用于检查当前文件 MD5 */
     ClientInfoInstance* clientInfo = ClientInfoInstance::getInstance();
-    QString url = QString("http://%1:%2/md5").arg(clientInfo->getServerAddress(), clientInfo->getServerPort());
+    QString url = QString("http://%1:%2/md5").arg(clientInfo->getServerAddress(),
+                                                  QString::number(clientInfo->getServerPort()));
+    qDebug() << "Got URL:" << url;
+
     QNetworkRequest request;
     request.setUrl(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -157,7 +160,7 @@ void MyFileWidget::uploadFilesAction()
         else if (code == HttpReplayCode::CheckMD5::SUCCESS)
         {
             qInfo() << file2Upload->name << "successful upload to server";
-            file2Upload->isUploaded = true;  // 设置一下标志位，以便队列识别和移除
+            file2Upload->isUploaded = true;
             queue->removeFinsishedTask();
         }
         else if (code == HttpReplayCode::CheckMD5::FAIL)  // 秒传失败，需要启用真正上传
@@ -173,6 +176,14 @@ void MyFileWidget::uploadFilesAction()
             //TODO 发送重新登陆信号
         }
     });
+
+}
+
+/**
+ * @brief MyFileWidget::uploadFile 上传文件
+ */
+void MyFileWidget::uploadFile()
+{
 
 }
 

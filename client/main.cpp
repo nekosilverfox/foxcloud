@@ -22,10 +22,10 @@ int main(int argc, char *argv[])
     // QLoggingCategory::setFilterRules("*.debug=false;");  // 设置日志级别
     Logger::init(PATH_LOG, "hh:mm:ss", " | ");  // 初始化 Logger
 
-    // WindowManager::getManger().showLogin();
+    WindowManager::getManger().showLogin();
 
-    MainWindow m;
-    m.show();
+    // MainWindow m;
+    // m.show();
 
     return a.exec();
 }
