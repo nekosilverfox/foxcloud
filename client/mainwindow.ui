@@ -6,15 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>985</width>
-    <height>600</height>
+    <width>1135</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QToolButton {
+   <string notr="true">QWidget {
+	background-color: transparent;
+}
+
+QToolButton {
    background-color: rgb(249, 249, 249);
    color: rgb(11, 54, 79);
    border: 2px solid rgb(11, 54, 79);
@@ -36,6 +40,10 @@ QStackedWidget {
    border-radius: 15px;
 }
 
+QScrollArea {
+  background-color: transparent;
+  border: transparent;
+}
 
 QListWidget {
 	background-color: transparent;
@@ -51,6 +59,7 @@ QScrollArea {
 
 QTableWidget {
   background-color: transparent;
+  border: transparent;
 }
 QHeaderView {
   background-color: transparent;
@@ -96,7 +105,7 @@ QTableWidget::item:selected {
        <item>
         <widget class="QStackedWidget" name="swPages">
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="pUserInfo">
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -146,7 +155,7 @@ QTableWidget::item:selected {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>985</width>
+     <width>1135</width>
      <height>24</height>
     </rect>
    </property>
