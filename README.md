@@ -81,8 +81,8 @@
 
     - 如果 `Tracker` 节点和 `Storge` 节点和数据库都在一台主机上，可使用
 
-        ```
-        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 -p POSTGRESQL_PORT:5432 -p NGINX_PORT:80 --name CONTAINER_NAME foxclouldserver
+        ```bash
+        docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 -p STORGE_PORT:23000 -p MYSQL_PORT:3306 -p REDIS_PORT:6379 -p NGINX_PORT:80 --name CONTAINER_NAME foxclouldserver
         ```
 
         
@@ -93,7 +93,7 @@
 
 ## 配置 FDFS
 
-**FDFS 的默认其配置文件都位于 `/etc/fdfs`**，我们需要配置 tracker、storage、client
+**FDFS 的默认其配置文件都位于 `/etc/fdfs`**，我们需要配置 tracker、storage、client。如果你的所有服务都运行在一个容器内，需要至少确认配置加粗的内容。
 
 ### tracker
 
@@ -152,6 +152,25 @@
 | `group_count = `         | **整个** FDFS 系统中有几个组。有几个组就需要把底下几个组（`[group*]`）的信息的注释去掉并正确配置:<br />118 [group1]<br/>119 group_name=group1<br/>120 storage_server_port=23000<br/>121 store_path_count=2<br/>122 store_path0=/home/yuqing/fastdfs<br/>123 store_path1=/home/yuqing/fastdfs1 |
 
 
+
+### 自动启动脚本配置
+
+修改 `/root/foxcloudservers/foxcloud/server/config/cfg.json` 中的数据库用户名及密码：
+
+```json
+...
+"mysql":
+{
+  ...
+  "user": "your_db_username_name",
+  "password": "your_db_password"
+}
+...
+```
+
+
+
+然后重启容器
 
 ---
 
@@ -237,6 +256,7 @@
 | `fdfs_upload_file /etc/fdfs/client.conf FILE`        | 使用 client 直接上传文件，会生成这么一段：`group1/M00/00/00/rBEAAmcNnNWACcJSAACXlD6bcgU7205557` |
 | `fdfs_download_file /etc/fdfs/client.conf FILE_NAME` | 测试文件上传，其中 `FILE_NAME` 为 `groupX/MXX/XX/XX/XXXXXX`  |
 | `pg_isready`                                         | 如果 PostgreSQL 正在运行并且可以接受连接，将输出：accepting connections |
+| `mysqladmin -uroot -p status`                        | 验证 MySQL 安装                                              |
 
 使用 client 节点中直接上传文件时候生成字符串的解释：
 

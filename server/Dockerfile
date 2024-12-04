@@ -228,8 +228,7 @@ EXPOSE 3306
 RUN echo "echo \"Starting server [MySQL]\"" >> $ENTRYPOINT_SH && \
     echo "service mysql start" >> $ENTRYPOINT_SH
 
-
-
+    
 ###############################################################
 # Install Nginx dependencies openssl v3.4.0
 ###############################################################
@@ -342,7 +341,7 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install
     
-# Config fastdfs-nginx-module
+# Config fastdfs-nginx-module，以便FDFS能够通过 URL 直接访问内容
 RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/mod_fastdfs.conf /etc/fdfs/  && \
     cp ${FDFS_BASE_PATH}/fastdfs-6.12.2/conf/http.conf /etc/fdfs/ && \
     cp ${NGINX_BASE_PATH}/nginx-1.16.1/conf/mime.types /etc/fdfs/
@@ -355,7 +354,8 @@ RUN cd ${PROJECT_SOURCE_CODE_PATH}/server && \
     make
 
 # 使用脚本进行启动
-RUN echo "${PROJECT_SOURCE_CODE_PATH}/server/start.sh" >> $ENTRYPOINT_SH
+RUN echo "cd ${PROJECT_SOURCE_CODE_PATH}/server" >> $ENTRYPOINT_SH && \
+    echo "./start.sh" >> $ENTRYPOINT_SH
 
 ###############################################################
 # 自动启动服务
