@@ -21,9 +21,12 @@ public:
     void initListWidgetFiles();  // 初始化 lwFiles 文件列表
     void startCheckTransportQueue(size_t interval = 1000);
 
+    /* 用于上传文件 */
     void selectUploadFilesAndAppendToQueue();
     void uploadFilesAction();
     void uploadRealFile(UploadFileInfo* file2Upload);
+
+    /* 获取文件列表 */
 
 
 private:

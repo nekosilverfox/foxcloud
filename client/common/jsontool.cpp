@@ -255,7 +255,7 @@ QByteArray JsonTool::getLoginJsonForServer(const UserInfo &userInfo)
 /**
  * @brief JsonTool::getCheckMD5JsonForServer 用于获取向服务器检查文件 MD5 是否存在 JSON
  * @param login 用户 login
- * @param token
+ * @param token 身份识别码
  * @param fileName 文件名
  * @param md5
  * @return 转换为 QByteArray 的二进制的 JSON 对象
@@ -280,6 +280,53 @@ QByteArray JsonTool::getCheckMD5JsonForServer(const QString& login,    const QSt
     qDebug() << "Get MD5 Json" << QJsonDocument::fromVariant(map).toJson();
 
     return QJsonDocument::fromVariant(map).toJson();
+}
+
+/**
+ * @brief JsonTool::getUserFilesNumberJsonForServer 用于向服务器发送 Request 获取用户文件数量的 JSON
+ * @param login 用户 login
+ * @param token 身份识别码
+ * @return
+ */
+QByteArray JsonTool::getUserFilesNumberJsonForServer(const QString &login, const QString &token)
+{
+    /*json数据如下
+    {
+        user:xxxx
+        token: xxxx
+    }
+    */
+    QJsonObject obj;
+    obj.insert(JsonKeyForServer::UserFilesNumber::STR_LOGIN, login);
+    obj.insert(JsonKeyForServer::UserFilesNumber::STR_TOKEN, token);
+
+    return QJsonDocument(obj).toJson();
+}
+
+/**
+ * @brief JsonTool::getUserFilesListJsonForServer 用于向服务器发送 Request 用于获取文件列表的 JSON
+ * @param login 用户 login
+ * @param token 身份识别码
+ * @param start
+ * @param number
+ * @return
+ */
+QByteArray JsonTool::getUserFilesListJsonForServer(const QString &login, const QString &token,
+                                                   const int start, const int number)
+{
+    /*{
+        "user": "yoyo"
+        "token": "xxx"
+        "start": 0
+        "count": 10
+    }*/
+    QJsonObject obj;
+    obj.insert(JsonKeyForServer::UserFilesList::STR_LOGIN, login);
+    obj.insert(JsonKeyForServer::UserFilesList::STR_TOKEN, token);
+    obj.insert(JsonKeyForServer::UserFilesList::STR_START, start);
+    obj.insert(JsonKeyForServer::UserFilesList::STR_NUMBER, number);
+
+    return QJsonDocument(obj).toJson();
 }
 
 
