@@ -123,6 +123,7 @@ void UploadQueue::removeFinsishedTask()
         if (_queue.at(i)->isUploaded)
         {
             UploadFileInfo* curTask = _queue.takeAt(i);
+            qInfo() << "Remove" << curTask->name << "from upload queue";
 
             UploadLayout::getInstance()->removeTransportBar(curTask->bar);  // 移除布局
             delete curTask->bar;

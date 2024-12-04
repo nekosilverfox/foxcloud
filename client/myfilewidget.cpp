@@ -6,6 +6,9 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QHttpMultiPart>
+#include <QHttpPart>
+#include <QMimeDatabase>
 
 
 #include "structs/fileinfo.h"
@@ -166,7 +169,7 @@ void MyFileWidget::uploadFilesAction()
         else if (code == HttpReplayCode::CheckMD5::FAIL)  // 秒传失败，需要启用真正上传
         {
             qInfo() << file2Upload->name << "match MD5 failed, need to upload";
-            //TODO
+            uploadRealFile(file2Upload);
         }
         else if (code == HttpReplayCode::CheckMD5::TOKEN_ERROR)
         {
@@ -179,14 +182,106 @@ void MyFileWidget::uploadFilesAction()
 
 }
 
+
 /**
- * @brief MyFileWidget::uploadFile 上传文件
+ * @brief MyFileWidget::uploadRealFile 开始上传真实文件
+ * @param file2Upload 需要上传的文件
  */
-void MyFileWidget::uploadFile()
+void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
 {
+    qInfo() << "Start upload real file" << file2Upload->name;
+
+    ClientInfoInstance* client = ClientInfoInstance::getInstance();
+    QHttpPart part;
+    QString disp = QString("form-data; "
+                           "user=\"%1\"; "
+                           "filename=\"%2\"; "
+                           "md5=\"%3\"; "
+                           "size=%4")
+                       .arg(client->getLogin(),
+                            file2Upload->name,
+                            file2Upload->md5,
+                            QString::number(file2Upload->size));
+    qDebug() << "Get upload disp" << disp;
+    part.setHeader(QNetworkRequest::ContentDispositionHeader, disp);
+
+
+    // 动态设置Content-Type
+    QMimeDatabase mimeDatabase;
+    QMimeType mimeType = mimeDatabase.mimeTypeForFile(file2Upload->name);
+    QString mimeName = mimeType.isValid() ? mimeType.name() : "application/octet-stream";
+    part.setHeader(QNetworkRequest::ContentTypeHeader, mimeName);
+    part.setBodyDevice(file2Upload->pfile);
+
+    QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    multiPart->append(part);
+
+    QNetworkRequest request;
+    QString url = QString("http://%1:%2/upload")
+                      .arg(client->getServerAddress(),
+                           QString::number(client->getServerPort()));
+    request.setUrl(url);
+    qDebug() << "Got URL:" << url;
+
+    // 注意：`QHttpMultiPart` 会自动设置适当的 `Content-Type`，不需要手动设置
+    // 如果手动设置，可能会覆盖自动生成的边界信息，导致请求失败
+    // 所以这里不需要设置 `Content-Type`，让 `QHttpMultiPart` 处理
+    // request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
+    QNetworkReply* reply = NetworkTool::getNetworkManager()->post(request, multiPart);
+
+    // 确保在合适的时候删除 `multiPart`，例如在 `reply` 的 `finished` 信号中
+    multiPart->setParent(reply); // 让 `multiPart` 在 `reply` 结束时自动删除
+
+    /*
+     * 参数说明：
+     *      bytesSent：已经上传的字节数。
+     *      bytesTotal：要上传的总字节数。如果无法确定总字节数，这个值可能是 -1。
+     *      信号触发：每当上传过程中有新的数据被发送到服务器时，这个信号会被触发。
+     */
+    connect(reply, &QNetworkReply::uploadProgress, this, [=](qint64 bytesSent, qint64 bytesTotal){
+        if (bytesTotal > 0)
+        {
+            file2Upload->bar->setValue(bytesSent);
+        }
+    });
+
+    /* 所有数据发送完成 */
+    UploadQueue* queue = UploadQueue::getInstance();
+    connect(reply, &QNetworkReply::finished, this, [=](){
+        QString curFileName = file2Upload->name;
+        qDebug() << "Reply upload file" << curFileName << "finished";
+
+        /* 无论如何，设置完成 */
+        file2Upload->isUploaded = true;
+        queue->removeFinsishedTask();
+
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qCritical() << "Upload file" << curFileName << "failed" << reply->errorString();
+            reply->deleteLater();
+            return;
+        }
+
+        QByteArray replyData = reply->readAll();
+        reply->deleteLater();
+        multiPart->deleteLater();
+
+        const QString code = NetworkTool::getReplayCode(replyData);
+        if (code == HttpReplayCode::Upload::SUCCESS)
+        {
+            qInfo() << curFileName << "success upload to server";
+        }
+        else if (code == HttpReplayCode::Upload::FAIL)
+        {
+            qCritical() << curFileName << "FAILED upload to server";
+        }
+        else
+        {
+            qCritical() << "Unknow reply code" << code;
+        }
+    });
 
 }
-
 
 
 

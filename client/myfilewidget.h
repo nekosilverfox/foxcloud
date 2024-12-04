@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QTimer>
 
+#include "structs/fileinfo.h"
+
 namespace Ui {
 class MyFileWidget;
 }
@@ -21,7 +23,7 @@ public:
 
     void selectUploadFilesAndAppendToQueue();
     void uploadFilesAction();
-    void uploadFile();
+    void uploadRealFile(UploadFileInfo* file2Upload);
 
 
 private:
