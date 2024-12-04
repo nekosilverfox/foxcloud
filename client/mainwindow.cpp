@@ -7,6 +7,7 @@
 #include "common/clientinfoinstance.h"
 #include "common/config.h"
 #include "common/logger.h"
+#include "common/uploadlayout.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

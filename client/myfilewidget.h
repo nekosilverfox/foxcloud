@@ -2,6 +2,7 @@
 #define MYFILEWIDGET_H
 
 #include <QWidget>
+#include <QTimer>
 
 namespace Ui {
 class MyFileWidget;
@@ -15,8 +16,16 @@ public:
     explicit MyFileWidget(QWidget *parent = nullptr);
     ~MyFileWidget();
 
+    void initListWidgetFiles();  // 初始化 lwFiles 文件列表
+    void startCheckTransportQueue(size_t interval);
+    void selectUploadFilesAndAppendToQueue();
+
+
+
 private:
     Ui::MyFileWidget *ui;
+
+    QTimer _transportChecker;  // 定时器，每隔一段时间检查上传任务队列或者下载队列
 };
 
 #endif // MYFILEWIDGET_H
