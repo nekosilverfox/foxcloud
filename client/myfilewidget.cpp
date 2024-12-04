@@ -41,6 +41,9 @@ MyFileWidget::MyFileWidget(QWidget *parent)
         qDebug() << "Catch signal MyFileWidget::numberOfCloudFilesUpdated, start get cloud file list";
         if (_numberCloudFiles > 0)
         {
+            /* 一定要清空列表，不然会在第二次获取文件列表的时候造成奔溃 */
+            clearCloudFileList();
+
             // 开始递归获取文件列表，这里是递归入口
             getUserFilesListFromServer(SortType::Normal, 0, 10);
         }
@@ -303,6 +306,7 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
 void MyFileWidget::clearListWidgetFiles()
 {
     ui->lwFiles->clear();
+
     qInfo() << "Clear all items in lwFiles";
 }
 
