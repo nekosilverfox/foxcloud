@@ -36,16 +36,19 @@ public:
 
     /* 获取文件列表 */
     void getUserNumberFilesFromServer();
-    void getUserFilesListFromServer(const SortType softType);
+    void getUserFilesListFromServer(const SortType softType, const size_t startPos = 0, const size_t numPerRequest = 20);
 
 
     /* 操作私有成员 */
     void clearCloudFileList();
 
+signals:
+    void numberOfCloudFilesUpdated();  // 云端文件数量已更新（收到此信号后应该重新获取文件列表并刷新到 ui）
 
 private:
     Ui::MyFileWidget *ui;
 
+    long _numberCloudFiles;
     QList<CloudFileInfo*> _cloudFileList;  // 用户云端文件列表
 
     QTimer _transportChecker;  // 定时器，每隔一段时间检查上传任务队列或者下载队列

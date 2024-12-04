@@ -21,6 +21,7 @@ WindowManager::WindowManager(QObject* parent) :
 WindowManager::~WindowManager()
 {
     qInfo() << "Destory Window manager";
+    qInfo() << "=================================================================================";
 
     if (_login != nullptr)
     {

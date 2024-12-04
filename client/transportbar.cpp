@@ -39,7 +39,7 @@ void TransportBar::setFileName(QString name)
 void TransportBar::setValue(const unsigned int value)
 {
     ui->progressBar->setValue(value);
-    ui->lbPercent->setText(QString::number(value / _max_value, 'f', 2));
+    ui->lbPercent->setText(QString::number((double)value / (double)_max_value * 100.00, 'f', 2));
 }
 
 /**

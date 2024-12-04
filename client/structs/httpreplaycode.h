@@ -58,6 +58,15 @@ namespace HttpReplayCode
         inline const char* SUCCESS     = "110";
         inline const char* FAIL        = "111";
     }
+
+    /*
+     * 获取文件列表
+     */
+    namespace GetUserFilesList
+    {
+        inline const char* TOKEN_ERROR = "111";
+        inline const char* FAIL        = "015";
+    }
 }
 
 

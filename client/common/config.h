@@ -55,6 +55,10 @@ namespace JsonKeyForServer
         inline const char* STR_TOKEN    = "token";
         inline const char* STR_START    = "start";
         inline const char* STR_NUMBER   = "count";
+
+        inline const char* STR_SORT_TYPE_NORMAL = "normal";
+        inline const char* STR_SORT_TYPE_ASC    = "pvasc";
+        inline const char* STR_SORT_TYPE_DESC   = "pvdesc";
     }
 }
 

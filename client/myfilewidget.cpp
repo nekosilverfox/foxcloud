@@ -24,6 +24,8 @@ MyFileWidget::MyFileWidget(QWidget *parent)
 {
     ui->setupUi(this);
 
+    _numberCloudFiles = 0;
+
     /* 初始化文件显示控件 */
     initListWidgetFiles();
 
@@ -31,6 +33,18 @@ MyFileWidget::MyFileWidget(QWidget *parent)
     startCheckTransportQueue(1000);
 
     connect(ui->btnUpload, &QPushButton::clicked, this, &MyFileWidget::selectUploadFilesAndAppendToQueue);
+    connect(ui->btnRefresh, &QPushButton::clicked, this, [=](){
+        getUserNumberFilesFromServer();
+    });
+
+    connect(this, &MyFileWidget::numberOfCloudFilesUpdated, this, [=](){
+        qDebug() << "Catch signal MyFileWidget::numberOfCloudFilesUpdated, start get cloud file list";
+        if (_numberCloudFiles > 0)
+        {
+            // 开始递归获取文件列表，这里是递归入口
+            getUserFilesListFromServer(SortType::Normal, 0, 10);
+        }
+    });
 }
 
 MyFileWidget::~MyFileWidget()
@@ -66,7 +80,7 @@ void MyFileWidget::startCheckTransportQueue(size_t interval)
 {
     // TODO
     connect(&_transportChecker, &QTimer::timeout, this, &MyFileWidget::uploadFilesAction);
-    connect(&_transportChecker, &QTimer::timeout, this, [=](){getUserNumberFilesFromServer();});
+    connect(&_transportChecker, &QTimer::timeout, this, [=](){});
 
     _transportChecker.start(interval);  // 启动定时器以便触发定时检查
 }
@@ -297,7 +311,7 @@ void MyFileWidget::clearListWidgetFiles()
  */
 void MyFileWidget::refreshListWidgetFiles()
 {
-    qInfo() << "Refrsh lwFiles";
+    qInfo() << "Start refrsh lwFiles";
     clearListWidgetFiles();
 
     if (_cloudFileList.isEmpty())
@@ -363,16 +377,112 @@ void MyFileWidget::getUserNumberFilesFromServer()
 
         size_t numCloudFiles = NetworkTool::getReplayNumberFiles(replyData);
         qInfo() << "Got number of user cloud files from server:" << numCloudFiles;
+
+        _numberCloudFiles = numCloudFiles;
+        qInfo() << "Updated number of user cloud files to" << _numberCloudFiles;
+
+        /* 发送信号去获取用户文件列表 */
+        emit MyFileWidget::numberOfCloudFilesUpdated();
     });
 }
 
 /**
- * @brief MyFileWidget::getUserFilesListFromServer 从服务器获取用户文件列表
- * @param softType 排序方式
+ * @brief MyFileWidget::getUserFilesListFromServer
+ * @param softType 文件的排序方式
+ * @param startPos 本次请求开始的位置（从数据表中的哪个位置开始取）
+ * @param numPerRequest 每次请求的数量（从数据表中的那个位置取多少个）
  */
-void MyFileWidget::getUserFilesListFromServer(const SortType softType)
+void MyFileWidget::getUserFilesListFromServer(const SortType softType, const size_t startPos, const size_t numPerRequest)
 {
+    qInfo() << "Start get file list from server, need to get" << _numberCloudFiles
+            << "will start with postion" << startPos
+            << "get" << numPerRequest << "items this time";
 
+    size_t curStartPos = startPos;
+    size_t curRequestNum = numPerRequest;  // 本次要请求的数量
+
+    // 遍历数目，结束条件处理
+    if (_numberCloudFiles <= 0)  // 结束条件，这个条件很重要，函数递归的结束条件
+    {
+        qInfo() << "Finish got user cloud file list";
+        refreshListWidgetFiles();
+        return;
+    }
+    else if (numPerRequest > _numberCloudFiles)
+    {
+        curRequestNum = _numberCloudFiles;
+    }
+
+
+    // 获取用户文件信息 127.0.0.1:80/myfiles&cmd=normal
+    // 按下载量升序 127.0.0.1:80/myfiles?cmd=pvasc
+    // 按下载量降序127.0.0.1:80/myfiles?cmd=pvdesc
+    QString cmd;
+    switch (softType)
+    {
+    case SortType::Normal:
+        cmd = JsonKeyForServer::UserFilesList::STR_SORT_TYPE_NORMAL;
+        break;
+
+    case SortType::AscDownloadCount:
+        cmd = JsonKeyForServer::UserFilesList::STR_SORT_TYPE_ASC;
+        break;
+
+        case SortType::DescDownloadCount:
+        cmd = JsonKeyForServer::UserFilesList::STR_SORT_TYPE_DESC;
+        break;
+
+    default:
+        cmd = JsonKeyForServer::UserFilesList::STR_SORT_TYPE_NORMAL;
+        break;
+    }
+
+    ClientInfoInstance* client = ClientInfoInstance::getInstance();
+    QString url = QString("http://%1:%2/myfiles?cmd=%3")
+                      .arg(client->getServerAddress(), QString::number(client->getServerPort()), cmd);
+    qDebug() << "Url for get file list from server:" << url;
+
+    QNetworkRequest request;
+    request.setUrl(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+
+    QByteArray postData = JsonTool::getUserFilesListJsonForServer(client->getLogin(), client->getToken(),
+                                                                  curStartPos, numPerRequest);
+    /* 改变下次请求位置 */
+    curStartPos += numPerRequest;
+    _numberCloudFiles -= numPerRequest;
+
+    QNetworkReply* reply = NetworkTool::getNetworkManager()->post(request, postData);
+    connect(reply, &QNetworkReply::finished, this, [=](){
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qCritical() << "Got file list from server failed" << reply->errorString();
+            reply->deleteLater();
+            return;
+        }
+
+        QByteArray replyData = reply->readAll();
+        reply->deleteLater();
+        qDebug() << "Got reply from server" << replyData;
+
+        const QString code = NetworkTool::getReplayCode(replyData);
+        if (HttpReplayCode::GetUserFilesList::FAIL == code)
+        {
+            qCritical() << "Got file list from server failed";
+            return;
+        }
+        else if (HttpReplayCode::GetUserFilesList::TOKEN_ERROR == code)
+        {
+            qWarning() << "Failed token authentication";
+            QMessageBox::warning(this, "Account Exception", "Please log in again");
+            // TODO 发送重新登陆信号
+            return;
+        }
+
+        /* 如果没错误就递归获取 */
+        _cloudFileList.append(NetworkTool::getReplayCloudFilesList(replyData));
+        getUserFilesListFromServer(softType, curStartPos, numPerRequest);
+    });
 }
 
 /**
