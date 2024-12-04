@@ -156,6 +156,7 @@ bool Login::registerUser()
     }
 
     /* 加密密码 */
+    QString tmpPwd = user.password;  // 用于之后填到登录界面
     user.password = EncryptTool::getStrMD5(user.password).toBase64();
 
     /* 注册信息转为 JSON */
@@ -194,7 +195,7 @@ bool Login::registerUser()
         {
             /* 帮用户把成功的信息填到输入框，然后跳转 */
             ui->lePageLoginLogin->setText(user.login);
-            ui->lePageLoginPwd->setText(user.password);
+            ui->lePageLoginPwd->setText(tmpPwd);
             ui->swLoginPages->setCurrentWidget(ui->pageLogin);
 
             /* 保存信息 */
@@ -326,7 +327,7 @@ bool Login::loginUser()
         }
 
         //TODO 登陆成功后调用的东西，还需要保存下 token
-        QMessageBox::information(this, "Login", "Successed login!");
+        // QMessageBox::information(this, "Login", "Successed login!");
         JsonTool::overwriteFoxcloudClientInfo(clientInfo);
 
         //Token 很重要，之后所有的传输都需要他，用于确认身份
@@ -365,7 +366,8 @@ bool Login::connectServer()
     }
 
 
-// TODO
+// TODO 增加连接ping服务器的测试方法
+
     return true;
 }
 

@@ -47,7 +47,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btnGroup, &ButtonGroup::onBtnMyFilesClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pMyFile); });
     connect(ui->btnGroup, &ButtonGroup::onBtnTransportListClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pTransport); });
 
+
+    /* 一路跳转到上传显示区域 */
+    connect(ui->myFileWidget, &MyFileWidget::jumpToTabUpload, this, [=](){
+        ui->swPages->setCurrentWidget(ui->pTransport);
+        ui->transportWidget->turnToTabUpload();
+    });
+
     connect(ui->btnGroup, &ButtonGroup::onBtnLogoutClicked, this, [](){ emit &ButtonGroup::onBtnLogoutClicked; });  //TODO 完成退出流程，文件停止传输等
+
 }
 
 MainWindow::~MainWindow()

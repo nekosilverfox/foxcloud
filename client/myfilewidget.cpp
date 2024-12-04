@@ -249,6 +249,9 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
     // 确保在合适的时候删除 `multiPart`，例如在 `reply` 的 `finished` 信号中
     multiPart->setParent(reply); // 让 `multiPart` 在 `reply` 结束时自动删除
 
+    /* 跳转到上传界面 */
+    emit MyFileWidget::jumpToTabUpload();
+
     /*
      * 参数说明：
      *      bytesSent：已经上传的字节数。

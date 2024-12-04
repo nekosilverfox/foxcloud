@@ -43,7 +43,8 @@ public:
     void clearCloudFileList();
 
 signals:
-    void numberOfCloudFilesUpdated();  // 云端文件数量已更新（收到此信号后应该重新获取文件列表并刷新到 ui）
+    void jumpToTabUpload();            // 跳转到上传界面
+    void numberOfCloudFilesUpdated();  // 云端文件数量已更新（收到此信号后应该重新从服务器获取文件列表并刷新到 ui）
 
 private:
     Ui::MyFileWidget *ui;

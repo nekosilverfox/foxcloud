@@ -115,7 +115,7 @@ QTableWidget::item:selected {
        <item>
         <widget class="QStackedWidget" name="swPages">
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="pUserInfo">
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -138,11 +138,27 @@ QTableWidget::item:selected {
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="pTopDownload"/>
+         <widget class="QWidget" name="pTopDownload">
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="font">
+              <font>
+               <pointsize>256</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>TO
+DO</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
          <widget class="QWidget" name="pTransport">
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="TransportWidget" name="widget" native="true"/>
+            <widget class="TransportWidget" name="transportWidget" native="true"/>
            </item>
           </layout>
          </widget>

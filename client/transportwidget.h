@@ -15,6 +15,8 @@ public:
     explicit TransportWidget(QWidget *parent = nullptr);
     ~TransportWidget();
 
+    void turnToTabUpload();
+
 private:
     Ui::TransportWidget *ui;
 };
