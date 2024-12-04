@@ -12,7 +12,7 @@ public:
     static QNetworkAccessManager* getNetworkManager();
     static QString getReplayCode(const QByteArray& replayJsonData);
     static QString getReplayToken(const QByteArray& replayJsonData);
-    static QString getReplayNumberFiles(const QByteArray& replayJsonData);
+    static size_t  getReplayNumberFiles(const QByteArray& replayJsonData);
     static QList<CloudFileInfo*> getReplayCloudFilesList(const QByteArray& replayJsonData);
 
 private:

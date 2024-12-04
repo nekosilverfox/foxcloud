@@ -85,7 +85,7 @@ QString NetworkTool::getReplayToken(const QByteArray &replayJsonData)
  * @param replayJsonData 服务器发回的 JSON 数据
  * @return 文件数量
  */
-QString NetworkTool::getReplayNumberFiles(const QByteArray &replayJsonData)
+size_t NetworkTool::getReplayNumberFiles(const QByteArray &replayJsonData)
 {
     qInfo() << "Parses the reply from the server:" << replayJsonData;
 
@@ -94,19 +94,19 @@ QString NetworkTool::getReplayNumberFiles(const QByteArray &replayJsonData)
     if (error.error != QJsonParseError::NoError)
     {
         qCritical() << "Json format error:" << error.errorString();
-        return HttpReplayCode::Reg::EMPTY;
+        return 0;
     }
 
     if (doc.isNull() || doc.isEmpty() || !doc.isObject() || !doc.object().contains("num"))
     {
         qCritical() << "Can not get replay `num`, wrong json format: " << replayJsonData;
-        return HttpReplayCode::Reg::EMPTY;
+        return 0;
     }
 
-    QString num = doc.object().value("num").toString();
-    qDebug() << "Get replay num :" << num;
+    // 无法直接使用获得整型值：doc.object().value("num").toInt()
+    // qDebug() << "Get replay num :" << doc.object().value("num").toString().toULongLong();
 
-    return num;
+    return doc.object().value("num").toString().toULongLong();
 }
 
 /**

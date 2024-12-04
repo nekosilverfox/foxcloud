@@ -52,6 +52,12 @@ namespace HttpReplayCode
         inline const char* SUCCESS     = "008";
         inline const char* FAIL        = "009";
     }
+
+    namespace UserNumberCloudFiles
+    {
+        inline const char* SUCCESS     = "110";
+        inline const char* FAIL        = "111";
+    }
 }
 
 

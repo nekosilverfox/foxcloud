@@ -35,7 +35,9 @@ public:
     void refreshListWidgetFiles();
 
     /* 获取文件列表 */
+    void getUserNumberFilesFromServer();
     void getUserFilesListFromServer(const SortType softType);
+
 
     /* 操作私有成员 */
     void clearCloudFileList();

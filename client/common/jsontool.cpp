@@ -283,12 +283,12 @@ QByteArray JsonTool::getCheckMD5JsonForServer(const QString& login,    const QSt
 }
 
 /**
- * @brief JsonTool::getUserFilesNumberJsonForServer 用于向服务器发送 Request 获取用户文件数量的 JSON
+ * @brief JsonTool::getUserNumberFilesJsonForServer 用于向服务器发送 Request 获取用户文件数量的 JSON
  * @param login 用户 login
  * @param token 身份识别码
  * @return
  */
-QByteArray JsonTool::getUserFilesNumberJsonForServer(const QString &login, const QString &token)
+QByteArray JsonTool::getUserNumberFilesJsonForServer(const QString &login, const QString &token)
 {
     /*json数据如下
     {

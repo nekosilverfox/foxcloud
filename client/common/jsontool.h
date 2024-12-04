@@ -33,7 +33,7 @@ public:
     static QByteArray getLoginJsonForServer(const UserInfo& userInfo);
     static QByteArray getCheckMD5JsonForServer(const QString& login, const QString& token,
                                                 const QString& fileName, const QString& md5);
-    static QByteArray getUserFilesNumberJsonForServer(const QString& login, const QString& token);
+    static QByteArray getUserNumberFilesJsonForServer(const QString& login, const QString& token);
     static QByteArray getUserFilesListJsonForServer(const QString& login, const QString& token,
                                                     const int start, const int number);
 

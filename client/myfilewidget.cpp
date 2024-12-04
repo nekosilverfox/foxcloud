@@ -66,7 +66,7 @@ void MyFileWidget::startCheckTransportQueue(size_t interval)
 {
     // TODO
     connect(&_transportChecker, &QTimer::timeout, this, &MyFileWidget::uploadFilesAction);
-    connect(&_transportChecker, &QTimer::timeout, this, [](){});
+    connect(&_transportChecker, &QTimer::timeout, this, [=](){getUserNumberFilesFromServer();});
 
     _transportChecker.start(interval);  // 启动定时器以便触发定时检查
 }
@@ -310,6 +310,60 @@ void MyFileWidget::refreshListWidgetFiles()
         ui->lwFiles->addItem(i->item);
     }
     qInfo() << "Finished add all item in cloud file list";
+}
+
+/**
+ * @brief MyFileWidget::getUserNumberFilesFromServer 从服务端获取用户文件数量
+ */
+void MyFileWidget::getUserNumberFilesFromServer()
+{
+    qInfo() << "Start get number of cloud files from server";
+
+    ClientInfoInstance* client = ClientInfoInstance::getInstance();
+    QString url = QString("http://%1:%2/myfiles?cmd=count")
+                      .arg(client->getServerAddress(), QString::number(client->getServerPort()));
+    qDebug() << "Url for get number of cloud files from server:" << url;
+
+    QNetworkRequest request;
+    request.setUrl(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+
+    QByteArray postData = JsonTool::getUserNumberFilesJsonForServer(client->getLogin(), client->getToken());
+    QNetworkReply* reply = NetworkTool::getNetworkManager()->post(request, postData);
+
+    connect(reply, &QNetworkReply::finished, this, [=](){
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qCritical() << "Got number of user cloud files from server failed" << reply->errorString();
+            reply->deleteLater();
+            return;
+        }
+
+        QByteArray replyData = reply->readAll();
+        reply->deleteLater();
+        qDebug() << "Got reply from server" << replyData;
+
+        const QString code = NetworkTool::getReplayCode(replyData);
+        if (HttpReplayCode::UserNumberCloudFiles::SUCCESS == code)
+        {
+            qInfo() << "Successful got number of user cloud files from server";
+        }
+        else if (HttpReplayCode::UserNumberCloudFiles::FAIL == code)
+        {
+            qWarning() << "Failed token authentication";
+            QMessageBox::warning(this, "Account Exception", "Please log in again");
+            // TODO 发送重新登陆信号
+            return;
+        }
+        else
+        {
+            qCritical() << "Unknow reply code" << code;
+            // return;
+        }
+
+        size_t numCloudFiles = NetworkTool::getReplayNumberFiles(replyData);
+        qInfo() << "Got number of user cloud files from server:" << numCloudFiles;
+    });
 }
 
 /**
