@@ -69,7 +69,7 @@ TransportStatus UploadQueue::appendUploadFile(const QString& filePath)
     return TransportStatus::SUCCESS;
 }
 
-/**
+/** TODO 如果多任务上传这里需要修改获取方式
  * @brief UploadQueue::getFileToUpload 获取一个需要上传的文件（队列第 0 个文件），如果没有任务上传，设置第 0 个上传
  * @return 队列中第一个任务，如果队列为空则返回 nullptr
  */

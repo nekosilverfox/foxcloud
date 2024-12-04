@@ -20,7 +20,7 @@ public:
     FoxcloudClientInfo getClientInfo();
     QString getLogin();
     QString getServerAddress();
-    qint16  getServerIp();
+    qint16  getServerPort();
     QString getToken();
 
 private:

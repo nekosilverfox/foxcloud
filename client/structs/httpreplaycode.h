@@ -2,8 +2,7 @@
 #define HTTPREPLAYCODE_H
 
 /*
- * Server 返回的数据
-
+ * Server 返回的数据中 code 的对应值
 */
 namespace HttpReplayCode
 {
@@ -30,6 +29,29 @@ namespace HttpReplayCode
         inline const char* FAIL        = "001";
     }
 
+    /* 通过 MD5 秒传文件：
+     * 文件已存在：{"code":"005"}
+     * 秒传成功：  {"code":"006"}
+     * 秒传失败：  {"code":"007"}
+     * token验证失败：{"code":"111"}
+     */
+    namespace CheckMD5
+    {
+        inline const char* FILE_EXIST   = "005";
+        inline const char* SUCCESS      = "006";
+        inline const char* FAIL         = "007";
+        inline const char* TOKEN_ERROR  = "111";
+    }
+
+    /* 上传文件
+     * 成功 {"code":"008"}
+     * 失败 {"code":"009"}
+     */
+        namespace Upload
+        {
+        inline const char* SUCCESS     = "008";
+        inline const char* FAIL        = "009";
+        }
 }
 
 

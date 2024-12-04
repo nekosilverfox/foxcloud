@@ -59,7 +59,7 @@ QString ClientInfoInstance::getServerAddress()
     return _clientInfo.webServerInfo.address;
 }
 
-qint16 ClientInfoInstance::getServerIp()
+qint16 ClientInfoInstance::getServerPort()
 {
     return _clientInfo.webServerInfo.port;
 }

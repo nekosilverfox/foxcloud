@@ -11,8 +11,7 @@
 class JsonTool
 {
 public:
-    JsonTool();
-
+    /* 用于处理本地用户信息 */
     static QJsonObject userInfoToJsonObj(const UserInfo& userInfo);
 
     static FoxcloudClientInfo getFoxcloudClientInfo(const QString& jsonPath = PATH_FOXCLOUD_CLIENT_CONFIG);
@@ -29,10 +28,15 @@ public:
     static bool overwriteWebServerInfo(const WebServerInfo& webServerInfo,
                                        const QString& jsonPath = PATH_FOXCLOUD_CLIENT_CONFIG);
 
+    /* 用于构造向服务器发送 Requests 中的 JSON */
     static QByteArray getRegistrationJsonForServer(const UserInfo& userInfo);
     static QByteArray getLoginJsonForServer(const UserInfo& userInfo);
-    static QByteArray getCheckMD5JsonFromServer(const QString& login, const QString& token,
-                                                const QString& fileName, const QString& md5)
+    static QByteArray getCheckMD5JsonForServer(const QString& login, const QString& token,
+                                                const QString& fileName, const QString& md5);
+
+private:
+    JsonTool();
+    ~JsonTool();
 };
 
 #endif // JSONTOOL_H

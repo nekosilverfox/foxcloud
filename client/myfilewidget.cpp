@@ -3,9 +3,17 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+
 
 #include "structs/fileinfo.h"
+#include "structs/httpreplaycode.h"
+#include "common/networktool.h"
 #include "common/uploadqueue.h"
+#include "common/clientinfoinstance.h"
+#include "common/jsontool.h"
 
 MyFileWidget::MyFileWidget(QWidget *parent)
     : QWidget(parent)
@@ -17,7 +25,7 @@ MyFileWidget::MyFileWidget(QWidget *parent)
     initListWidgetFiles();
 
     /* 开始定时触发定时器，以便检查上传/下载任务队列 */
-    startCheckTransportQueue(500);
+    startCheckTransportQueue(1000);
 
     connect(ui->btnUpload, &QPushButton::clicked, this, &MyFileWidget::selectUploadFilesAndAppendToQueue);
 }
@@ -54,7 +62,7 @@ void MyFileWidget::initListWidgetFiles()
 void MyFileWidget::startCheckTransportQueue(size_t interval)
 {
     // TODO
-    connect(&_transportChecker, &QTimer::timeout, this, [](){});
+    connect(&_transportChecker, &QTimer::timeout, this, &MyFileWidget::uploadFilesAction);
     connect(&_transportChecker, &QTimer::timeout, this, [](){});
 
     _transportChecker.start(interval);  // 启动定时器以便触发定时检查
@@ -92,6 +100,79 @@ void MyFileWidget::selectUploadFilesAndAppendToQueue()
         }
     }
 
+
+}
+
+/**
+ * @brief MyFileWidget::uploadFilesAction 这里先确认 MD5，没有匹配到再调用方法启动真实上传
+ */
+void MyFileWidget::uploadFilesAction()
+{
+    qDebug() << "Check UploadQueue";
+
+    UploadQueue* queue = UploadQueue::getInstance();
+    /* 检查上传队列是否有任务 */
+    if (queue->isQueueEmpty())
+    {
+        return;
+    }
+
+    /* 因为是单任务上传，所以查看队列里是否有任务在正在上传 */
+    if (queue->isUploading())
+    {
+        return;
+    }
+
+    /* 准备 Request 用于检查当前文件 MD5 */
+    ClientInfoInstance* clientInfo = ClientInfoInstance::getInstance();
+    QString url = QString("http://%1:%2/md5").arg(clientInfo->getServerAddress(), clientInfo->getServerPort());
+    QNetworkRequest request;
+    request.setUrl(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    /* 获取一个用于上传的任务，取出第0个上传任务，如果任务队列没有任务在上传，设置第0个任务上传 */
+    UploadFileInfo* file2Upload = queue->getFileToUpload();
+    QByteArray postData = JsonTool::getCheckMD5JsonForServer(clientInfo->getLogin(),
+                                                             clientInfo->getToken(),
+                                                             file2Upload->name,
+                                                             file2Upload->md5);
+    QNetworkReply* reply = NetworkTool::getNetworkManager()->post(request, postData);
+    connect(reply,  &QNetworkReply::finished, this, [=](){
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qCritical() << "Check md5 from server failed" << reply->errorString();
+            reply->deleteLater();
+            return;
+        }
+        QByteArray replyData = reply->readAll();
+        reply->deleteLater();
+
+        const QString code = NetworkTool::getReplayCode(replyData);
+        if (code == HttpReplayCode::CheckMD5::FILE_EXIST)
+        {
+            qInfo() << file2Upload->name << "exist on server";
+            file2Upload->isUploaded = true;  // 设置一下标志位，以便队列识别和移除
+            queue->removeFinsishedTask();
+        }
+        else if (code == HttpReplayCode::CheckMD5::SUCCESS)
+        {
+            qInfo() << file2Upload->name << "successful upload to server";
+            file2Upload->isUploaded = true;  // 设置一下标志位，以便队列识别和移除
+            queue->removeFinsishedTask();
+        }
+        else if (code == HttpReplayCode::CheckMD5::FAIL)  // 秒传失败，需要启用真正上传
+        {
+            qInfo() << file2Upload->name << "match MD5 failed, need to upload";
+            //TODO
+        }
+        else if (code == HttpReplayCode::CheckMD5::TOKEN_ERROR)
+        {
+            qWarning() << "Failed token authentication";
+            QMessageBox::warning(this, "Account Exception", "Please log in again");
+
+            //TODO 发送重新登陆信号
+        }
+    });
 
 }
 

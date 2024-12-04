@@ -253,15 +253,15 @@ QByteArray JsonTool::getLoginJsonForServer(const UserInfo &userInfo)
 }
 
 /**
- * @brief JsonTool::getCheckMD5JsonFromServer 获取用于向服务器检查文件 MD5 是否存在 JSON
+ * @brief JsonTool::getCheckMD5JsonForServer 用于获取向服务器检查文件 MD5 是否存在 JSON
  * @param login 用户 login
  * @param token
  * @param fileName 文件名
  * @param md5
  * @return 转换为 QByteArray 的二进制的 JSON 对象
  */
-QByteArray JsonTool::getCheckMD5JsonFromServer(const QString& login,    const QString& token,
-                                               const QString& fileName, const QString& md5)
+QByteArray JsonTool::getCheckMD5JsonForServer(const QString& login,    const QString& token,
+                                              const QString& fileName, const QString& md5)
 {
     /* Server 需要的 json 数据如下
     {

@@ -17,9 +17,10 @@ public:
     ~MyFileWidget();
 
     void initListWidgetFiles();  // 初始化 lwFiles 文件列表
-    void startCheckTransportQueue(size_t interval);
-    void selectUploadFilesAndAppendToQueue();
+    void startCheckTransportQueue(size_t interval = 1000);
 
+    void selectUploadFilesAndAppendToQueue();
+    void uploadFilesAction();
 
 
 private:
