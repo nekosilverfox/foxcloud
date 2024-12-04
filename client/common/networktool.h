@@ -3,13 +3,17 @@
 
 #include <QNetworkAccessManager>
 
+#include "structs/fileinfo.h"
 
 class NetworkTool
 {
 public:
+    /* 用一次解析服务端发回来的数据 */
     static QNetworkAccessManager* getNetworkManager();
     static QString getReplayCode(const QByteArray& replayJsonData);
     static QString getReplayToken(const QByteArray& replayJsonData);
+    static QString getReplayNumberFiles(const QByteArray& replayJsonData);
+    static QList<CloudFileInfo*> getReplayCloudFilesList(const QByteArray& replayJsonData);
 
 private:
     NetworkTool();

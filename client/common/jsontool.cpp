@@ -307,8 +307,8 @@ QByteArray JsonTool::getUserFilesNumberJsonForServer(const QString &login, const
  * @brief JsonTool::getUserFilesListJsonForServer 用于向服务器发送 Request 用于获取文件列表的 JSON
  * @param login 用户 login
  * @param token 身份识别码
- * @param start
- * @param number
+ * @param start 起始位置
+ * @param number 要获取的数量
  * @return
  */
 QByteArray JsonTool::getUserFilesListJsonForServer(const QString &login, const QString &token,

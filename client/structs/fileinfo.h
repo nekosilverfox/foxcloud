@@ -1,7 +1,10 @@
 #ifndef FILEINFO_H
 #define FILEINFO_H
 
+
 #include <QFile>
+#include <QListWidgetItem>
+
 #include "transportbar.h"
 
 
@@ -17,7 +20,7 @@ enum TransportStatus
     GET_LAYOUT_FAILED   // 获取布局失败
 };
 
-/* 上传文件信息 */
+/* 要上传文件信息 */
 struct UploadFileInfo
 {
     QFile*  pfile;      // 文件指针
@@ -28,6 +31,21 @@ struct UploadFileInfo
     bool    isUploading;// 是否已经在上传
     bool    isUploaded; // 是否上传完毕
     TransportBar* bar;  // 上传进度控件
+};
+
+/* 云端文件信息 */
+struct CloudFileInfo
+{
+    QString     userLogin;  // 所属用户
+    QString     fileName;   // 文件名字
+    QString     md5;        // 文件md5码
+    QString     uploadTime; // 上传时间
+    QString     url;        // URL
+    QString     type;       // 文件类型
+    qint64      size;       // 文件大小
+    int         isShare;    // 是否共享 1共享 0不共享
+    unsigned int  downloadCount;  // 下载次数
+    QListWidgetItem* item;  // MyFileWidget 中对应该文件的 item
 };
 
 #endif // FILEINFO_H
