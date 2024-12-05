@@ -1,9 +1,9 @@
 <div align="center">
 <p>
- <img width="100px" src="https://raw.githubusercontent.com/NekoSilverFox/NekoSilverfox/403ab045b7d9adeaaf8186c451af7243f5d8f46d/icons/silverfox.svg" align="center" alt="NekoSilverfox" />
- <p align="center"><b><font size=6>FoxCloud</font></b></p>
+ <img width="100px" src="./client/img/foxcloud-logo-name.svg" align="center" alt="foxcloud" />
  <p align="center"><b>高负载的分布式存储解决方案</b></p>
 </p>
+
 
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen)](LICENSE)
