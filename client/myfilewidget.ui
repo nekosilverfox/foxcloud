@@ -55,6 +55,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="btnShareURL">
+        <property name="text">
+         <string>Share URL</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="btnRefresh">
         <property name="text">
          <string>Refresh</string>

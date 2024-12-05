@@ -29,6 +29,7 @@ Login::Login(QWidget *parent)
     ui->swLoginPages->setCurrentWidget(ui->pageLogin);
 
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
+    this->setWindowTitle("Foxcloud login");
 
     /* 从配置文件加载 webserver 信息 */
     WebServerInfo serverInfo = JsonTool::getWebServerInfo(PATH_FOXCLOUD_CLIENT_CONFIG);

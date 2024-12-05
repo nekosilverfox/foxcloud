@@ -33,6 +33,7 @@ MyFileWidget::MyFileWidget(QWidget *parent)
     startCheckTransportQueue(1000);
 
     connect(ui->btnUpload, &QPushButton::clicked, this, &MyFileWidget::selectUploadFilesAndAppendToQueue);
+    connect(ui->btnShareURL, &QPushButton::clicked, this, &MyFileWidget::getShareURLForSelectItem);
     connect(ui->btnRefresh, &QPushButton::clicked, this, [=](){
         getUserNumberFilesFromServer();
     });
@@ -490,6 +491,70 @@ void MyFileWidget::getUserFilesListFromServer(const SortType softType, const siz
         _cloudFileList.append(NetworkTool::getReplayCloudFilesList(replyData));
         getUserFilesListFromServer(softType, curStartPos, numPerRequest);
     });
+}
+
+/**
+ * @brief MyFileWidget::getShareURLForSelectItem 获取选中项的分享 URL （需要在服务端设置 Nginx 允许访问）
+ * @return 分享 URL
+ */
+QString MyFileWidget::getShareURLForSelectItem()
+{
+    QListWidgetItem* curItem = ui->lwFiles->currentItem();  // 如果为选中，则为空指针
+    if (nullptr == curItem)
+    {
+        QMessageBox::warning(this, "Warning", "Do not select any item");
+        qInfo() << "Do not select any item";
+        return "";
+    }
+
+    CloudFileInfo* file = findItemInCloudFileList(curItem);
+    if (nullptr == file)
+    {
+        QMessageBox::warning(this, "Warning", "Do not find this item in cloud file list");
+        qCritical() << "Do not find this CloudFileInfo in cloud file list";
+        return "";
+    }
+
+    /* http://172.17.0.2:80/group1/M00/00/00/xxxxxxxxxxxxxxxxxxxx.png
+     * 需要截取从 "/group" 到最后的内容，然后再拼接服务器 IP:PORT
+     */
+    QString url = file->url;
+    QString startMarker = "/group";
+    int startIndex = url.indexOf(startMarker);  // 找到起始位置
+    if (startIndex != -1)
+    {
+        url = url.mid(startIndex);  // 提取从 "/group" 开始的内容: "/group1/M00/00/00/xxxxxxxxxxxxxxxxxxxx.png"
+    }
+    else
+    {
+        qCritical() << "Marker not found!";
+        return file->url;
+    }
+    ClientInfoInstance* client = ClientInfoInstance::getInstance();
+    url = QString("http://%1:%2%3").arg(client->getServerAddress(), QString::number(client->getServerPort()), url);
+
+    QMessageBox::information(this, "Share URL", url);
+    qDebug() << "Get share URL:" << url;
+
+    return url;
+}
+
+/**
+ * @brief MyFileWidget::findItemInCloudFileList 通过 QListWidgetItem 在 cloudFileList 中查找文件对象，并获取这个对象
+ * @param item QListWidgetItem
+ * @return 对应的 CloudFileInfo 对象；如果未找到，返回 nullptr
+ */
+CloudFileInfo* MyFileWidget::findItemInCloudFileList(const QListWidgetItem* item)
+{
+    for (CloudFileInfo* i : _cloudFileList)
+    {
+        if (item == i->item)
+        {
+            return i;
+        }
+    }
+
+    return nullptr;
 }
 
 /**

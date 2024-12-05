@@ -24,6 +24,10 @@
 	background-color: transparent;
 }
 
+QMessageBox {
+	background-color: rgb(236, 236, 236);
+}
+
 QLineEdit {
     background-color: rgb(255, 255, 255);
 }

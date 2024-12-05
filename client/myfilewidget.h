@@ -38,8 +38,11 @@ public:
     void getUserNumberFilesFromServer();
     void getUserFilesListFromServer(const SortType softType, const size_t startPos = 0, const size_t numPerRequest = 20);
 
+    /* 文件分享相关操作 */
+    QString getShareURLForSelectItem();
 
     /* 操作私有成员 */
+    CloudFileInfo* findItemInCloudFileList(const QListWidgetItem* item);
     void clearCloudFileList();
 
 signals:

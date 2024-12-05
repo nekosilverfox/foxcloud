@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qInfo() << "Init MainWindow";
 
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
+    this->setWindowTitle("Foxcloud");
 
     /* 通过单例模式获取唯一的用户信息 */
     FoxcloudClientInfo clientInfo = ClientInfoInstance::getInstance()->getClientInfo();
