@@ -89,8 +89,23 @@
        <string>Download</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QScrollArea" name="saDownload">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
@@ -99,10 +114,11 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>722</width>
-            <height>461</height>
+            <width>762</width>
+            <height>493</height>
            </rect>
           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6"/>
          </widget>
         </widget>
        </item>

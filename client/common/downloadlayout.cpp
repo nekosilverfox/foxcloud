@@ -34,6 +34,10 @@ void DownloadLayout::initDownloadLayout(QWidget* parent)
 
     /* 当前 _widget 添加到父 widget */
     QLayout* parentLayout = parent->layout();  // 获取父窗口布局
+    if (nullptr == parentLayout)
+    {
+        qCritical() << "Parent of downloadwidget is nullptr";
+    }
     parentLayout->addWidget(_widget);          // 把当前 widget 添加到父窗口布局中
     parentLayout->setContentsMargins(0, 0, 0, 0);   // 设置父窗口边缘空隙
 
