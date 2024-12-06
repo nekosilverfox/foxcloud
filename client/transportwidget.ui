@@ -29,7 +29,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabUpload">
       <attribute name="title">
@@ -90,11 +90,11 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QScrollArea" name="scrollArea_2">
+        <widget class="QScrollArea" name="saDownload">
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <widget class="QWidget" name="saDownloadWidget">
           <property name="geometry">
            <rect>
             <x>0</x>

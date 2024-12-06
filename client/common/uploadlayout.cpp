@@ -46,7 +46,7 @@ void UploadLayout::initUploadLayout(QWidget* parent)
  */
 bool UploadLayout::appendTransportBar(TransportBar* bar)
 {
-    if (nullptr == _vlayout)
+    if (nullptr == _vlayout || nullptr == _widget)
     {
         qCritical() << "Upload Layout is nullptr, can not insert bar";
         return false;
@@ -65,12 +65,12 @@ bool UploadLayout::appendTransportBar(TransportBar* bar)
 
 /**
  * @brief UploadLayout::removeTransportBar 从传输列表中移除 TransportBar
- * @param bar 自定义的TransportBar
+ * @param bar 要移除的自定义的 TransportBar
  * @return 是否成功
  */
 bool UploadLayout::removeTransportBar(TransportBar* bar)
 {
-    if (nullptr == _vlayout)
+    if (nullptr == _vlayout || nullptr == _widget)
     {
         qCritical() << "Upload Layout is nullptr, remove bar failed";
         return false;
