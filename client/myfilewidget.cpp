@@ -34,6 +34,7 @@ MyFileWidget::MyFileWidget(QWidget *parent)
     startCheckTransportQueue(1000);
 
     connect(ui->btnUpload, &QPushButton::clicked, this, &MyFileWidget::selectUploadFilesAndAppendToQueue);
+    connect(ui->btnDownload, &QPushButton::clicked, this, &MyFileWidget::addSelectItemToDownloadQueue);
     connect(ui->btnShareURL, &QPushButton::clicked, this, &MyFileWidget::getShareURLForSelectItem);
     connect(ui->btnRefresh, &QPushButton::clicked, this, [=](){
         getUserNumberFilesFromServer();
@@ -335,8 +336,10 @@ void MyFileWidget::addSelectItemToDownloadQueue()
     }
 
 
-    /* 选择保存路径，追加到对列 */
-    QString savePath = QFileDialog::getSaveFileName(this, "Save to", QDir::homePath());
+    /* 选择并拼接一个保存路径，之后追加到队列 */
+    QString savePath = QFileDialog::getSaveFileName(this, "Save to", QString("%1%2%3").arg(QDir::homePath(), QDir::separator(), cloudFileToDownload->fileName));
+    qInfo() << cloudFileToDownload->fileName << "will save to" << savePath;
+
     TransportStatus status = queue->appendTaskToQueue(cloudFileToDownload, savePath);
     switch (status)
     {
