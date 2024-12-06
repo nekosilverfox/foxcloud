@@ -30,6 +30,9 @@ public:
     void uploadFilesAction();
     void uploadRealFile(UploadFileInfo* file2Upload);
 
+    /* 用于下载文件 */
+    void addSelectItemToDownloadQueue();
+
     /* 当前 Widget 的显示相关 */
     void clearListWidgetFiles();
     void refreshListWidgetFiles();
@@ -47,6 +50,7 @@ public:
 
 signals:
     void jumpToTabUpload();            // 跳转到上传界面
+    void jumpToTabDownload();          // 跳转到下载界面
     void numberOfCloudFilesUpdated();  // 云端文件数量已更新（收到此信号后应该重新从服务器获取文件列表并刷新到 ui）
 
 private:

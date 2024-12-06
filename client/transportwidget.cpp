@@ -32,3 +32,8 @@ void TransportWidget::turnToTabUpload()
 {
     ui->tabWidget->setCurrentWidget(ui->tabUpload);
 }
+
+void TransportWidget::turnToTabDownload()
+{
+    ui->tabWidget->setCornerWidget(ui->tabDownload);
+}

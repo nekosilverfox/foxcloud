@@ -59,7 +59,12 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->transportWidget->turnToTabUpload();
     });
 
-    connect(ui->btnGroup, &ButtonGroup::onBtnLogoutClicked, this, [](){ emit &ButtonGroup::onBtnLogoutClicked; });  //TODO 完成退出流程，文件停止传输等
+    connect(ui->myFileWidget, &MyFileWidget::jumpToTabDownload, this, [=](){
+        ui->swPages->setCurrentWidget(ui->pTransport);
+        ui->transportWidget->turnToTabDownload();
+    });
+
+    connect(ui->btnGroup, &ButtonGroup::onBtnLogoutClicked, this, [=](){ emit ui->btnGroup->onBtnLogoutClicked(); });  //TODO 完成退出流程，文件停止传输等
 
 }
 

@@ -1,5 +1,8 @@
 #include "downloadqueue.h"
-#include "common/downloadlayout.h".h"
+#include "common/downloadlayout.h"
+
+DownloadQueue* DownloadQueue::_instance = new DownloadQueue;
+
 
 /**
  * @brief DownloadQueue::getInstance 获取唯一实例
@@ -14,10 +17,9 @@ DownloadQueue *DownloadQueue::getInstance()
  * @brief DownloadQueue::appendTaskToQueue 向队列中添加下载任务
  * @param cloudFile 需要下载的远端文件信息
  * @param savePath 保存路径（路径+用户名）
- * @param isShare   是否为分享文件
  * @return 传输结果状态
  */
-TransportStatus DownloadQueue::appendTaskToQueue(const CloudFileInfo* cloudFile, const QString &savePath, bool isShare)
+TransportStatus DownloadQueue::appendTaskToQueue(const CloudFileInfo* cloudFile, const QString &savePath)
 {
     /* 是否已经在队列 */
     for (auto i : _queue)
@@ -150,3 +152,7 @@ void DownloadQueue::clearQueue()
         delete cur->bar;
     }
 }
+
+DownloadQueue::DownloadQueue() {}
+
+DownloadQueue::~DownloadQueue() {}

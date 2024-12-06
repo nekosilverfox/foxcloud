@@ -16,6 +16,7 @@ public:
     ~TransportWidget();
 
     void turnToTabUpload();
+    void turnToTabDownload();
 
 private:
     Ui::TransportWidget *ui;

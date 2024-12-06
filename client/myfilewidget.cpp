@@ -15,6 +15,7 @@
 #include "structs/httpreplaycode.h"
 #include "common/networktool.h"
 #include "common/uploadqueue.h"
+#include "common/downloadqueue.h"
 #include "common/clientinfoinstance.h"
 #include "common/jsontool.h"
 
@@ -305,6 +306,56 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
 }
 
 /**
+ * @brief MyFileWidget::addSelectItemToDownloadQueue 将选中的文件添加到任务队列
+ */
+void MyFileWidget::addSelectItemToDownloadQueue()
+{
+    /* 获取用户选中项 */
+    QListWidgetItem* item = ui->lwFiles->currentItem();
+    if (nullptr == item)
+    {
+        qInfo() << "Not select any item";
+        return;
+    }
+
+    DownloadQueue* queue = DownloadQueue::getInstance();
+    if (nullptr == queue)
+    {
+        qCritical() << "Download queue is nullptr, download stop";
+        return;
+    }
+
+    /* 根据用户选中的项去查找在本地存储的 云端文件信息 */
+    CloudFileInfo* cloudFileToDownload = findItemInCloudFileList(item);
+    if (nullptr == cloudFileToDownload)
+    {
+        qCritical() << "Can not find this item in local cloudfilelist";
+        QMessageBox::warning(this, "Warning", "Can not find this file, please reflash the file list");
+        return;
+    }
+
+
+    /* 选择保存路径，追加到对列 */
+    QString savePath = QFileDialog::getSaveFileName(this, "Save to", QDir::homePath());
+    TransportStatus status = queue->appendTaskToQueue(cloudFileToDownload, savePath);
+    switch (status)
+    {
+    case TransportStatus::ALREADY_IN_QUEUE:
+        QMessageBox::warning(this, "warning", QString("%1 aleady in download queue").arg(cloudFileToDownload->fileName));
+        break;
+
+    case TransportStatus::OPEN_FAILED:
+        qCritical() << "Can not open" << savePath;
+        break;
+
+    default:
+        break;
+    }
+
+    emit jumpToTabDownload();
+}
+
+/**
  * @brief MyFileWidget::clearListWidgetFiles 清空 lwFiles 中所有的 Item
  */
 void MyFileWidget::clearListWidgetFiles()
@@ -540,7 +591,7 @@ QString MyFileWidget::getShareURLForSelectItem()
 }
 
 /**
- * @brief MyFileWidget::findItemInCloudFileList 通过 QListWidgetItem 在 cloudFileList 中查找文件对象，并获取这个对象
+ * @brief MyFileWidget::findItemInCloudFileList 通过 QListWidgetItem（可以是用户选中的项） 在 cloudFileList 中查找文件对象，并获取这个对象，之后用于下载文件或者分享链接
  * @param item QListWidgetItem
  * @return 对应的 CloudFileInfo 对象；如果未找到，返回 nullptr
  */

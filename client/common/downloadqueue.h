@@ -14,7 +14,7 @@ class DownloadQueue
 public:
     static DownloadQueue* getInstance();
 
-    TransportStatus appendTaskToQueue(const CloudFileInfo* cloudFile, const QString& savePath, bool isShare = false);
+    TransportStatus appendTaskToQueue(const CloudFileInfo* cloudFile, const QString& savePath);
     DownloadFileInfo* getFileToDownload();
 
     bool isQueueEmpty();
