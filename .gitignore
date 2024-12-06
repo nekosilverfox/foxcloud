@@ -1,7 +1,7 @@
 .DS_Store
 *build-PolyChat*
 *build*
-foxcloud-server.json
+*foxcloud-server.json
 
 # C++ objects and libs
 *.slo
