@@ -12,6 +12,7 @@ SOURCES += \
     buttongroup.cpp \
     common/clientinfoinstance.cpp \
     common/downloadlayout.cpp \
+    common/downloadqueue.cpp \
     common/encrypttool.cpp \
     common/jsontool.cpp \
     common/logger.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
     common/clientinfoinstance.h \
     common/config.h \
     common/downloadlayout.h \
+    common/downloadqueue.h \
     common/encrypttool.h \
     common/jsontool.h \
     common/logger.h \
