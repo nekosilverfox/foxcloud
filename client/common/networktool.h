@@ -20,6 +20,7 @@ private:
     ~NetworkTool();
 
 private:
+    // QNetworkAccessManager 本身是异步的，不会阻塞主线程
     static QNetworkAccessManager* _manager;  // 整个项目维护一个 QNetworkAccessManager 就足够了
 };
 

@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     buttongroup.cpp \
     common/clientinfoinstance.cpp \
+    common/downloadlayout.cpp \
     common/encrypttool.cpp \
     common/jsontool.cpp \
     common/logger.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     buttongroup.h \
     common/clientinfoinstance.h \
     common/config.h \
+    common/downloadlayout.h \
     common/encrypttool.h \
     common/jsontool.h \
     common/logger.h \
