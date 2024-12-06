@@ -143,7 +143,7 @@ void UploadQueue::removeFinsishedTask()
  */
 void UploadQueue::clearQueue()
 {
-    for (int i = 0; i < _queue.size(); i++)
+    while (!_queue.isEmpty())
     {
         delete _queue.takeFirst();
     }

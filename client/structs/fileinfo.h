@@ -39,6 +39,7 @@ struct DownloadFileInfo
     QFile*      pfile;      // 文件指针
     QString     login;      // 下载用户的 login
     QString     fileName;   // 文件名字
+    qint64      size;       // 文件大小（byte）
     QString     md5;        // 文件md5码
     QString     url;        // URL
     bool        isDownloading;// 是否已经在上传
