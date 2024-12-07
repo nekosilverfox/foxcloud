@@ -84,9 +84,9 @@ void MyFileWidget::initListWidgetFiles()
  */
 void MyFileWidget::startCheckTransportQueue(size_t interval)
 {
-    // TODO
+    qDebug() << "Check queues";
     connect(&_transportChecker, &QTimer::timeout, this, &MyFileWidget::uploadFilesAction);
-    connect(&_transportChecker, &QTimer::timeout, this, [=](){});
+    connect(&_transportChecker, &QTimer::timeout, this, &MyFileWidget::downloadFileAction);
 
     _transportChecker.start(interval);  // 启动定时器以便触发定时检查
 }
@@ -131,8 +131,6 @@ void MyFileWidget::selectUploadFilesAndAppendToQueue()
  */
 void MyFileWidget::uploadFilesAction()
 {
-    qDebug() << "Check UploadQueue";
-
     UploadQueue* queue = UploadQueue::getInstance();
     /* 检查上传队列是否有任务 */
     if (queue->isQueueEmpty())
@@ -356,6 +354,72 @@ void MyFileWidget::addSelectItemToDownloadQueue()
     }
 
     emit jumpToTabDownload();
+}
+
+void MyFileWidget::downloadFileAction()
+{
+    DownloadQueue* queue = DownloadQueue::getInstance();
+    if (nullptr == queue)
+    {
+        qCritical() << "Download queue is nullptr";
+        return;
+    }
+
+    /// TODO 多线程这里要改掉
+    if (queue->isQueueEmpty() || queue->isDownloading())
+    {
+        // qDebug() << "Download queue is empty" << queue->isQueueEmpty() << "or task is downloading";
+        return;
+    }
+
+    DownloadFileInfo* task = queue->getFileToDownload();
+    task->isDownloading = true;
+
+    /* http://172.17.0.2:80/group1/M00/00/00/xxxxxxxxxxxxxxxxxxxx.png
+     * 需要截取从 "/group" 到最后的内容，然后再拼接服务器 IP:PORT
+     */
+    QString url = task->url;
+    QString startMarker = "/group";
+    int startIndex = url.indexOf(startMarker);  // 找到起始位置
+    if (startIndex != -1)
+    {
+        url = url.mid(startIndex);  // 提取从 "/group" 开始的内容: "/group1/M00/00/00/xxxxxxxxxxxxxxxxxxxx.png"
+    }
+    ClientInfoInstance* client = ClientInfoInstance::getInstance();
+    url = QString("http://%1:%2%3").arg(client->getServerAddress(), QString::number(client->getServerPort()), url);
+
+    QNetworkRequest request(url);
+    QNetworkReply* reply = NetworkTool::getNetworkManager()->get(request);
+    qInfo() << "Start download from URL" << url;
+
+    if (nullptr == reply)
+    {
+        task->isDownloaded = true;
+        queue->removeFinsishedTask();
+        qCritical() << "Download error, reply is nullptr";
+        return;
+    }
+
+    /* 有可用数据时候 */
+    connect(reply, &QNetworkReply::readyRead, this, [=](){
+        if (nullptr != task->pfile)
+        {
+            task->pfile->write(reply->readAll());
+        }
+    });
+
+    /* 进度更新的时候 */
+    connect(reply, &QNetworkReply::downloadProgress, this, [=](qint64 bytesRead, qint64 bytesTotal){
+        task->bar->setValue(bytesRead);
+    });
+
+    /* 请求完成时 */
+    connect(reply, &QNetworkReply::finished, this, [=](){
+        qInfo() << task->fileName << "download finished";
+        reply->deleteLater();
+        task->isDownloaded = true;
+        queue->removeFinsishedTask();
+    });
 }
 
 /**

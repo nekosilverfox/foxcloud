@@ -17,7 +17,6 @@ TransportWidget::TransportWidget(QWidget *parent)
     /* 把文件上传使用的 Layout 初始化*/
     UploadLayout::getInstance()->initUploadLayout(ui->saUploadWidget);
     DownloadLayout::getInstance()->initDownloadLayout(ui->saDownloadWidget);
-
 }
 
 TransportWidget::~TransportWidget()

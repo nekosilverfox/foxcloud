@@ -32,6 +32,7 @@ public:
 
     /* 用于下载文件 */
     void addSelectItemToDownloadQueue();
+    void downloadFileAction();
 
     /* 当前 Widget 的显示相关 */
     void clearListWidgetFiles();

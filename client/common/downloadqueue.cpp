@@ -56,6 +56,7 @@ TransportStatus DownloadQueue::appendTaskToQueue(const CloudFileInfo* cloudFile,
     downloadFile->bar = bar;      // 进度控件
 
     _queue.append(downloadFile);  // 添加到队列
+    qDebug() << "Download queue size is" << _queue.size();
 
     /* 添加到 Upload Layout */
     DownloadLayout::getInstance()->appendTransportBar(downloadFile->bar);
