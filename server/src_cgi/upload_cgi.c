@@ -284,6 +284,7 @@ END:
 /* -------------------------------------------*/
 int upload_to_dstorage(char *filename, char *fileid)
 {
+    LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC,">>>FileID %s\n", fileid);
     int ret = 0;
 
     pid_t pid;
@@ -299,6 +300,7 @@ int upload_to_dstorage(char *filename, char *fileid)
 
     //创建进程
     pid = fork();
+    
     if (pid < 0)//进程创建失败
     {
         LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC,"fork error\n");
