@@ -58,6 +58,11 @@ Login::Login(QWidget *parent)
     /* 点击注册 */
     connect(ui->btnLogin, &QPushButton::clicked, this, &Login::loginUser);
 
+    /* TODO 之后改掉测试连接点击 */
+    connect(ui->btnConnect, &QPushButton::clicked, this, [=](){
+        ui->swLoginPages->setCurrentWidget(ui->pageLogin);
+    });
+
     /* 点击关闭按钮时候窗口相互的切换 */
     connect(ui->wgTitle, &WidgetLoginTitle::closeCurPage, this, [=](){
         if (ui->swLoginPages->currentWidget() == ui->pageSetServer ||

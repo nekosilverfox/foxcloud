@@ -672,7 +672,7 @@
                    <string notr="true">color: rgb(11, 54, 79);</string>
                   </property>
                   <property name="text">
-                   <string>Connect</string>
+                   <string>Go Login!</string>
                   </property>
                   <property name="autoDefault">
                    <bool>false</bool>
