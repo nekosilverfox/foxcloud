@@ -71,3 +71,5 @@ TARGET = foxcloud
 
 RESOURCES += \
     resource.qrc
+
+RC_ICONS = ./img/foxcloud-logo-name.ico

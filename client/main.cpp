@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QLoggingCategory>
+#include <QFontDatabase>
 
 #include "windowmanager.h"
 #include "common/config.h"
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     /* 为当前应用统一设置字体 */
+    QFontDatabase::addApplicationFont(":/font/BM_JUA.ttf");
     a.setStyleSheet("QWidget { color: rgb(11, 54, 79); }");
     a.setFont(QFont("BM Jua", 14, QFont::Normal, false));
     a.setWindowIcon(QIcon(":/img/foxcloud-logo-name.svg"));
