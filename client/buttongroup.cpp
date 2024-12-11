@@ -12,6 +12,9 @@ ButtonGroup::ButtonGroup(QWidget *parent)
     ui->lbLogo->setPixmap(QPixmap(":/img/foxcloud-logo-name.svg").scaled(QSize(160, 85), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     // ui->btnCurrentUser->setIcon(QIcon(":/img/circle-user.svg"));
 
+    ui->btnShareList->hide();
+    ui->btnTopDownload->hide();
+
     connect(ui->btnCurrentUser, &QPushButton::clicked, [=](){emit ButtonGroup::onBtnCurrentUserClicked();});
     connect(ui->btnMyfile, &QPushButton::clicked, [=](){emit ButtonGroup::onBtnMyFilesClicked();});
     connect(ui->btnShareList, &QPushButton::clicked, [=](){emit ButtonGroup::onBtnShareListClicked();});

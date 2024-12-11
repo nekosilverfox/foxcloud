@@ -1,0 +1,77 @@
+name: macOS CI/CD
+on: 
+  push:
+    paths:
+      - 'client/**'
+      - '.github/workflows/macos.yml'
+  pull_request:
+    paths:
+      - 'client/**'
+      - '.github/workflows/macos.yml' 
+jobs:
+  build:
+    name: macOS-CI-CD
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-14]
+        qt_ver: [6.6.0]
+        qt_arch: [clang_64]
+    env:
+      # 在 Qt pro 文件中的 TARGET
+      AppTargetName: client
+      # .app 所处编译文件夹的路径
+      QtAppDirName: client
+    steps:
+      # macos 11.0 默认环境变了,要指定
+      # - name: prepare env
+      #   if: ${{ matrix.os == 'macos-latest' }}
+      #   run: |
+      #     softwareupdate --all --install --force
+      #     sudo xcode-select --print-path
+      #     sudo xcode-select --switch /Library/Developer/CommandLineTools
+      #参考：https://ddalcino.github.io/aqt-list-server/
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.qt_ver }}
+          cached: 'false'
+          aqtversion: '==3.1.*'
+          # host: 'mac'
+          #下面这几行不用也可以，删除不必要的控件能减少包体积
+          # modules: 'qtnetworkauth'
+          # tools: 'tools_qtcreator'
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      # 编译 Release 版本
+      - name: Build on macOS 
+        run: |
+          ls
+          cd ./${QtAppDirName}
+          qmake
+          make
+      # 打包
+      - name: Package on MacOS
+        run: |
+          cd ./${QtAppDirName}
+          # mv ./${QtAppDirName}/${AppTargetName}.app .
+          echo '------------------'
+          ls
+          # 拷贝依赖 pro文件里的名称：
+          macdeployqt ${AppTargetName}.app -qmldir=. -verbose=1 -dmg
+      # 上传artifacts          
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.AppTargetName }}_${{ matrix.os }}_${{matrix.qt_ver}}.zip
+          path: ${{ env.QtAppDirName }}/${{ env.AppTargetName }}.app
+      # tag 上传Release
+      - name: Upload Release
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.QtAppDirName }}/${{ env.AppTargetName }}.dmg
+          asset_name: ${{ env.AppTargetName }}_${{ matrix.os }}_${{ matrix.qt_ver }}.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
