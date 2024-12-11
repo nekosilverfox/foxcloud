@@ -19,7 +19,7 @@ jobs:
         qt_arch: [clang_64]
     env:
       # 在 Qt pro 文件中的 TARGET
-      AppTargetName: client
+      AppTargetName: foxcloud
       # .app 所处编译文件夹的路径
       QtAppDirName: client
     steps:
