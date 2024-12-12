@@ -101,10 +101,22 @@ QTableWidget::item:selected {
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="ButtonGroup" name="btnGroup" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="minimumSize">
        <size>
-        <width>50</width>
+        <width>170</width>
         <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>230</width>
+        <height>16777215</height>
        </size>
       </property>
      </widget>
@@ -127,7 +139,7 @@ QTableWidget::item:selected {
        <item>
         <widget class="QStackedWidget" name="swPages">
          <property name="currentIndex">
-          <number>0</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="pUserInfo">
           <layout class="QVBoxLayout" name="verticalLayout_2">
