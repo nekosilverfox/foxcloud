@@ -11,6 +11,8 @@ on:
       - 'client/**'
       - '.github/workflows/windows.yml'
       - 'scripts/**'
+permissions:
+  contents: write
 jobs:
   build:
     name: Windows-CI-CD
