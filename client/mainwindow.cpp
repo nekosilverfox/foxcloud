@@ -52,7 +52,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btnGroup, &ButtonGroup::onBtnTransportListClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pTransport); });
     connect(ui->btnGroup, &ButtonGroup::onBtnTopDownloadClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pTopDownload); });
     connect(ui->btnGroup, &ButtonGroup::onBtnShareListClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pShare); });
-    // connect(ui->btnGroup, &ButtonGroup::onBtnLogoutClicked, this, [=](){ this->close();});
+    connect(ui->btnGroup, &ButtonGroup::onBtnLogoutClicked, this, [=](){
+        qDebug() << "emit MainWindow::onLogoutFromMainWindow();";
+        emit MainWindow::onLogoutFromMainWindow(); });  //TODO 完成退出流程，文件停止传输等
 
     /* 一路跳转到上传显示区域 */
     connect(ui->myFileWidget, &MyFileWidget::jumpToTabUpload, this, [=](){
@@ -65,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->transportWidget->turnToTabDownload();
     });
 
-    connect(ui->btnGroup, &ButtonGroup::onBtnLogoutClicked, this, [=](){ emit ui->btnGroup->onBtnLogoutClicked(); });  //TODO 完成退出流程，文件停止传输等
+
 
 }
 

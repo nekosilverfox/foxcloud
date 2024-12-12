@@ -140,11 +140,31 @@ void WindowManager::connectSingalSlot()
     qInfo() << "Connected singals and slots between windows";
 }
 
+/**
+ * @brief WindowManager::connectSignalFromMainWindow 连接从 MainWindow 中发送出来的信号，要确保在调用的时候_mainwindow 不是 nullptr!!!
+ */
+void WindowManager::connectSignalFromMainWindow()
+{
+    qInfo() << "Start connect singals from mainwindow";
+
+    /* 用户 Logout  */
+    connect(_mainwindow, &MainWindow::onLogoutFromMainWindow, this, [=](){
+        qDebug() << "Logout from Main Windows";
+        _mainwindow->close();
+        _mainwindow->deleteLater();
+        delete _mainwindow;
+        _mainwindow = nullptr;
+    });
+
+    qInfo() << "Finish singals from mainwindow";
+}
+
 void WindowManager::onLogined(const FoxcloudClientInfo& clientInfo, const QString& token)
 {
     ClientInfoInstance::getInstance()->setClientInfo(clientInfo, token);
     initMainWindow();
     showMainWindow();
+    connectSignalFromMainWindow();
 }
 
 

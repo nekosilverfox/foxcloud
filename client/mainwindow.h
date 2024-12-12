@@ -21,6 +21,9 @@ protected:
     /* 绘图事件函数 */
     void paintEvent(QPaintEvent*) override;
 
+signals:
+    void onLogoutFromMainWindow();
+
 private:
     Ui::MainWindow* ui;
 };

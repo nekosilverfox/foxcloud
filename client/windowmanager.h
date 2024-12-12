@@ -30,6 +30,7 @@ private:
     void destroyMainWindow();
 
     void connectSingalSlot();
+    void connectSignalFromMainWindow();
 
 private slots:
     void onLogined(const FoxcloudClientInfo& clientInfo,const QString& token);
