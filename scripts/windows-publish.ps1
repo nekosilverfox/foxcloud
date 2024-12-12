@@ -25,6 +25,8 @@ Write-Host "scriptDir" $scriptDir
 
 function Main() {
 
+    Write-Host "In scripts\windows-publish.ps1: archiveName is" $archiveName ", targetName is" $targetName
+
     New-Item -ItemType Directory $archiveName
 
     # 拷贝exe

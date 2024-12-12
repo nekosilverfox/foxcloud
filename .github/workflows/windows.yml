@@ -85,9 +85,10 @@ jobs:
         run: |
           # 目前处于工程根目录
           tree D: /F
-          echo '------- Run scripts\windows-publish.ps1'
+          echo '-------> Run scripts\windows-publish.ps1'
+          echo '-------> archiveName: ${env:archiveName}'
           & scripts\windows-publish.ps1 ${env:archiveName} ${env:QtApplicationName}
-          echo '------- Finish scripts windows-publish.ps1'
+          echo '-------> Finish scripts windows-publish.ps1'
           # 记录packageName给后续step
           $name = ${env:archiveName}
           echo "::set-output name=packageName::$name"
@@ -104,6 +105,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ steps.package.outputs.packageName }}.zip
-          asset_name: ${{ env.targetName }}_${{ steps.package.outputs.packageName }}.zip
+          asset_name: ${{ steps.package.outputs.packageName }}.zip
           tag: ${{ github.ref }}
           overwrite: true
