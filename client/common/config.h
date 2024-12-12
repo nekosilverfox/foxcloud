@@ -43,6 +43,14 @@ namespace JsonKeyForServer
         inline const char* STR_FILENAME = "fileName";
     }
 
+        namespace DeleteFile
+        {
+        inline const char* STR_LOGIN    = "user";
+        inline const char* STR_TOKEN    = "token";
+        inline const char* STR_MD5      = "md5";
+        inline const char* STR_FILENAME = "fileName";
+        }
+
     namespace UserFilesNumber
     {
         inline const char* STR_LOGIN    = "user";

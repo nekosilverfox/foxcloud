@@ -53,6 +53,13 @@ namespace HttpReplayCode
         inline const char* FAIL        = "009";
     }
 
+    namespace DeleteFile
+    {
+        inline const char* TOKEN_ERROR = "111";
+        inline const char* SUCCESS     = "013";
+        inline const char* FAIL        = "014";
+    }
+
     namespace UserNumberCloudFiles
     {
         inline const char* SUCCESS     = "110";

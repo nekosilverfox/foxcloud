@@ -329,6 +329,44 @@ QByteArray JsonTool::getUserFilesListJsonForServer(const QString &login, const Q
     return QJsonDocument(obj).toJson();
 }
 
+/**
+ * @brief JsonTool::getCheckMD5JsonForServer 用于获取向服务器检查文件 MD5 是否存在 JSON
+ * @param login 用户 login
+ * @param token 身份识别码
+ * @param fileName 文件名
+ * @param md5
+ * @return 转换为 QByteArray 的二进制的 JSON 对象
+ */
+
+/**
+ * @brief JsonTool::getDelteFileJsonFromServer 用于获取向服务器删除文件的 JSON
+ * @param login 用户 login
+ * @param token 身份识别码
+ * @param fileName 文件名
+ * @param md5
+ * @return
+ */
+QByteArray JsonTool::getDelteFileJsonFromServer(const QString &login, const QString &token, const QString &fileName, const QString &md5)
+{
+    /* Server 需要的 json 数据如下
+    {
+        user:xxxx,
+        token:xxxx,
+        fileName: xxx,
+        md5:xxx
+    }
+    */
+    QMap<QString, QVariant> map;
+    map.insert(JsonKeyForServer::DeleteFile::STR_LOGIN, login);
+    map.insert(JsonKeyForServer::DeleteFile::STR_TOKEN, token);
+    map.insert(JsonKeyForServer::DeleteFile::STR_MD5,   md5);
+    map.insert(JsonKeyForServer::DeleteFile::STR_FILENAME, fileName);
+
+    qDebug() << "Delete file Json" << QJsonDocument::fromVariant(map).toJson();
+
+    return QJsonDocument::fromVariant(map).toJson();
+}
+
 
 
 

@@ -36,7 +36,8 @@ public:
     static QByteArray getUserNumberFilesJsonForServer(const QString& login, const QString& token);
     static QByteArray getUserFilesListJsonForServer(const QString& login, const QString& token,
                                                     const int start, const int number);
-
+    static QByteArray getDelteFileJsonFromServer(const QString& login, const QString& token,
+                                                 const QString& fileName, const QString& md5);
 private:
     JsonTool();
     ~JsonTool();

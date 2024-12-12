@@ -6,7 +6,6 @@
 #include "common/uploadlayout.h"
 #include "common/downloadlayout.h"
 
-#include "mainwindow.h"
 
 TransportWidget::TransportWidget(QWidget *parent)
     : QWidget(parent)

@@ -36,9 +36,11 @@ MyFileWidget::MyFileWidget(QWidget *parent)
     connect(ui->btnUpload, &QPushButton::clicked, this, &MyFileWidget::selectUploadFilesAndAppendToQueue);
     connect(ui->btnDownload, &QPushButton::clicked, this, &MyFileWidget::addSelectItemToDownloadQueue);
     connect(ui->btnShareURL, &QPushButton::clicked, this, &MyFileWidget::getShareURLForSelectItem);
+    connect(ui->btnDelete, &QPushButton::clicked, this, &MyFileWidget::deleteFileActoin);
     connect(ui->btnRefresh, &QPushButton::clicked, this, [=](){
         getUserNumberFilesFromServer();
     });
+
 
     connect(this, &MyFileWidget::numberOfCloudFilesUpdated, this, [=](){
         qDebug() << "Catch signal MyFileWidget::numberOfCloudFilesUpdated, start get cloud file list";
@@ -422,6 +424,93 @@ void MyFileWidget::downloadFileAction()
     });
 }
 
+
+/**
+ * @brief MyFileWidget::deleteFileActoin 从服务器中删除文件
+ */
+void MyFileWidget::deleteFileActoin()
+{
+    qInfo() << "Start to delete file from cloud";
+
+    QListWidgetItem* curItem = ui->lwFiles->currentItem();  // 如果什么都选中，则为空指针
+    if (nullptr == curItem)
+    {
+        QMessageBox::warning(this, "Warning", "Do not select any item");
+        qInfo() << "Do not select any item to delete, delte cancal";
+        return;
+    }
+
+    CloudFileInfo* file = findItemInCloudFileList(curItem);
+    if (nullptr == file)
+    {
+        QMessageBox::warning(this, "Error", "Do not find this item in cloud file list, please refrish the list");
+        qCritical() << "Do not find select CloudFileInfo in cloud file list, delete cancal";
+        return;
+    }
+
+
+    QMessageBox::StandardButton btn = QMessageBox::question(this, "Delete file",
+                                                            QString("Are you sure to delete %1?").arg(file->fileName),
+                                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (QMessageBox::No == btn)
+    {
+        qInfo() << "Delete" << file->fileName << "cancel";
+        return;
+    }
+
+
+    ClientInfoInstance* client = ClientInfoInstance::getInstance();
+    QString url = QString("http://%1:%2/dealfile?cmd=del")
+                      .arg(client->getServerAddress(), QString::number(client->getServerPort()));
+    qDebug() << "Url for delete file from cloud:" << url;
+
+    QNetworkRequest request;
+    request.setUrl(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+
+    QByteArray data = JsonTool::getDelteFileJsonFromServer(client->getLogin(), client->getToken(), file->fileName, file->md5);
+    QNetworkReply * reply = NetworkTool::getNetworkManager()->post(request, data);
+
+    connect(reply, &QNetworkReply::finished, this, [=](){
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            qCritical() << "Delete file from server failed" << reply->errorString();
+            reply->deleteLater();
+            return;
+        }
+
+        QByteArray replyData = reply->readAll();
+        reply->deleteLater();
+        qDebug() << "Got reply from server" << replyData;
+
+        const QString code = NetworkTool::getReplayCode(replyData);
+        if (HttpReplayCode::DeleteFile::SUCCESS == code)
+        {
+            qInfo() << "Successful delete file from server";
+
+            /* 通过发送刷新按钮被点击来刷新列表 */
+            emit ui->btnRefresh->clicked();
+        }
+        else if (HttpReplayCode::DeleteFile::TOKEN_ERROR == code)
+        {
+            qWarning() << "Failed token authentication";
+            QMessageBox::warning(this, "Account Exception", "Please log in again");
+            // TODO 发送重新登陆信号
+            return;
+        }
+        else if (HttpReplayCode::DeleteFile::FAIL == code)
+        {
+            qCritical() << "Failed delete file from server";
+            QMessageBox::warning(this, "Failed", "Failed delete file from server");
+        }
+        else
+        {
+            qCritical() << "Unknow reply code" << code;
+        }
+
+    });
+}
+
 /**
  * @brief MyFileWidget::clearListWidgetFiles 清空 lwFiles 中所有的 Item
  */
@@ -617,7 +706,7 @@ void MyFileWidget::getUserFilesListFromServer(const SortType softType, const siz
  */
 QString MyFileWidget::getShareURLForSelectItem()
 {
-    QListWidgetItem* curItem = ui->lwFiles->currentItem();  // 如果为选中，则为空指针
+    QListWidgetItem* curItem = ui->lwFiles->currentItem();  // 如果什么都选中，则为空指针
     if (nullptr == curItem)
     {
         QMessageBox::warning(this, "Warning", "Do not select any item");

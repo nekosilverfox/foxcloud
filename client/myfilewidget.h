@@ -34,6 +34,9 @@ public:
     void addSelectItemToDownloadQueue();
     void downloadFileAction();
 
+    /* 用于删除文件 */
+    void deleteFileActoin();
+
     /* 当前 Widget 的显示相关 */
     void clearListWidgetFiles();
     void refreshListWidgetFiles();

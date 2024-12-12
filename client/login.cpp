@@ -30,6 +30,8 @@ Login::Login(QWidget *parent)
 
     ui->swLoginPages->setCurrentWidget(ui->pageLogin);
 
+    ui->cbSavePwd->hide();  /// TODO 加密完成后删除此
+
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
     this->setWindowTitle("Foxcloud login");
 
@@ -171,6 +173,13 @@ bool Login::registerUser()
         return false;
     }
 
+    /* 检查有没有设置服务器 */
+    if (ui->lePageServerAddress->text().isEmpty() || 0 == ui->lePageServerPort)
+    {
+        QMessageBox::warning(this, "Warning", "Please setup your Foxcloud server");
+        return false;
+    }
+
     /* 加密密码 */
     QString tmpPwd = user.password;  // 用于之后填到登录界面
     user.password = EncryptTool::getStrMD5(user.password).toBase64();
@@ -251,8 +260,14 @@ bool Login::loginUser()
     clientInfo.webServerInfo.address = ui->lePageServerAddress->text();
     clientInfo.webServerInfo.port = (qint16)ui->lePageServerPort->text().toInt();
 
+    /* 检查有没有设置服务器 */
+    if (ui->lePageServerAddress->text().isEmpty() || 0 == ui->lePageServerPort)
+    {
+        QMessageBox::warning(this, "Warning", "Please setup your Foxcloud server");
+        return false;
+    }
+
     /* 校验数据 */
-    //TODO 校验服务器
     if (clientInfo.userInfo.login.length() == 0 || clientInfo.userInfo.password.length() == 0)
     {
         QMessageBox::warning(this, "Warning", "Login or password is empty");
