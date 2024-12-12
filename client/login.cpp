@@ -18,6 +18,8 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
+#include "structs/foxcloudclientinfo.h"
+
 Login::Login(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Login)
@@ -31,10 +33,15 @@ Login::Login(QWidget *parent)
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
     this->setWindowTitle("Foxcloud login");
 
-    /* 从配置文件加载 webserver 信息 */
-    WebServerInfo serverInfo = JsonTool::getWebServerInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
-    ui->lePageServerAddress->setText(serverInfo.address);
-    ui->lePageServerPort->setText(QString::number(serverInfo.port));
+    /* 从配置文件加载 client 信息 */
+    FoxcloudClientInfo clientInfo = JsonTool::getFoxcloudClientInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
+    ui->lePageServerAddress->setText(clientInfo.webServerInfo.address);
+    ui->lePageServerPort->setText(QString::number(clientInfo.webServerInfo.port));
+    ui->lePageLoginLogin->setText(clientInfo.userInfo.login);
+    if ("true" == clientInfo.userInfo.remember_password)
+    {
+        // TODO
+    }
 
     ui->lePageLoginPwd->setEchoMode(QLineEdit::Password);
     ui->lePageRegPwd->setEchoMode(QLineEdit::Password);
@@ -60,6 +67,9 @@ Login::Login(QWidget *parent)
 
     /* TODO 之后改掉测试连接点击 */
     connect(ui->btnConnect, &QPushButton::clicked, this, [=](){
+        ui->swLoginPages->setCurrentWidget(ui->pageLogin);
+    });
+    connect(ui->btnBackToLogin, &QPushButton::clicked, this, [=](){
         ui->swLoginPages->setCurrentWidget(ui->pageLogin);
     });
 
@@ -272,9 +282,6 @@ bool Login::loginUser()
     // TODO 加密用户名称
     /* 加密用户名和密码 */
     clientInfo.userInfo.password = EncryptTool::getStrMD5(clientInfo.userInfo.password).toBase64();
-    // clientInfo.userInfo.login    = EncryptTool::encryptString(clientInfo.userInfo.login).toHex();
-    // clientInfo.userInfo.password = EncryptTool::encryptString(clientInfo.userInfo.password).toHex();
-
 
     /* 注册信息转为 JSON */
     QByteArray jsonPostData = JsonTool::getLoginJsonForServer(clientInfo.userInfo);
@@ -292,6 +299,7 @@ bool Login::loginUser()
     QNetworkAccessManager* manager = NetworkTool::getNetworkManager();
     QNetworkReply* reply = manager->post(request, jsonPostData);  // 发送请求
     qInfo() << "Login Json data POST to server finish";
+
 
     /* 用户没有选中保存密码 */
     if (ui->cbSavePwd->isChecked())
@@ -332,7 +340,7 @@ bool Login::loginUser()
             return;
         }
 
-        //TODO 登陆成功后调用的东西，还需要保存下 token
+        //TODO 登陆成功后调用的东西
         // QMessageBox::information(this, "Login", "Successed login!");
         JsonTool::overwriteFoxcloudClientInfo(clientInfo);
 

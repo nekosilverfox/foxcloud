@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setFont(QFont("BM JUA_TTF", 14, QFont::Normal, false));
+    a.setFont(QFont(":/font/BM_JUA.ttf", 14, QFont::Normal, false));
     a.setStyleSheet(
         "QWidget { color: rgb(11, 54, 79); }"
         "QMessageBox { background-color: rgb(230, 240, 250); }"
