@@ -2,6 +2,7 @@
 #define WINDOWMANAGER_H
 
 #include <QObject>
+#include <QFont>
 
 #include "login.h"
 #include "mainwindow.h"

@@ -1,23 +1,18 @@
-#include "mainwindow.h"
-
 #include <QApplication>
 #include <QLoggingCategory>
-#include <QFontDatabase>
 
 #include "windowmanager.h"
 #include "common/config.h"
 #include "common/logger.h"
 
-#include "mainwindow.h"
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    /* 为当前应用统一设置字体 */
-    QFontDatabase::addApplicationFont(":/font/BM_JUA.ttf");
-    a.setStyleSheet("QWidget { color: rgb(11, 54, 79); }");
-    a.setFont(QFont("BM Jua", 14, QFont::Normal, false));
+    a.setFont(QFont("BM JUA_TTF", 14, QFont::Normal, false));
+    a.setStyleSheet(
+        "QWidget { color: rgb(11, 54, 79); }"
+        "QMessageBox { background-color: rgb(230, 240, 250); }"
+        );
     a.setWindowIcon(QIcon(":/img/foxcloud-logo-name.svg"));
 
     /* 初始化 Logger */
@@ -25,9 +20,6 @@ int main(int argc, char *argv[])
     Logger::init(PATH_LOG, "hh:mm:ss", " | ");  // 初始化 Logger
 
     WindowManager::getManger().showLogin();
-
-    // MainWindow m;
-    // m.show();
 
     return a.exec();
 }

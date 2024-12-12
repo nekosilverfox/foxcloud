@@ -1,6 +1,7 @@
 #include "windowmanager.h"
 
 #include <QDebug>
+#include <QFontDatabase>
 
 #include "common/logger.h"
 #include "common/clientinfoinstance.h"

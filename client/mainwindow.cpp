@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btnGroup, &ButtonGroup::onBtnTransportListClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pTransport); });
     connect(ui->btnGroup, &ButtonGroup::onBtnTopDownloadClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pTopDownload); });
     connect(ui->btnGroup, &ButtonGroup::onBtnShareListClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pShare); });
+    // connect(ui->btnGroup, &ButtonGroup::onBtnLogoutClicked, this, [=](){ this->close();});
 
     /* 一路跳转到上传显示区域 */
     connect(ui->myFileWidget, &MyFileWidget::jumpToTabUpload, this, [=](){
