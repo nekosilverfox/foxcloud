@@ -338,6 +338,11 @@ void MyFileWidget::addSelectItemToDownloadQueue()
 
     /* 选择并拼接一个保存路径，之后追加到队列 */
     QString savePath = QFileDialog::getSaveFileName(this, "Save to", QString("%1%2%3").arg(QDir::homePath(), QDir::separator(), cloudFileToDownload->fileName));
+    if (savePath.isEmpty())
+    {
+        qInfo() << "User cancel download file";
+        return;
+    }
     qInfo() << cloudFileToDownload->fileName << "will save to" << savePath;
 
     TransportStatus status = queue->appendTaskToQueue(cloudFileToDownload, savePath);
