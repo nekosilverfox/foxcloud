@@ -9,6 +9,7 @@
 #include <QHttpMultiPart>
 #include <QHttpPart>
 #include <QMimeDatabase>
+#include <QClipboard>
 
 
 #include "structs/fileinfo.h"
@@ -745,7 +746,19 @@ QString MyFileWidget::getShareURLForSelectItem()
     ClientInfoInstance* client = ClientInfoInstance::getInstance();
     url = QString("http://%1:%2%3").arg(client->getServerAddress(), QString::number(client->getServerPort()), url);
 
-    QMessageBox::information(this, "Share URL", url);
+    /* 创建提示拷贝 URL 消息框 */
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Share URL");
+    msgBox.setText(url);
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.addButton("Copy", QMessageBox::ActionRole);  // 添加自定义“复制”按钮
+    msgBox.exec();
+
+    /* 将 URL 复制到剪贴板 */
+    QClipboard* clipboard = QGuiApplication::clipboard();
+    clipboard->setText(url);
+
+    // QMessageBox::information(this, "Share URL", url);
     qDebug() << "Get share URL:" << url;
 
     return url;
