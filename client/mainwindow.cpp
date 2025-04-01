@@ -31,10 +31,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     /* 用户信息添加到表格中 */
     QStringList clientInfoKeyList;
-    clientInfoKeyList << STR_VAL_LOGIN << STR_VAL_ADDRESS << STR_VAL_PORT;
+    clientInfoKeyList << STR_VAL_LOGIN << STR_VAL_ADDRESS << STR_VAL_PORT << "Token";
 
     QStringList clientInfoValueList;
-    clientInfoValueList << clientInfo.userInfo.login << clientInfo.webServerInfo.address << QString::number(clientInfo.webServerInfo.port);
+    clientInfoValueList << clientInfo.userInfo.login << clientInfo.webServerInfo.address << QString::number(clientInfo.webServerInfo.port)  << ClientInfoInstance::getInstance()->getToken();
 
     ui->twClientInfo->setRowCount(clientInfoKeyList.size());
     ui->twClientInfo->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);

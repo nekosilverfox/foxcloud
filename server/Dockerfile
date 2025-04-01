@@ -163,8 +163,10 @@ RUN echo "echo \"Starting server [Redis]\"" >> $ENTRYPOINT_SH && \
 RUN cd $REDIS_BASE_PATH && \
     git clone https://github.com/redis/hiredis.git && \
     cd hiredis && \
+    git checkout v1.2.0  && \
     make  && \
     make install
+
 
 ###############################################################
 # Install PosrgreSQL v9.5
