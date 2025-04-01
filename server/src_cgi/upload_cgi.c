@@ -39,7 +39,11 @@ void read_cfg()
     get_cfg_value(CFG_PATH, "mysql", "user", mysql_user);
     get_cfg_value(CFG_PATH, "mysql", "password", mysql_pwd);
     get_cfg_value(CFG_PATH, "mysql", "database", mysql_db);
-    LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC, "mysql:[user=%s,pwd=%s,database=%s]", mysql_user, mysql_pwd, mysql_db);
+
+    LOG(UPLOAD_LOG_MODULE, 
+        UPLOAD_LOG_PROC, 
+        "mysql:[user=%s,pwd=%s,database=%s]\n", 
+        mysql_user, mysql_pwd, mysql_db);
 
     //读取redis配置信息
     //get_cfg_value(CFG_PATH, "redis", "ip", redis_ip);
@@ -222,6 +226,7 @@ int recv_save_file(long len, char *user, char *filename, char *md5, long *p_size
     p += 4;//\r\n\r\n
     len -= (p-begin);
 
+    LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC,"User [%s] upload file [%s] MD5 [%s] Size [%d]\n", user, filename, md5, tmp);
     //下面才是文件的真正内容
 
     /*
@@ -615,7 +620,7 @@ int main()
                 goto END;
             }
 
-            LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC, "%s成功上传[%s, 大小：%ld, md5码：%s]到本地\n", user, filename, size, md5);
+            LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC, "%s成功上传[%s, 大小：%ld, MD5：%s]到本地\n", user, filename, size, md5);
 
             //===============> 将该文件存入fastDFS中,并得到文件的file_id <============
             if (upload_to_dstorage(filename, fileid) < 0)
