@@ -67,19 +67,12 @@ int dumpmsg_to_file(char *module_name, char *proc_name, const char *filename,
         va_start(ap, fmt);                                                                               
         vsprintf(mesg, fmt, ap);                                                                       
         va_end(ap);                        
-#if 1
-        snprintf(buf, 4096, "[%04d-%02d-%02d %02d:%02d:%02d]--[%s:%d]--%s",
-                                now -> tm_year + 1900, now -> tm_mon + 1,                                         
-                                now -> tm_mday, now -> tm_hour, now -> tm_min, now -> tm_sec,                     
-								filename, line, mesg);                                     
-#endif
 
-#if 0
-        snprintf(buf, 4096, "===%04d%02d%02d-%02d%02d%02d,%s[%d]=== %s",
-                                now -> tm_year + 1900, now -> tm_mon + 1,                                         
-                                now -> tm_mday, now -> tm_hour, now -> tm_min, now -> tm_sec,
-                                funcname, line, mesg);   
-#endif								
+        snprintf(buf, 4096, "[%04d-%02d-%02d %02d:%02d:%02d]--[%s:%d]--%s",
+                 now->tm_year + 1900, now->tm_mon + 1,
+                 now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec,
+                 filename, line, mesg);
+						
         make_path(filepath, module_name, proc_name);
         
         pthread_mutex_lock(&ca_log_lock);
@@ -89,6 +82,7 @@ int dumpmsg_to_file(char *module_name, char *proc_name, const char *filename,
         return 0;     
 }
 #endif
+
 //写入内容
 int out_put_file(char *path, char *buf)
 {

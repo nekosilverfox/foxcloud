@@ -283,7 +283,7 @@ RUN cd $NGINX_BASE_PATH && \
     ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
 
 RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/nginx.conf /usr/local/nginx/conf/nginx.conf
-RUN cp -r ${PROJECT_SOURCE_CODE_PATH}/server/zyfile2  /usr/local/nginx/
+RUN cp -r ${PROJECT_SOURCE_CODE_PATH}/server/index-html  /usr/local/nginx/
 
 EXPOSE 80
 

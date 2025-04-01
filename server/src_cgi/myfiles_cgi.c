@@ -37,7 +37,7 @@ void read_cfg()
     get_cfg_value(CFG_PATH, "mysql", "user", mysql_user);
     get_cfg_value(CFG_PATH, "mysql", "password", mysql_pwd);
     get_cfg_value(CFG_PATH, "mysql", "database", mysql_db);
-    LOG(MYFILES_LOG_MODULE, MYFILES_LOG_PROC, "mysql:[user=%s,pwd=%s,database=%s]", mysql_user, mysql_pwd, mysql_db);
+    LOG(MYFILES_LOG_MODULE, MYFILES_LOG_PROC, "mysql:[user=%s,pwd=%s,database=%s]\n", mysql_user, mysql_pwd, mysql_db);
 
     //读取redis配置信息
     //get_cfg_value(CFG_PATH, "redis", "ip", redis_ip);
@@ -161,7 +161,7 @@ void get_user_files_count(char *user, int ret)
     int ret2 = process_result_one(conn, sql_cmd, tmp); //指向sql语句
     if(ret2 != 0)
     {
-        LOG(MYFILES_LOG_MODULE, MYFILES_LOG_PROC, "%s 操作失败\n", sql_cmd);
+        LOG(MYFILES_LOG_MODULE, MYFILES_LOG_PROC, "%s 操作失败 (process_result_one): %d\n", sql_cmd, ret2);
         goto END;
     }
 

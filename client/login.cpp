@@ -37,8 +37,14 @@ Login::Login(QWidget *parent)
 
     /* 从配置文件加载 client 信息 */
     FoxcloudClientInfo clientInfo = JsonTool::getFoxcloudClientInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
-    ui->lePageServerAddress->setText(clientInfo.webServerInfo.address);
-    ui->lePageServerPort->setText(QString::number(clientInfo.webServerInfo.port));
+    clientInfo.webServerInfo.address.isEmpty() ?
+        ui->lePageServerAddress->setText("localhost") :
+        ui->lePageServerAddress->setText(clientInfo.webServerInfo.address);
+
+    0 == clientInfo.webServerInfo.port ?
+        ui->lePageServerPort->setText(QString::number(80)) :
+        ui->lePageServerPort->setText(QString::number(clientInfo.webServerInfo.port));
+
     ui->lePageLoginLogin->setText(clientInfo.userInfo.login);
     if ("true" == clientInfo.userInfo.remember_password)
     {
@@ -240,7 +246,7 @@ bool Login::registerUser()
         }
         else
         {
-            QMessageBox::critical(this, "Error", QString("Can not registration, server reply code: %1").arg(code));
+            QMessageBox::critical(this, "Error", QString("Can not registration, server reply code: %1 (%2)").arg(code, replayData));
             return;
         }
     });
