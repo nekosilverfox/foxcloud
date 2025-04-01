@@ -39,7 +39,7 @@ void read_cfg()
     get_cfg_value(CFG_PATH, "mysql", "user", mysql_user);
     get_cfg_value(CFG_PATH, "mysql", "password", mysql_pwd);
     get_cfg_value(CFG_PATH, "mysql", "database", mysql_db);
-    LOG(DEALFILE_LOG_MODULE, DEALFILE_LOG_PROC, "mysql:[user=%s,pwd=%s,database=%s]", mysql_user, mysql_pwd, mysql_db);
+    LOG(DEALFILE_LOG_MODULE, DEALFILE_LOG_PROC, "mysql:[user=%s,pwd=%s,database=%s]\n", mysql_user, mysql_pwd, mysql_db);
 
     //读取redis配置信息
     get_cfg_value(CFG_PATH, "redis", "ip", redis_ip);

@@ -67,7 +67,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-TARGET = foxcloud
+# TARGET = foxcloud
 
 RESOURCES += \
     resource.qrc

@@ -41,12 +41,11 @@
 3. 通过 `Dockerfile` 中配置数据库及 SSH 远程登录密码
 
     ```dockerfile
-    ENV POSTGRE_USER=your_pg_user_name
-    ENV POSTGRE_PASSWORD=your_pg_password
-    ENV POSTGRE_DB=your_pg_database
     ENV SSH_ROOT_PASSWORD=your_ssh_password
+    ENV DB_USERNAME=your_db_username_name
+    ENV DB_NAME=db_foxcloud
     ```
-
+    
 4. 构建 foxclouldserver 的 Docker 镜像
 
     ```bash
@@ -112,12 +111,12 @@
 | 行号    | 配置                    | 说明                                                         |
 | ------- | ----------------------- | ------------------------------------------------------------ |
 | 11      | `group_name = `         | 当前 storage 存储节点属于哪一个组                            |
-| **24**  | **`bind_addr = `**      | **storage 所在的主机的 IP（不能是 127.0.0.1 和 localhost）** |
+| **25**  | **`bind_addr = `**      | **storage 所在的主机的 IP（不能是 127.0.0.1 和 localhost）** |
 | 32      | `port = `               | storage 所运行的端口（默认 23000）                           |
 | 79      | `base_path = `          | 存储 storage 数据和日志的路径(要保证该目录已经实际存在)      |
 | 149     | `store_path_count =`    | 存储目录的数量                                               |
 | 159     | `store_path* =`         | 实际存储数据路径，如果 `store_path_count` 指定了几个路径，就要有对应的几个 |
-| **179** | **`tracker_server = `** | **tracker 的 IP 及端口**                                     |
+| **181** | **`tracker_server = `** | **tracker 的 IP 及端口**                                     |
 
 
 
@@ -140,16 +139,16 @@
 
 此是 FastDFS 对于 Nginx 的插件，配置文件位于 `/etc/fdfs/mod_fastdfs.conf`，确保以下行被正确配置：
 
-| 配置                     | 说明                                                         |
-| ------------------------ | ------------------------------------------------------------ |
-| `base_path = `           | 需要与存储节点中`storage.conf`的`base_path`保持一致(要保证该目录已经实际存在) |
-| **`tracker_server = `**  | **tracker 的 IP 及端口（不能是 127.0.0.1 和 localhost）**    |
-| `storage_server_port = ` | 存储节点 storage 的端口                                      |
-| `group_name = `          | 当前 storage 存储节点属于哪一个组                            |
-| `url_have_group_name = ` | 通过 URL 访问的时候是否显示属于位于哪一个组（`group_name`）  |
-| `store_path_count =`     | 对应存储节点 storage 的存储目录数量                          |
-| `store_path* =`          | 对应存储节点的实际存储数据路径，如果 `store_path_count` 指定了几个路径，就要有对应的几个 |
-| `group_count = `         | **整个** FDFS 系统中有几个组。有几个组就需要把底下几个组（`[group*]`）的信息的注释去掉并正确配置:<br />118 [group1]<br/>119 group_name=group1<br/>120 storage_server_port=23000<br/>121 store_path_count=2<br/>122 store_path0=/home/yuqing/fastdfs<br/>123 store_path1=/home/yuqing/fastdfs1 |
+| 行号   | 配置                     | 说明                                                         |
+| ------ | ------------------------ | ------------------------------------------------------------ |
+|        | `base_path = `           | 需要与存储节点中`storage.conf`的`base_path`保持一致(要保证该目录已经实际存在) |
+| **41** | **`tracker_server = `**  | **tracker 的 IP 及端口（不能是 127.0.0.1 和 localhost）**    |
+|        | `storage_server_port = ` | 存储节点 storage 的端口                                      |
+|        | `group_name = `          | 当前 storage 存储节点属于哪一个组                            |
+|        | `url_have_group_name = ` | 通过 URL 访问的时候是否显示属于位于哪一个组（`group_name`）  |
+|        | `store_path_count =`     | 对应存储节点 storage 的存储目录数量                          |
+|        | `store_path* =`          | 对应存储节点的实际存储数据路径，如果 `store_path_count` 指定了几个路径，就要有对应的几个 |
+|        | `group_count = `         | **整个** FDFS 系统中有几个组。有几个组就需要把底下几个组（`[group*]`）的信息的注释去掉并正确配置:<br />118 [group1]<br/>119 group_name=group1<br/>120 storage_server_port=23000<br/>121 store_path_count=2<br/>122 store_path0=/home/yuqing/fastdfs<br/>123 store_path1=/home/yuqing/fastdfs1 |
 
 
 
