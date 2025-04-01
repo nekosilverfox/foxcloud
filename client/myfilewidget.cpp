@@ -236,7 +236,8 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
     qDebug() << "Content-Disposition:" << disp;
     part.setHeader(QNetworkRequest::ContentDispositionHeader, disp);
 
-    /* Content-Type */
+
+    /* Content-Type /// Qt 6.8.2 有错误！！！不要使用 6.8.2 版本！！！！！ */
 #if 1
     // 动态设置Content-Type，服务器端不支持，千万别用 qwq
     QMimeDatabase mimeDatabase;
@@ -244,7 +245,7 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
     QString mimeName = mimeType.isValid() ? mimeType.name() : "application/octet-stream";
     part.setHeader(QNetworkRequest::ContentTypeHeader, mimeName);
 #else
-    part.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");   /// Qt 6.8.2 有错误！！！不要使用 6.8.2 版本！！！！！
+    part.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
 #endif
     part.setBodyDevice(file2Upload->pfile);
 

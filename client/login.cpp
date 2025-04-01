@@ -30,7 +30,7 @@ Login::Login(QWidget *parent)
 
     ui->swLoginPages->setCurrentWidget(ui->pageLogin);
 
-    ui->cbSavePwd->hide();  /// TODO 加密完成后删除此
+    ui->wSavePwd->hide();  /// TODO 加密完成后删除此
 
     this->setWindowIcon(QIcon(":/img/foxcloud-logo.svg"));
     this->setWindowTitle("Foxcloud login");

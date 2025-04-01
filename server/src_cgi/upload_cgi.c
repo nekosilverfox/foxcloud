@@ -146,6 +146,12 @@ int recv_save_file(long len, char *user, char *filename, char *md5, long *p_size
     //                                ↑
     q = begin;
     q = strstr(begin, "user=");
+    if(q == NULL)
+    {
+        LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC,"ERROR: get Content-Disposition `user` error\n");
+        ret = -1;
+        goto END;
+    }
 
     //Content-Disposition: form-data; user="mike"; filename="xxx.jpg"; md5="xxxx"; size=10240\r\n
     //                                      ↑
@@ -167,6 +173,12 @@ int recv_save_file(long len, char *user, char *filename, char *md5, long *p_size
     begin = k;
     q = begin;
     q = strstr(begin, "filename=");
+    if(q == NULL)
+    {
+        LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC,"ERROR: get Content-Disposition `filename` error\n");
+        ret = -1;
+        goto END;
+    }
 
     //"; filename="xxx.jpg"; md5="xxxx"; size=10240\r\n
     //             ↑
@@ -207,6 +219,12 @@ int recv_save_file(long len, char *user, char *filename, char *md5, long *p_size
     begin = k;
     q = begin;
     q = strstr(begin, "size=");
+    if(q == NULL)
+    {
+        LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC,"ERROR: get Content-Disposition `size` error\n");
+        ret = -1;
+        goto END;
+    }
 
     //"; size=10240\r\n
     //        ↑
@@ -215,6 +233,13 @@ int recv_save_file(long len, char *user, char *filename, char *md5, long *p_size
     //"; size=10240\r\n
     //             ↑
     k = strstr(q, "\r\n");
+    if(k == NULL)
+    {
+        LOG(UPLOAD_LOG_MODULE, UPLOAD_LOG_PROC,"ERROR: get Content-Disposition `size` value error\n");
+        ret = -1;
+        goto END;
+    }
+
     char tmp[256] = {0};
     strncpy(tmp, q, k-q);   //内容
     tmp[k-q] = '\0';
