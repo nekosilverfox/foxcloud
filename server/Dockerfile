@@ -25,11 +25,11 @@ RUN apt-get install -y vim net-tools git
 # 克隆 Github 仓库到容器（需要利用仓库中的配置文件）
 # 由于 Docker 缓存机制如果不再次 pull 会造成 仓库代码不是最新版
 ###############################################################
-ENV PROJECT_BASE_PATH=/root/foxcloudservers/
-RUN mkdir $PROJECT_BASE_PATH
+ENV PROJECT_BASE_PATH=/root/foxcloudservers
+RUN mkdir ${PROJECT_BASE_PATH}
 
-ENV PROJECT_SOURCE_CODE_PATH=${PROJECT_BASE_PATH}foxcloud
-RUN cd $PROJECT_BASE_PATH && \
+ENV PROJECT_SOURCE_CODE_PATH=${PROJECT_BASE_PATH}/foxcloud
+RUN cd ${PROJECT_BASE_PATH} && \
     git clone https://github.com/nekosilverfox/foxcloud.git && \
     cd ${PROJECT_SOURCE_CODE_PATH} && \
     git pull
@@ -38,7 +38,7 @@ RUN cd $PROJECT_BASE_PATH && \
 ###############################################################
 # 创建开机自动启动的服务的脚本
 ###############################################################
-ENV ENTRYPOINT_SH=${PROJECT_BASE_PATH}entrypoint.sh
+ENV ENTRYPOINT_SH=${PROJECT_BASE_PATH}/entrypoint.sh
 RUN touch $ENTRYPOINT_SH && \
     chmod 755 $ENTRYPOINT_SH
 RUN echo "#!/bin/bash" >> $ENTRYPOINT_SH
@@ -65,7 +65,7 @@ RUN echo "echo \"Starting server [SSH]\"" >> $ENTRYPOINT_SH && \
 RUN apt-get install -y gcc g++ make
 
 # FastDFS package install path and also data and log save path
-ENV FDFS_BASE_PATH=${PROJECT_BASE_PATH}fdfs
+ENV FDFS_BASE_PATH=${PROJECT_BASE_PATH}/fdfs
 RUN mkdir -p $FDFS_BASE_PATH
 
 RUN wget -P $FDFS_BASE_PATH https://github.com/happyfish100/libfastcommon/archive/refs/tags/V1.0.75.tar.gz && \
@@ -133,7 +133,7 @@ RUN echo "echo \"Starting server [fdfs_storaged]\"" >> $ENTRYPOINT_SH && \
 ###############################################################
 # Install Redis 
 ###############################################################
-ENV REDIS_BASE_PATH=${PROJECT_BASE_PATH}redis
+ENV REDIS_BASE_PATH=${PROJECT_BASE_PATH}/redis
 RUN mkdir $REDIS_BASE_PATH && \
     cd $REDIS_BASE_PATH && \
     git clone https://github.com/redis/redis.git && \
@@ -232,7 +232,7 @@ RUN echo "echo \"Starting server [MySQL]\"" >> $ENTRYPOINT_SH && \
 ###############################################################
 # Install Nginx dependencies openssl v3.4.0
 ###############################################################
-ENV NGINX_BASE_PATH=${PROJECT_BASE_PATH}nginx
+ENV NGINX_BASE_PATH=${PROJECT_BASE_PATH}/nginx
 RUN mkdir $NGINX_BASE_PATH && \
     cd $NGINX_BASE_PATH && \
     wget https://github.com/openssl/openssl/releases/download/openssl-3.4.0/openssl-3.4.0.tar.gz && \
