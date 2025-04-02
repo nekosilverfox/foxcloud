@@ -24,7 +24,7 @@ protected:
 private slots:
     bool registerUser();
     bool loginUser();
-    bool connectServer();
+    bool tryConnectServer();
 
 signals:
     void logined(FoxcloudClientInfo clientInfo, QString token);

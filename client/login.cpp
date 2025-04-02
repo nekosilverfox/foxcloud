@@ -8,7 +8,6 @@
 #include "structs/httpreplaycode.h"
 #include "common/encrypttool.h"
 
-
 #include <QPainter>
 #include <QRegularExpression>
 #include <QMessageBox>
@@ -60,6 +59,7 @@ Login::Login(QWidget *parent)
         ui->swLoginPages->setCurrentWidget(ui->pageSetServer);
         ui->lePageServerAddress->setFocus();  // 设置焦点
     });
+    connect(ui->btnCheckConnect, &QPushButton::clicked, this, &Login::tryConnectServer);
 
     /* 点击前往注册 */
     connect(ui->btnTurnToRegPage, &QPushButton::clicked, this, [=](){
@@ -114,6 +114,11 @@ void Login::paintEvent(QPaintEvent*)
 
 bool Login::registerUser()
 {
+    if (!tryConnectServer())
+    {
+        return false;
+    }
+
     UserInfo user;
     user.login       = ui->lePageRegLogin->text();
     user.nickname    = ui->lePageRegNickname->text();
@@ -260,6 +265,11 @@ bool Login::registerUser()
  */
 bool Login::loginUser()
 {
+    if (!tryConnectServer())
+    {
+        return false;
+    }
+
     FoxcloudClientInfo clientInfo = JsonTool::getFoxcloudClientInfo(PATH_FOXCLOUD_CLIENT_CONFIG);
     clientInfo.userInfo.login = ui->lePageLoginLogin->text();
     clientInfo.userInfo.password = ui->lePageLoginPwd->text();
@@ -375,35 +385,42 @@ bool Login::loginUser()
     return true;
 }
 
-bool Login::connectServer()
+bool Login::tryConnectServer()
 {
     QString ip = ui->lePageServerAddress->text();
     QString port = ui->lePageServerPort->text();
+    qInfo() << "Try to connect" << ip << ":" << port;
 
     /* 利用正则表达式校验数据 */
-    QRegularExpression reg;
-    reg.setPattern(REG_IP);
-    if (!reg.match(ip).hasMatch())
+    if (ip.isEmpty())
     {
-        QMessageBox::warning(this ,"Warning","Incorrect IP format");
-        ui->lePageServerAddress->clear();
+        QMessageBox::warning(this ,"Warning", QString("IP address is empty"));
         ui->lePageServerAddress->setFocus();
         return false;
     }
 
+    QRegularExpression reg;
     reg.setPattern(REG_PORT);
     if (!reg.match(port).hasMatch())
     {
-        QMessageBox::warning(this ,"Warning","Incorrect port format");
-        ui->lePageServerPort->clear();
+        QMessageBox::warning(this ,"Warning", QString("Incorrect port format ").append(port));
         ui->lePageServerPort->setFocus();
         return false;
     }
 
+    // ping服务器的测试
+    bool isSucc = NetworkTool::pingAddress(ip, port.toUInt());
+    if (isSucc)
+    {
+        ui->lbIsConnected->setStyleSheet("color: green;");
+    }
+    else
+    {
+        ui->lbIsConnected->setStyleSheet("color: red;");
+        QMessageBox::warning(this, "Warning", QString("Failed to connect %1:%2").arg(ip, port));
+    }
 
-// TODO 增加连接ping服务器的测试方法
-
-    return true;
+    return isSucc;
 }
 
 

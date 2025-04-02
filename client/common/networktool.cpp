@@ -6,6 +6,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QIcon>
+#include <QTcpSocket>
+#include <QEventLoop>
+#include <QTimer>
 
 #include "structs/httpreplaycode.h"
 
@@ -171,6 +174,49 @@ QList<CloudFileInfo*> NetworkTool::getReplayCloudFilesList(const QByteArray& rep
     }
 
     return resultList;
+}
+
+/**
+ * @brief NetworkTool::pingAddress 尝试 ping 指定地址（发送一个数据包看看有无回复）
+ * @param ip
+ * @param port
+ * @return true - 成功 ping
+ */
+bool NetworkTool::pingAddress(const QString &ip, const quint16 port, int timeoutMs)
+{
+    QTcpSocket socket;
+    QEventLoop eventLoop;
+    QTimer timer;
+
+    // 设置超时定时器
+    timer.setSingleShot(true);
+    QObject::connect(&timer, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
+
+    // 连接成功或出错时退出事件循环
+    QObject::connect(&socket, &QTcpSocket::connected, &eventLoop, &QEventLoop::quit);
+    QObject::connect(&socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::errorOccurred),
+                     [&](QAbstractSocket::SocketError) { eventLoop.quit(); });
+
+    // 开始尝试连接
+    socket.connectToHost(ip, port);
+    timer.start(timeoutMs); // 启动超时计时
+    eventLoop.exec();       // 阻塞等待连接结果
+
+    // 判断结果
+    if (timer.isActive())
+    {
+        // 未超时：检查是否成功连接
+        timer.stop();
+        return socket.state() == QTcpSocket::ConnectedState;
+    }
+    else
+    {
+        // 超时：强制断开并返回失败
+        socket.abort();
+        return false;
+    }
+
+    return false;
 }
 
 

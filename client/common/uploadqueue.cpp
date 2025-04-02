@@ -2,6 +2,8 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QtConcurrent>
+#include <QFuture>
 
 #include "common/encrypttool.h"
 #include "common/uploadlayout.h"
@@ -55,10 +57,14 @@ TransportStatus UploadQueue::appendUploadFile(const QString& filePath)
     uploadFile->name  = fileInfo.fileName();
     uploadFile->path  = fileInfo.filePath();
     uploadFile->size  = fileInfo.size();
-    uploadFile->md5   = EncryptTool::getFileMD5(uploadFile->path);
     uploadFile->bar   = new TransportBar(nullptr, uploadFile->name, uploadFile->size);
     uploadFile->isUploaded = false;
     uploadFile->isUploading = false;
+
+    auto future = QtConcurrent::run([=](){
+        uploadFile->md5   = EncryptTool::getFileMD5(uploadFile->path);
+    });
+    future.waitForFinished();
 
     _queue.append(uploadFile);
 

@@ -45,7 +45,7 @@ MyFileWidget::MyFileWidget(QWidget *parent)
 
     connect(this, &MyFileWidget::numberOfCloudFilesUpdated, this, [=](){
         qDebug() << "Catch signal MyFileWidget::numberOfCloudFilesUpdated, start get cloud file list";
-        if (_numberCloudFiles > 0)
+        if (_numberCloudFiles >= 0)
         {
             /* 一定要清空列表，不然会在第二次获取文件列表的时候造成奔溃 */
             clearCloudFileList();
@@ -610,7 +610,8 @@ void MyFileWidget::getUserNumberFilesFromServer()
         else
         {
             qCritical() << "Unknow reply code" << code;
-            // return;
+            QMessageBox::warning(this, "Warning", "Unknow reply code: " + code);
+            return;
         }
 
         size_t numCloudFiles = NetworkTool::getReplayNumberFiles(replyData);
