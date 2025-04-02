@@ -8,7 +8,6 @@ ENV SSH_ROOT_PASSWORD=your_ssh_password
 ENV DB_USERNAME=your_db_username_name
 ENV DB_PASSWORD=your_db_password
 
-
 ENV DB_NAME=db_foxcloud
 
 # 定义构建参数 TARGETARCH
@@ -78,7 +77,10 @@ RUN cd $FDFS_BASE_PATH/libfastcommon-1.0.75 && \
     echo "Files in current directory:" && ls -l && \
     ./make.sh clean && \
     ./make.sh && \
-    ./make.sh install
+    ./make.sh install && \
+    ./make.sh clean
+    
+RUN rm -rf ${FDFS_BASE_PATH}/libfastcommon-1.0.75
 
 ###############################################################
 # Install FDFS dependencies libserverframe v1.2.5
@@ -93,7 +95,10 @@ RUN cd $FDFS_BASE_PATH/libserverframe-1.2.5 && \
     echo "Files in current directory:" && ls -l && \
     ./make.sh clean && \
     ./make.sh && \
-    ./make.sh install
+    ./make.sh install && \
+    ./make.sh clean
+
+RUN rm -rf ${FDFS_BASE_PATH}/libserverframe-1.2.5
 
 ###############################################################
 # Install fdfs v6.12.2
@@ -108,7 +113,8 @@ RUN cd $FDFS_BASE_PATH/fastdfs-6.12.2 && \
     echo "Files in current directory:" && ls -l && \
     ./make.sh clean && \
     ./make.sh && \
-    ./make.sh install
+    ./make.sh install && \
+    ./make.sh clean
 
 # Create base path to save data and log for FastDFS
 RUN mkdir -p ${FDFS_BASE_PATH}/tracker && \
@@ -142,31 +148,34 @@ RUN mkdir $REDIS_BASE_PATH && \
     make && \
     make install
 
+# 清除不必要文件
+RUN rm -rf ${REDIS_BASE_PATH}/*
+
 # 用于记录 redis pid
-RUN cd $REDIS_BASE_PATH && \
+RUN cd ${REDIS_BASE_PATH} && \
     touch redis.pid
 
 # 用于记录 redis 日志的文件
-RUN cd $REDIS_BASE_PATH && \
+RUN cd ${REDIS_BASE_PATH} && \
     touch redis.log
 
-# Copy config file to FastDFS
-RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/redis.conf ${REDIS_BASE_PATH}/redis/redis.conf
+# Copy config file
+RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/redis.conf ${REDIS_BASE_PATH}/redis.conf
 
 # Autostart service when booting
 RUN echo "echo \"Starting server [Redis]\"" >> $ENTRYPOINT_SH && \
-    echo "redis-server /root/foxcloudservers/foxcloud/server/config/redis.conf" >> $ENTRYPOINT_SH
+    echo "redis-server ${REDIS_BASE_PATH}/redis.conf" >> $ENTRYPOINT_SH
 
 ###############################################################
 # Install HiRedis
 ###############################################################
-RUN cd $REDIS_BASE_PATH && \
+RUN cd ${REDIS_BASE_PATH} && \
     git clone https://github.com/redis/hiredis.git && \
     cd hiredis && \
-    git checkout v1.2.0  && \
     make  && \
     make install
 
+RUN rm -rf ${REDIS_BASE_PATH}/hiredis
 
 ###############################################################
 # Install PosrgreSQL v9.5
@@ -218,7 +227,6 @@ RUN apt-get install -y gettext-base
 COPY init.sql /docker-entrypoint-initdb.d/init.sql
 RUN envsubst < /docker-entrypoint-initdb.d/init.sql > /docker-entrypoint-initdb.d/init_processed.sql
 
-
 # 初始化数据库
 RUN service mysql start && \
     mysql -u root < /docker-entrypoint-initdb.d/init_processed.sql
@@ -235,8 +243,8 @@ RUN echo "echo \"Starting server [MySQL]\"" >> $ENTRYPOINT_SH && \
 # Install Nginx dependencies openssl v3.4.0
 ###############################################################
 ENV NGINX_BASE_PATH=${PROJECT_BASE_PATH}/nginx
-RUN mkdir $NGINX_BASE_PATH && \
-    cd $NGINX_BASE_PATH && \
+RUN mkdir ${NGINX_BASE_PATH} && \
+    cd ${NGINX_BASE_PATH} && \
     wget https://github.com/openssl/openssl/releases/download/openssl-3.4.0/openssl-3.4.0.tar.gz && \
     tar -xzvf openssl-3.4.0.tar.gz && \
     rm openssl-3.4.0.tar.gz && \
@@ -245,10 +253,13 @@ RUN mkdir $NGINX_BASE_PATH && \
     make && \
     make install
 
+# 清除不必要文件
+RUN rm -rf ${NGINX_BASE_PATH}/openssl-3.4.0
+
 ###############################################################
 # Install Nginx dependencies pcre v8.45
 ###############################################################
-RUN cd $NGINX_BASE_PATH && \
+RUN cd ${NGINX_BASE_PATH} && \
     wget https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.gz  && \
     tar -xzvf pcre-8.45.tar.gz && \
     rm pcre-8.45.tar.gz && \
@@ -257,10 +268,13 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install
 
+# 清除不必要文件
+RUN rm -rf ${NGINX_BASE_PATH}/pcre-8.45
+
 ###############################################################
 # Install Nginx dependencies zlib v1.3.1
 ###############################################################
-RUN cd $NGINX_BASE_PATH && \
+RUN cd ${NGINX_BASE_PATH} && \
     wget https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz && \
     tar -xzvf zlib-1.3.1.tar.gz && \
     rm zlib-1.3.1.tar.gz && \
@@ -269,12 +283,15 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install
 
+# 清除不必要文件
+RUN rm -rf ${NGINX_BASE_PATH}/zlib-1.3.1
+
 ###############################################################
 # Install nginx v1.16.1
 # 由于 FDFS 兼容性问题，所以使用 1.16.1 版本
 # Nginx 的配置位于 /usr/local/nginx/
 ###############################################################
-RUN cd $NGINX_BASE_PATH && \
+RUN cd ${NGINX_BASE_PATH} && \
     wget https://nginx.org/download/nginx-1.16.1.tar.gz && \
     tar -xzvf nginx-1.16.1.tar.gz && \
     rm nginx-1.16.1.tar.gz && \
@@ -283,6 +300,8 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install && \
     ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
+
+# RUN rm -rf ${NGINX_BASE_PATH}/nginx-1.16.1
 
 RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/nginx.conf /usr/local/nginx/conf/nginx.conf
 RUN cp -r ${PROJECT_SOURCE_CODE_PATH}/server/index-html  /usr/local/nginx/
@@ -301,7 +320,7 @@ RUN echo "echo \"Starting server [nginx]\"" >> $ENTRYPOINT_SH && \
 # 使用 C++ 编译 FastCGI 程序：
 # g++ echo-cpp.cpp -o test -lfcgi++ -lfcgi -std=c++11
 ###############################################################
-RUN cd $NGINX_BASE_PATH && \
+RUN cd ${NGINX_BASE_PATH} && \
     git clone https://github.com/Kuzmenko-Pavel/FastCGI.git && \
     cd FastCGI && \
     if [ "$TARGETARCH" = "arm64" ]; then \
@@ -312,6 +331,8 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install
 
+RUN rm -rf ${NGINX_BASE_PATH}/FastCGI
+
 ###############################################################
 # Install spawn-fcgi v1.6.3
 # 其用于作为 Nginx 与 FastCGI 的连接桥梁
@@ -319,7 +340,7 @@ RUN cd $NGINX_BASE_PATH && \
 # https://github.com/lighttpd/spawn-fcgi
 ###############################################################
 RUN apt-get install -y automake
-RUN cd $NGINX_BASE_PATH && \
+RUN cd ${NGINX_BASE_PATH} && \
     wget https://github.com/lighttpd/spawn-fcgi/archive/refs/tags/v1.6.3.tar.gz && \
     tar -xzvf v1.6.3.tar.gz && \
     rm v1.6.3.tar.gz && \
@@ -329,16 +350,17 @@ RUN cd $NGINX_BASE_PATH && \
     make && \
     make install
 
+RUN rm -rf ${NGINX_BASE_PATH}/spawn-fcgi-1.6.3
+
 ###############################################################
 # Install and config fastdfs-nginx-module v1.24
 ###############################################################
-RUN cd $FDFS_BASE_PATH && \
+RUN cd ${FDFS_BASE_PATH} && \
     git clone https://github.com/happyfish100/fastdfs-nginx-module.git && \
     cd fastdfs-nginx-module && \
     git checkout V1.24
 
-RUN cd $NGINX_BASE_PATH && \
-    cd nginx-1.16.1 && \
+RUN cd ${NGINX_BASE_PATH}/nginx-1.16.1 && \
     ./configure --add-module=${FDFS_BASE_PATH}/fastdfs-nginx-module/src && \
     make && \
     make install
@@ -347,6 +369,10 @@ RUN cd $NGINX_BASE_PATH && \
 RUN cp ${PROJECT_SOURCE_CODE_PATH}/server/config/mod_fastdfs.conf /etc/fdfs/  && \
     cp ${FDFS_BASE_PATH}/fastdfs-6.12.2/conf/http.conf /etc/fdfs/ && \
     cp ${NGINX_BASE_PATH}/nginx-1.16.1/conf/mime.types /etc/fdfs/
+
+RUN rm -rf ${FDFS_BASE_PATH}/fastdfs-nginx-module
+RUN rm -rf ${FDFS_BASE_PATH}/fastdfs-6.12.2
+RUN rm -rf ${NGINX_BASE_PATH}
 
 ###############################################################
 # 编译 自己编写的 CGI 脚本
