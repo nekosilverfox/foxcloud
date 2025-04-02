@@ -10,10 +10,13 @@ class NetworkTool
 public:
     /* 用一次解析服务端发回来的数据 */
     static QNetworkAccessManager* getNetworkManager();
+
     static QString getReplayCode(const QByteArray& replayJsonData);
     static QString getReplayToken(const QByteArray& replayJsonData);
     static size_t  getReplayNumberFiles(const QByteArray& replayJsonData);
     static QList<CloudFileInfo*> getReplayCloudFilesList(const QByteArray& replayJsonData);
+
+    static bool pingAddress(const QString& ip, const quint16 port = 80, int timeoutMs = 3000);
 
 private:
     NetworkTool();
