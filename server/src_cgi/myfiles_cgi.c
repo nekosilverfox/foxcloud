@@ -1,9 +1,6 @@
 /**
  * @file myfiles_cgi.c
  * @brief  用户列表展示CGI程序
- * @author Mike
- * @version 2.0
- * @date 2017年2月27日
  */
 
 #include "fcgi_config.h"

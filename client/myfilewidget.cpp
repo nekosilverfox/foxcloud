@@ -212,6 +212,16 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
 {
     qInfo() << "Start upload real file" << file2Upload->name;
 
+    /*
+       ------WebKitFormBoundary88asdgewtgewx\r\n
+       Content-Disposition: form-data; user="mike"; filename="xxx.jpg"; md5="xxxx"; size=10240\r\n
+       Content-Type: application/octet-stream\r\n
+       \r\n
+       真正的文件内容\r\n
+       ------WebKitFormBoundary88asdgewtgewx
+       */
+
+    /* Content-Disposition */
     ClientInfoInstance* client = ClientInfoInstance::getInstance();
     QHttpPart part;
     QString disp = QString("form-data; "
@@ -223,15 +233,20 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
                             file2Upload->name,
                             file2Upload->md5,
                             QString::number(file2Upload->size));
-    qDebug() << "Get upload disp" << disp;
+    qDebug() << "Content-Disposition:" << disp;
     part.setHeader(QNetworkRequest::ContentDispositionHeader, disp);
 
 
-    // 动态设置Content-Type
+    /* Content-Type /// Qt 6.8.2 有错误！！！不要使用 6.8.2 版本！！！！！ */
+#if 1
+    // 动态设置Content-Type，服务器端不支持，千万别用 qwq
     QMimeDatabase mimeDatabase;
     QMimeType mimeType = mimeDatabase.mimeTypeForFile(file2Upload->name);
     QString mimeName = mimeType.isValid() ? mimeType.name() : "application/octet-stream";
     part.setHeader(QNetworkRequest::ContentTypeHeader, mimeName);
+#else
+    part.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+#endif
     part.setBodyDevice(file2Upload->pfile);
 
     QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
@@ -281,7 +296,9 @@ void MyFileWidget::uploadRealFile(UploadFileInfo* file2Upload)
 
         if (reply->error() != QNetworkReply::NoError)
         {
-            qCritical() << "Upload file" << curFileName << "failed" << reply->errorString();
+            QString err = "Upload file" + curFileName + "failed" + reply->errorString();
+            qCritical() << err;
+            QMessageBox::warning(this, "Something wrong", err);
             reply->deleteLater();
             return;
         }
@@ -798,17 +815,4 @@ void MyFileWidget::clearCloudFileList()
         cur = nullptr;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
