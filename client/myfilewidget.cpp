@@ -28,20 +28,34 @@ MyFileWidget::MyFileWidget(QWidget *parent)
 
     _numberCloudFiles = 0;
 
+    ui->btnFileInfo->setCheckable(true);
+    ui->btnFileInfo->setIcon(QIcon(":/img/single_file_info.svg"));
+    ui->lbFileInfo->setPixmap(QPixmap(":/img/single_file_info_2.svg").scaled(QSize(100, 100), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    ui->lbFileName->setWordWrap(true);
+    ui->lbFileName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->lbMD5->setWordWrap(true);
+    ui->lbMD5->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    ui->btnFileInfo->setCheckable(true);
+    ui->btnFileInfo->setChecked(true);
+    connect(ui->btnFileInfo, &QToolButton::clicked, [=](bool checked) {
+        checked ? ui->wFileInfo->show() : ui->wFileInfo->hide();;
+    });
+
     /* 初始化文件显示控件 */
     initListWidgetFiles();
 
     /* 开始定时触发定时器，以便检查上传/下载任务队列 */
     startCheckTransportQueue(1000);
 
-    connect(ui->btnUpload, &QPushButton::clicked, this, &MyFileWidget::selectUploadFilesAndAppendToQueue);
+    connect(ui->btnUpload,   &QPushButton::clicked, this, &MyFileWidget::selectUploadFilesAndAppendToQueue);
     connect(ui->btnDownload, &QPushButton::clicked, this, &MyFileWidget::addSelectItemToDownloadQueue);
     connect(ui->btnShareURL, &QPushButton::clicked, this, &MyFileWidget::getShareURLForSelectItem);
-    connect(ui->btnDelete, &QPushButton::clicked, this, &MyFileWidget::deleteFileActoin);
-    connect(ui->btnRefresh, &QPushButton::clicked, this, [=](){
-        getUserNumberFilesFromServer();
-    });
+    connect(ui->btnDelete,   &QPushButton::clicked, this, &MyFileWidget::deleteFileActoin);
+    connect(ui->btnRefresh,  &QPushButton::clicked, this, &MyFileWidget::getUserNumberFilesFromServer);
 
+    connect(ui->lwFiles, &QListWidget::itemSelectionChanged, this, &MyFileWidget::showSingleFileInfo);
 
     connect(this, &MyFileWidget::numberOfCloudFilesUpdated, this, [=](){
         qDebug() << "Catch signal MyFileWidget::numberOfCloudFilesUpdated, start get cloud file list";
@@ -68,7 +82,7 @@ void MyFileWidget::initListWidgetFiles()
 {
     ui->lwFiles->setViewMode(QListView::IconMode);   //设置显示图标模式
     ui->lwFiles->setIconSize(QSize(50, 50));         //设置图标大小
-    ui->lwFiles->setGridSize(QSize(80, 80));        //设置item大小
+    ui->lwFiles->setGridSize(QSize(80, 80));         //设置item大小
 
     // 设置QLisView大小改变时，图标的调整模式，默认是固定的，可以改成自动调整
     ui->lwFiles->setResizeMode(QListView::Adjust);   //自动适应布局
@@ -545,9 +559,9 @@ void MyFileWidget::clearListWidgetFiles()
 }
 
 /**
- * @brief MyFileWidget::refreshListWidgetFiles 刷新lwFile中的内容
+ * @brief MyFileWidget::addAllFileItemsToListWidget 刷新lwFile中的内容
  */
-void MyFileWidget::refreshListWidgetFiles()
+void MyFileWidget::addAllFileItemsToListWidget()
 {
     qInfo() << "Start refrsh lwFiles";
     clearListWidgetFiles();
@@ -562,6 +576,70 @@ void MyFileWidget::refreshListWidgetFiles()
         ui->lwFiles->addItem(i->item);
     }
     qInfo() << "Finished add all item in cloud file list";
+}
+#include <QByteArray>
+/**
+ * @brief MyFileWidget::showSingleFileInfo 展示选中文件的信息
+ */
+void MyFileWidget::showSingleFileInfo()
+{
+    /* 获取用户选中项 */
+    QListWidgetItem* item = ui->lwFiles->currentItem();
+    if (nullptr == item)
+    {
+        qInfo() << "Not select any item";
+        return;
+    }
+
+    CloudFileInfo* fileInfo =  findItemInCloudFileList(item);
+    ui->lbOwner->setText(fileInfo->userLogin);
+    ui->lbFileName->setText(fileInfo->fileName);
+    ui->lbMD5->setText(fileInfo->md5);
+    ui->lbUploadTime->setText(fileInfo->uploadTime);
+    ui->lbType->setText(fileInfo->type);
+    ui->lbSize->setText(getFormatFileSize(fileInfo->size));
+    ui->lbShare->setText(fileInfo->isShare ? "Yes" : "No");
+    ui->lbDownload->setText(QString("%1 Times").arg(fileInfo->downloadCount));
+}
+
+/**
+ * @brief MyFileWidget::getFormatFileSize 根据字节数自动转换为合适的单位（如 KB、MB、GB），并保留适当的小数位数
+ * @param bytes
+ * @return
+ */
+QString MyFileWidget::getFormatFileSize(qint64 bytes)
+{
+    const QStringList units = {"B", "KB", "MB", "GB", "TB"};
+
+    if (bytes == 0) {
+        return "0 B"; // 处理 0 字节的情况
+    }
+
+    int unitIndex = 0;
+    double size = static_cast<double>(bytes);
+
+    // 循环计算合适的单位
+    while (size >= 1024 && unitIndex < units.size() - 1) {
+        size /= 1024;
+        unitIndex++;
+    }
+
+    // 动态设置小数位数
+    int precision = 2; // 默认保留两位小数
+    if (unitIndex == 0) {
+        precision = 0; // B 单位无小数
+    } else {
+        // 如果是整数（如 2.00），则去掉小数部分
+        double integerPart;
+        if (std::modf(size, &integerPart) == 0.0) {
+            precision = 0;
+        }
+    }
+
+    // 格式化输出（自动去除多余零，例如 2.0 → 2）
+    return QString("%1 %2")
+        .arg(size, 0, 'f', precision)
+        .arg(units[unitIndex]);
 }
 
 /**
@@ -644,7 +722,7 @@ void MyFileWidget::getUserFilesListFromServer(const SortType softType, const siz
     if (_numberCloudFiles <= 0)  // 结束条件，这个条件很重要，函数递归的结束条件
     {
         qInfo() << "Finish got user cloud file list";
-        refreshListWidgetFiles();
+        addAllFileItemsToListWidget();
         return;
     }
     else if (numPerRequest > _numberCloudFiles)

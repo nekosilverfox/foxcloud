@@ -8,5 +8,7 @@
         <file>img/foxcloud-logo-name.svg</file>
         <file>img/background-violet-yellow.jpg</file>
         <file>font/BM_JUA.ttf</file>
+        <file>img/single_file_info.svg</file>
+        <file>img/single_file_info_2.svg</file>
     </qresource>
 </RCC>

@@ -53,16 +53,16 @@ TransportStatus UploadQueue::appendUploadFile(const QString& filePath)
     /* 创建上传文件的对象 */
     QFileInfo fileInfo(filePath);
     UploadFileInfo* uploadFile =  new UploadFileInfo;
-    uploadFile->pfile = file;
-    uploadFile->name  = fileInfo.fileName();
-    uploadFile->path  = fileInfo.filePath();
-    uploadFile->size  = fileInfo.size();
-    uploadFile->bar   = new TransportBar(nullptr, uploadFile->name, uploadFile->size);
-    uploadFile->isUploaded = false;
+    uploadFile->pfile   = file;
+    uploadFile->name    = fileInfo.fileName();
+    uploadFile->path    = fileInfo.filePath();
+    uploadFile->size    = fileInfo.size();
+    uploadFile->bar     = new TransportBar(nullptr, uploadFile->name, uploadFile->size);
+    uploadFile->isUploaded  = false;
     uploadFile->isUploading = false;
 
     auto future = QtConcurrent::run([=](){
-        uploadFile->md5   = EncryptTool::getFileMD5(uploadFile->path);
+        uploadFile->md5     = EncryptTool::getFileMD5(uploadFile->path).toHex();
     });
     future.waitForFinished();
 
