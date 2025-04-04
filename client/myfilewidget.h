@@ -39,7 +39,7 @@ public:
 
     /* 当前 Widget 的显示相关 */
     void clearListWidgetFiles();
-    void refreshListWidgetFiles();
+    void addAllFileItemsToListWidget();
 
     /* 获取文件列表 */
     void getUserNumberFilesFromServer();

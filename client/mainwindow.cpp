@@ -31,10 +31,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     /* 用户信息添加到表格中 */
     QStringList clientInfoKeyList;
-    clientInfoKeyList << STR_VAL_LOGIN << STR_VAL_ADDRESS << STR_VAL_PORT << "Token";
+    clientInfoKeyList << STR_VAL_LOGIN
+                      << STR_VAL_ADDRESS
+                      << STR_VAL_PORT
+                      << "Token";
 
     QStringList clientInfoValueList;
-    clientInfoValueList << clientInfo.userInfo.login << clientInfo.webServerInfo.address << QString::number(clientInfo.webServerInfo.port)  << ClientInfoInstance::getInstance()->getToken();
+    clientInfoValueList << clientInfo.userInfo.login
+                        << clientInfo.webServerInfo.address
+                        << QString::number(clientInfo.webServerInfo.port)
+                        << ClientInfoInstance::getInstance()->getToken();
 
     ui->twClientInfo->setRowCount(clientInfoKeyList.size());
     ui->twClientInfo->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -44,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->twClientInfo->setItem(i, 0, new QTableWidgetItem(clientInfoKeyList.at(i)));
         ui->twClientInfo->setItem(i, 1, new QTableWidgetItem(clientInfoValueList.at(i)));
 
-        qDebug() << "Add to table:" << clientInfoKeyList.at(i) << clientInfoValueList.at(i);
+        qDebug() << "Add to UserInfo Table:" << clientInfoKeyList.at(i) << clientInfoValueList.at(i);
     }
 
     connect(ui->btnGroup, &ButtonGroup::onBtnCurrentUserClicked, this, [=](){ ui->swPages->setCurrentWidget(ui->pUserInfo); });
@@ -66,9 +72,6 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->swPages->setCurrentWidget(ui->pTransport);
         ui->transportWidget->turnToTabDownload();
     });
-
-
-
 }
 
 MainWindow::~MainWindow()

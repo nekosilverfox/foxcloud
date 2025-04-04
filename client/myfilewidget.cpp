@@ -38,9 +38,7 @@ MyFileWidget::MyFileWidget(QWidget *parent)
     connect(ui->btnDownload, &QPushButton::clicked, this, &MyFileWidget::addSelectItemToDownloadQueue);
     connect(ui->btnShareURL, &QPushButton::clicked, this, &MyFileWidget::getShareURLForSelectItem);
     connect(ui->btnDelete, &QPushButton::clicked, this, &MyFileWidget::deleteFileActoin);
-    connect(ui->btnRefresh, &QPushButton::clicked, this, [=](){
-        getUserNumberFilesFromServer();
-    });
+    connect(ui->btnRefresh, &QPushButton::clicked, this, &MyFileWidget::getUserNumberFilesFromServer);
 
 
     connect(this, &MyFileWidget::numberOfCloudFilesUpdated, this, [=](){
@@ -545,9 +543,9 @@ void MyFileWidget::clearListWidgetFiles()
 }
 
 /**
- * @brief MyFileWidget::refreshListWidgetFiles 刷新lwFile中的内容
+ * @brief MyFileWidget::addAllFileItemsToListWidget 刷新lwFile中的内容
  */
-void MyFileWidget::refreshListWidgetFiles()
+void MyFileWidget::addAllFileItemsToListWidget()
 {
     qInfo() << "Start refrsh lwFiles";
     clearListWidgetFiles();
@@ -644,7 +642,7 @@ void MyFileWidget::getUserFilesListFromServer(const SortType softType, const siz
     if (_numberCloudFiles <= 0)  // 结束条件，这个条件很重要，函数递归的结束条件
     {
         qInfo() << "Finish got user cloud file list";
-        refreshListWidgetFiles();
+        addAllFileItemsToListWidget();
         return;
     }
     else if (numPerRequest > _numberCloudFiles)
