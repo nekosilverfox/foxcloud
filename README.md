@@ -43,13 +43,12 @@
     ```dockerfile
     ENV SSH_ROOT_PASSWORD=your_ssh_password
     ENV DB_USERNAME=your_db_username_name
-    ENV DB_NAME=db_foxcloud
     ```
     
 4. 构建 foxclouldserver 的 Docker 镜像
 
     ```bash
-    docker buildx build -t foxclouldserver .
+    docker buildx build --no-cache -t foxclouldserver .
     ```
 
 5. 启动容器（节点），其中可选配置：
@@ -62,7 +61,7 @@
     | `POSTGRESQL_PORT` | PostgreSQL 数据库端口，内部默认端口 5432          |
     | `CONTAINER_NAME`  | 自定义容器名                                      |
 
-    - 启动单独的 `Tracker` 节点
+    - 如果启动单独的 `Tracker` 节点
 
         ```
         docker run -id -p SSH_PORT:22 -p TRACKER_PORT:22122 --name TRACKER_CONTAINER_NAME foxclouldserver
@@ -70,7 +69,7 @@
 
         
 
-    - 启动单独的 `Storge` 节点
+    - 如果启动单独的 `Storge` 节点
 
         ```
         docker run -id -p SSH_PORT:22 -p STORGE_PORT:23000 --name STORGE_CONTAINER_NAME foxclouldserver
@@ -167,9 +166,7 @@
 ...
 ```
 
-
-
-然后重启容器
+**然后使用 `/root/foxcloudservers/foxcloud/server/start.sh` 重启服务以应用配置或者重启容器**
 
 ---
 

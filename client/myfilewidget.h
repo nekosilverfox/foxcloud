@@ -27,6 +27,7 @@ public:
 
     /* 用于上传文件 */
     void selectUploadFilesAndAppendToQueue();
+    void addUploadFilesToQueue(const QStringList& uploadFiles);
     void uploadFilesAction();
     void uploadRealFile(UploadFileInfo* file2Upload);
 
@@ -53,6 +54,10 @@ public:
     /* 操作私有成员 */
     CloudFileInfo* findItemInCloudFileList(const QListWidgetItem* item);
     void clearCloudFileList();
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 signals:
     void jumpToTabUpload();            // 跳转到上传界面

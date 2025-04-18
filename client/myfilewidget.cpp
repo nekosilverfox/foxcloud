@@ -10,7 +10,9 @@
 #include <QHttpPart>
 #include <QMimeDatabase>
 #include <QClipboard>
-
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
 
 #include "structs/fileinfo.h"
 #include "structs/httpreplaycode.h"
@@ -25,6 +27,8 @@ MyFileWidget::MyFileWidget(QWidget *parent)
     , ui(new Ui::MyFileWidget)
 {
     ui->setupUi(this);
+
+    setAcceptDrops(true);
 
     _numberCloudFiles = 0;
 
@@ -113,6 +117,12 @@ void MyFileWidget::selectUploadFilesAndAppendToQueue()
     /* 获取需要上传的文件 */
     QStringList uploadFiles = QFileDialog::getOpenFileNames(this, "Select one or more files to upload", QDir::homePath());
     qInfo() << "Get upload files:" << uploadFiles;
+
+    addUploadFilesToQueue(uploadFiles);
+}
+
+void MyFileWidget::addUploadFilesToQueue(const QStringList &uploadFiles)
+{
     for (QString path : uploadFiles)
     {
         TransportStatus status = UploadQueue::getInstance()->appendUploadFile(path);
@@ -139,8 +149,6 @@ void MyFileWidget::selectUploadFilesAndAppendToQueue()
             break;
         }
     }
-
-
 }
 
 /**
@@ -894,4 +902,31 @@ void MyFileWidget::clearCloudFileList()
         cur = nullptr;
     }
 }
+
+
+void MyFileWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasUrls() &&
+        event->mimeData()->urls().count() <= 100)
+    {
+        QUrl url = event->mimeData()->urls().at(0);  // 获取第一个URL
+        QString localPath = url.toLocalFile();       // 转换成本地文件路径（如 "C:/image.jpg"）
+        qInfo() << "Drag file on cloud file page" << localPath;
+
+        event->acceptProposedAction();
+    }
+}
+
+void MyFileWidget::dropEvent(QDropEvent *event)
+{
+    QStringList uploadFiles;
+
+    for (QUrl curUrl : event->mimeData()->urls())
+    {
+        uploadFiles << curUrl.toLocalFile();
+    }
+
+    addUploadFilesToQueue(uploadFiles);
+}
+
 
